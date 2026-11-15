@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
@@ -146,4 +147,10 @@ final activityRepositoryProvider = Provider<ActivityRepository>(
 /// Every activity, newest first.
 final activitiesProvider = StreamProvider<List<Activity>>(
   (ref) => ref.watch(activityRepositoryProvider).watchAll(),
+);
+
+/// One activity by ID; null when it no longer exists.
+final FutureProviderFamily<Activity?, int> activityByIdProvider =
+    FutureProvider.family<Activity?, int>(
+  (ref, id) => ref.watch(activityRepositoryProvider).byId(id),
 );

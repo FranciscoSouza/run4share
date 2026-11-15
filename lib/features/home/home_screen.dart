@@ -363,8 +363,7 @@ class _ActivityTile extends ConsumerWidget {
       ),
       child: format.card(
         activity,
-        // Choosing an activity starts the photo step (phase 3).
-        onTap: () => showComingSoon(context),
+        onTap: () => context.push(AppRoutes.choosePhoto(activity.id)),
         trailing: manual
             ? PopupMenuButton<_ActivityAction>(
                 icon: const Icon(AppIcons.more),

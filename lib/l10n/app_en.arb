@@ -176,5 +176,36 @@
         "type": "String"
       }
     }
+  },
+  "photoAccessTitle": "Add a photo from your library",
+  "photoAccessBody": "run4share needs access to your photos so you can pick the one that goes with this workout. Your photos stay on your phone.",
+  "actionContinue": "Continue",
+  "actionNotNow": "Not now",
+  "photoAccessOffTitle": "Photo access is off",
+  "photoAccessOffBody": "Turn on photo access for run4share in your phone settings to choose a photo.",
+  "actionOpenSettings": "Open Settings",
+  "actionBackToActivities": "Back to activities",
+  "photosRecents": "Recents",
+  "photosChooseOne": "choose one photo",
+  "photosEmpty": "No photos here yet.",
+  "photosLimited": "run4share can see only the photos you picked.",
+  "actionManage": "Manage",
+  "photoNumber": "Photo {number}",
+  "cropTitle": "Format",
+  "actionNext": "Next",
+  "cropHint": "Drag and pinch the photo to adjust the crop",
+  "formatStory": "Story",
+  "formatFeed": "Feed",
+  "formatSquare": "Square",
+  "photoLoadFailed": "Couldn’t open this photo.",
+  "previewTitle": "Preview",
+  "previewNote": "Stickers come in the next step.",
+  "actionDone": "Done",
+  "@photoNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
   }
 }

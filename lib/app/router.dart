@@ -3,8 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:run4share/app/app_shell.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/features/activities/activity_form_screen.dart';
+import 'package:run4share/features/create/crop_preview_screen.dart';
+import 'package:run4share/features/create/crop_screen.dart';
 import 'package:run4share/features/creations/creations_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
+import 'package:run4share/features/photos/photo_step_screen.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
 import 'package:run4share/features/strava/connect_strava_screen.dart';
 
@@ -16,6 +19,10 @@ abstract final class AppRoutes {
   static const connectStrava = '/connect/strava';
   static const newActivity = '/activity/new';
   static String editActivity(int id) => '/activity/$id/edit';
+  static String choosePhoto(int activityId) => '/create/$activityId/photo';
+  static String crop(int activityId, String photoId) =>
+      '/create/$activityId/photo/${Uri.encodeComponent(photoId)}';
+  static const createPreview = '/create/preview';
 }
 
 final _rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -63,6 +70,29 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => ActivityFormScreen(
           activityId: int.tryParse(state.pathParameters['id'] ?? ''),
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.createPreview,
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => const CropPreviewScreen(),
+      ),
+      GoRoute(
+        path: '/create/:activityId/photo',
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => PhotoStepScreen(
+          activityId: int.tryParse(state.pathParameters['activityId']!) ?? 0,
+        ),
+        routes: [
+          GoRoute(
+            path: ':photoId',
+            parentNavigatorKey: _rootKey,
+            builder: (context, state) => CropScreen(
+              activityId:
+                  int.tryParse(state.pathParameters['activityId']!) ?? 0,
+              photoId: state.pathParameters['photoId']!,
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.connectStrava,

@@ -7,6 +7,7 @@ import 'package:run4share/app/material.dart';
 import 'package:run4share/app/router.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/features/lab/lab.dart';
+import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/features/strava/strava_models.dart';
@@ -121,7 +122,7 @@ class SettingsScreen extends ConsumerWidget {
                   icon: AppIcons.image,
                   title: l10n.settingsPhotoAccess,
                   subtitle: l10n.settingsPhotoAccessSubtitle,
-                  onTap: soon,
+                  onTap: ref.read(photoLibraryProvider).openSettings,
                 ),
               ],
             ),

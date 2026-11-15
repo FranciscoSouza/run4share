@@ -69,8 +69,8 @@ adds caching, paging, manual activities).
 - The connect screen's Strava tile is a placeholder: use Strava's official
   brand assets and check their guidelines before release (phase 7).
 
-**Phase 2 status (home/activities):** code done, running on Francisco's
-phone, waiting for his check.
+**Phase 2 status (home/activities):** committed (`phase-2-activities`);
+Francisco moved on to phase 3 on 15 Nov 2026 without reporting problems.
 - Local database: drift (`lib/data/`), tables `activities` (every source)
   and `preferences` (units, sync state). Start times are wall-clock values
   stored as UTC text (`store_date_time_values_as_text` in build.yaml).
@@ -87,6 +87,23 @@ phone, waiting for his check.
   Workout.
 - Templates carousel tap still says "coming"; the guided flow comes with
   themes in phase 4a. Tapping an activity leads to phase 3 (photo).
+
+**Phase 3 status (photo/crop):** code done, installed on Francisco's
+phone, waiting for his check. Not committed yet.
+- Flow: tap an activity → `/create/:activityId/photo` (explainer the first
+  time, "Photo access is off" after a denial, else the picker) →
+  `/create/:activityId/photo/:photoId` (format and crop, dark theme) →
+  `/create/preview` (temporary until the editor, phase 4a).
+- Android can't tell "never asked" from "denied", so the app stores
+  `photos.asked` in preferences.
+- Photos go through `PhotoLibrary` (`lib/features/photos/`); tests use a
+  fake. The crop is non-destructive: `CreationDraft` keeps the photo ID,
+  the format (`ShareFormat`: story 9:16, feed 4:5, square 1:1) and the crop
+  as fractions of the photo, so export can use the full-resolution
+  original. The cropper works on a preview no larger than 2048 px.
+- The last format used is offered first (Story the first time).
+- iOS photo-permission text is English only for now (needs InfoPlist
+  .strings per language later).
 
 ## Decisions already taken (do not reopen without asking)
 

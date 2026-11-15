@@ -20,6 +20,10 @@ abstract final class AppIcons {
   static const IconData ruler = LucideIcons.ruler;
   static const IconData globe = LucideIcons.globe;
   static const IconData image = LucideIcons.image;
+  static const IconData imageOff = LucideIcons.imageOff;
+  static const IconData down = LucideIcons.chevronDown;
+  static const IconData story = LucideIcons.rectangleVertical;
+  static const IconData square = LucideIcons.square;
   static const IconData sparkle = LucideIcons.sparkle;
   static const IconData invite = LucideIcons.userPlus;
   static const IconData shield = LucideIcons.shield;

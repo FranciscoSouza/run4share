@@ -4,6 +4,10 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>run4share needs your photos so you can pick the one that goes with your workout. Your photos stay on your phone.</string>
+	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+	<true/>
 	<key>CFBundleDisplayName</key>
 	<string>run4share</string>
 	<key>CFBundleExecutable</key>

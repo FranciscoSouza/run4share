@@ -198,12 +198,67 @@
   "formatFeed": "Feed",
   "formatSquare": "Square",
   "photoLoadFailed": "Couldn’t open this photo.",
-  "previewTitle": "Preview",
-  "previewNote": "Stickers come in the next step.",
-  "actionDone": "Done",
   "@photoNumber": {
     "placeholders": {
       "number": {
+        "type": "int"
+      }
+    }
+  },
+  "actionShare": "Share",
+  "editorTheme": "Theme",
+  "editorThemeCount": "{count} themes · more added over time",
+  "editorRotate": "Rotate sticker",
+  "editorResize": "Resize sticker",
+  "editorRemove": "Remove sticker",
+  "editorHideThemes": "Hide themes",
+  "editorAddSticker": "Pick a theme to add the sticker back",
+  "themeNeedsDistance": "No distance in this activity",
+  "themeNeedsHeartRate": "No heart rate in this activity",
+  "themeNeedsCalories": "No calories in this activity",
+  "templateCantUse": "{reason}, so this template can’t use it",
+  "templateSample": "Sample data · {format} · shows {metrics}",
+  "metricDistance": "distance",
+  "metricTime": "time",
+  "metricPace": "pace",
+  "metricHeartRate": "heart rate",
+  "metricCalories": "calories",
+  "templateStep1": "Choose one of your activities",
+  "templateStep2": "Choose a photo",
+  "templateStep3": "Adjust the sticker and share",
+  "templateUse": "Use this template",
+  "templateStepOf": "Step {step} of {total}",
+  "templateChooseActivity": "Choose an activity",
+  "@editorThemeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@templateCantUse": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@templateSample": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      },
+      "metrics": {
+        "type": "String"
+      }
+    }
+  },
+  "@templateStepOf": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
         "type": "int"
       }
     }

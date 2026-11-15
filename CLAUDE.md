@@ -88,12 +88,12 @@ Francisco moved on to phase 3 on 15 Nov 2026 without reporting problems.
 - Templates carousel tap still says "coming"; the guided flow comes with
   themes in phase 4a. Tapping an activity leads to phase 3 (photo).
 
-**Phase 3 status (photo/crop):** code done, installed on Francisco's
-phone, waiting for his check. Not committed yet.
+**Phase 3 status (photo/crop):** committed (`phase-3-photo`); Francisco
+moved on to phase 4a on 15 Nov 2026 without reporting problems.
 - Flow: tap an activity → `/create/:activityId/photo` (explainer the first
   time, "Photo access is off" after a denial, else the picker) →
   `/create/:activityId/photo/:photoId` (format and crop, dark theme) →
-  `/create/preview` (temporary until the editor, phase 4a).
+  `/create/editor` (phase 4a).
 - Android can't tell "never asked" from "denied", so the app stores
   `photos.asked` in preferences.
 - Photos go through `PhotoLibrary` (`lib/features/photos/`); tests use a
@@ -104,6 +104,30 @@ phone, waiting for his check. Not committed yet.
 - The last format used is offered first (Story the first time).
 - iOS photo-permission text is English only for now (needs InfoPlist
   .strings per language later).
+
+**Phase 4a status (editor core):** code done, installed on Francisco's
+phone, waiting for his check. Not committed yet.
+- Themes are data (`lib/features/editor/sticker_theme.dart`): id, name,
+  layout (inline, stack, hero, poster, ring, weekday), metric list and
+  start position. One renderer (`sticker_view.dart`) draws them all in
+  canvas units (1080 wide); `StoryCanvas` places photo, sticker and
+  watermark and is used by the editor, theme thumbnails, template
+  previews and (phase 5) export.
+- `Metric.rate` is pace on foot and speed on rides. A theme is offered
+  only if the activity has all its metrics; others are greyed with the
+  reason. Strava calories come from the activity detail endpoint, fetched
+  when the editor opens.
+- Sticker: drag, pinch to resize and rotate (snaps straight within 3°);
+  when selected, rotate/remove/resize handles. Removing it leaves the
+  photo alone until a theme is picked again. Switching theme puts the
+  sticker at the new theme's start position.
+- Templates (`storyTemplates`): Story Hero (Big Distance), Top Line
+  (Inline Top), Left Stack (Vertical Stack), Race Poster (Poster), all
+  9:16. Flow: preview → choose activity (unusable greyed) → photo → crop
+  (template format) → editor (template theme). "Race Poster" is a guess
+  from the cut-off "Race P…" in the design.
+- Last theme and format used are offered first. Share says "coming"
+  until phase 5.
 
 ## Decisions already taken (do not reopen without asking)
 
@@ -142,10 +166,18 @@ by users.
 3. First themes: the seven in the design's theme carousel.
 4. Icons: `lucide_icons_flutter`.
 
+Answered 15 Nov 2026 for phase 4a:
+- Theme names: Inline Top, Vertical Stack, Big Distance, Poster, Heart
+  Ring, Weekday, Time & Calories.
+- Watermark "run4share" drawn on images now; Pro will remove it later.
+- Editor bottom bar shows only Theme; Calories, Quotes, Text and Stickers
+  come after phase 4b.
+- No undo/redo for now.
+
 ## Open questions (ask Francisco, don't assume)
 
 Still open from design: free/Pro split and price, duplicate rule across
-sources, undo/redo, edit-again from My Creations, when the rate sheet
+sources, edit-again from My Creations, when the rate sheet
 appears, invite reward, native review of translations, Effort formula.
 
 ## How Francisco works

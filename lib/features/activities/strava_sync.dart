@@ -147,6 +147,26 @@ class StravaSync extends Notifier<SyncState> {
     }
   }
 
+  /// Adds what only Strava's detail has (calories) to [activity]. Best
+  /// effort: themes needing it stay unavailable if this fails.
+  Future<void> fetchDetails(Activity activity) async {
+    if (activity.source != ActivitySource.strava ||
+        activity.calories != null ||
+        !await _connected()) {
+      return;
+    }
+    final id = int.tryParse(activity.sourceId ?? '');
+    if (id == null) return;
+    try {
+      final detail = await _api.activity(id);
+      if (detail.calories case final kcal? when kcal > 0) {
+        await _repo.setCalories(activity.id, kcal);
+      }
+    } on Object catch (error) {
+      debugPrint('Strava detail failed: $error');
+    }
+  }
+
   /// Forgets everything synced, after Strava is disconnected.
   Future<void> reset() async {
     await _repo.deleteSource(ActivitySource.strava);

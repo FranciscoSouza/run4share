@@ -26,6 +26,7 @@ class ActivityCard extends StatelessWidget {
     super.key,
     this.onTap,
     this.trailing,
+    this.footer,
   });
 
   final IconData icon;
@@ -36,6 +37,9 @@ class ActivityCard extends StatelessWidget {
 
   /// Replaces the chevron, e.g. with a menu button.
   final Widget? trailing;
+
+  /// Extra line under the figures, e.g. why it can't be chosen.
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +104,10 @@ class ActivityCard extends StatelessWidget {
                       Expanded(child: _Stat(stat: stat)),
                   ],
                 ),
+              ],
+              if (footer != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                footer!,
               ],
             ],
           ),

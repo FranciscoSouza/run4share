@@ -1,0 +1,171 @@
+import 'package:run4share/app/material.dart';
+import 'package:run4share/features/create/creation_draft.dart';
+
+/// What a sticker can show. [rate] is pace on foot and speed on wheels.
+enum Metric { distance, time, rate, heartRate, calories }
+
+/// How a sticker arranges its metrics. Each layout is drawn by
+/// `StickerView`; new themes reuse layouts with other metrics or styles.
+enum StickerLayout {
+  /// Metrics side by side: label above value.
+  inline,
+
+  /// Metrics one below the other, left-aligned.
+  stack,
+
+  /// One huge value with "RUN · THURSDAY" under it.
+  hero,
+
+  /// Each metric in a coloured box.
+  poster,
+
+  /// One value inside a ring.
+  ring,
+
+  /// One small value above a huge weekday.
+  weekday,
+}
+
+/// One theme = one whole sticker: layout plus the metrics it shows. The
+/// metric list is authoritative: a theme is only offered when the activity
+/// has every metric it needs.
+@immutable
+class StickerTheme {
+  const StickerTheme({
+    required this.id,
+    required this.name,
+    required this.layout,
+    required this.metrics,
+    required this.position,
+  });
+
+  final String id;
+
+  /// Shown under the thumbnail; a product name, not translated.
+  final String name;
+  final StickerLayout layout;
+  final List<Metric> metrics;
+
+  /// Where the sticker's centre starts, as fractions of the canvas.
+  final Offset position;
+}
+
+/// The catalogue, in carousel order.
+const stickerThemes = <StickerTheme>[
+  StickerTheme(
+    id: 'inline-top',
+    name: 'Inline Top',
+    layout: StickerLayout.inline,
+    metrics: [Metric.distance, Metric.time, Metric.rate],
+    position: Offset(0.5, 0.72),
+  ),
+  StickerTheme(
+    id: 'vertical-stack',
+    name: 'Vertical Stack',
+    layout: StickerLayout.stack,
+    metrics: [Metric.distance, Metric.time, Metric.rate],
+    position: Offset(0.32, 0.36),
+  ),
+  StickerTheme(
+    id: 'big-distance',
+    name: 'Big Distance',
+    layout: StickerLayout.hero,
+    metrics: [Metric.distance],
+    position: Offset(0.5, 0.2),
+  ),
+  StickerTheme(
+    id: 'poster',
+    name: 'Poster',
+    layout: StickerLayout.poster,
+    metrics: [Metric.distance, Metric.time, Metric.rate],
+    position: Offset(0.62, 0.5),
+  ),
+  StickerTheme(
+    id: 'heart-ring',
+    name: 'Heart Ring',
+    layout: StickerLayout.ring,
+    metrics: [Metric.heartRate],
+    position: Offset(0.5, 0.42),
+  ),
+  StickerTheme(
+    id: 'weekday',
+    name: 'Weekday',
+    layout: StickerLayout.weekday,
+    metrics: [Metric.distance],
+    position: Offset(0.5, 0.62),
+  ),
+  StickerTheme(
+    id: 'time-calories',
+    name: 'Time & Calories',
+    layout: StickerLayout.inline,
+    metrics: [Metric.time, Metric.calories],
+    position: Offset(0.5, 0.72),
+  ),
+];
+
+StickerTheme? themeById(String? id) {
+  for (final theme in stickerThemes) {
+    if (theme.id == id) return theme;
+  }
+  return null;
+}
+
+/// A Popular template: a theme in a format, with sample background art.
+@immutable
+class StoryTemplate {
+  const StoryTemplate({
+    required this.id,
+    required this.name,
+    required this.themeId,
+    required this.format,
+    required this.colours,
+  });
+
+  final String id;
+  final String name;
+  final String themeId;
+  final ShareFormat format;
+
+  /// Gradient standing in for a photo in previews.
+  final List<Color> colours;
+
+  StickerTheme get theme => themeById(themeId)!;
+}
+
+const storyTemplates = <StoryTemplate>[
+  StoryTemplate(
+    id: 'story-hero',
+    name: 'Story Hero',
+    themeId: 'big-distance',
+    format: ShareFormat.story,
+    colours: [Color(0xFF4A9AD8), Color(0xFF8CC4EC), Color(0xFF3F7A6A)],
+  ),
+  StoryTemplate(
+    id: 'top-line',
+    name: 'Top Line',
+    themeId: 'inline-top',
+    format: ShareFormat.story,
+    colours: [Color(0xFF6A3F9A), Color(0xFF2A1F45), Color(0xFF1A1426)],
+  ),
+  StoryTemplate(
+    id: 'left-stack',
+    name: 'Left Stack',
+    themeId: 'vertical-stack',
+    format: ShareFormat.story,
+    colours: [Color(0xFF1E3F6E), Color(0xFF27406B), Color(0xFFB8492F)],
+  ),
+  StoryTemplate(
+    id: 'race-poster',
+    name: 'Race Poster',
+    themeId: 'poster',
+    format: ShareFormat.story,
+    colours: [Color(0xFF6B4E7A), Color(0xFFC07A5A), Color(0xFF2A2235)],
+  ),
+];
+
+StoryTemplate? templateById(String? id) {
+  for (final template in storyTemplates) {
+    if (template.id == id) return template;
+  }
+  return null;
+}

@@ -12,6 +12,7 @@ import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/app/theme/app_theme.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/create/creation_draft.dart';
+import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/pills.dart';
@@ -54,7 +55,8 @@ class _CropScreenState extends ConsumerState<CropScreen> {
 
   Future<void> _load() async {
     final db = ref.read(appDatabaseProvider);
-    final format = await lastFormat(db);
+    final template = templateById(ref.read(templateChoiceProvider));
+    final format = template?.format ?? await lastFormat(db);
     final bytes = await ref
         .read(photoLibraryProvider)
         .preview(widget.photoId, maxSide: cropPreviewMaxSide);
@@ -95,18 +97,23 @@ class _CropScreenState extends ConsumerState<CropScreen> {
     final crop = frame != null && photo != null
         ? fractionalCrop(frame: frame, photo: photo)
         : centreCrop(size, format);
+    final db = ref.read(appDatabaseProvider);
+    final template = templateById(ref.read(templateChoiceProvider));
+    final theme = template?.theme ??
+        themeById(await db.readPreference(themePreference)) ??
+        stickerThemes.first;
     ref.read(creationDraftProvider.notifier).set(
           CreationDraft(
             activityId: widget.activityId,
             photoId: widget.photoId,
             format: format,
             crop: crop,
+            themeId: theme.id,
+            sticker: StickerPlacement(center: theme.position),
           ),
         );
-    await ref
-        .read(appDatabaseProvider)
-        .writePreference(formatPreference, format.name);
-    if (mounted) await context.push(AppRoutes.createPreview);
+    await db.writePreference(formatPreference, format.name);
+    if (mounted) await context.push(AppRoutes.editor);
   }
 
   @override

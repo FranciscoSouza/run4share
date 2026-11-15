@@ -21,6 +21,15 @@ class FakeStravaApi extends StravaApi {
         : all.where((a) => a.startDate.isBefore(before)).toList();
     return matching.skip((page - 1) * perPage).take(perPage).toList();
   }
+
+  /// Detail calls, by Strava ID.
+  final detailCalls = <int>[];
+
+  @override
+  Future<StravaActivity> activity(int id) async {
+    detailCalls.add(id);
+    return all.firstWhere((a) => a.id == id).copyWith(calories: 321);
+  }
 }
 
 /// [count] runs, one a day, newest first, IDs from [firstId] upwards.

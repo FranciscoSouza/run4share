@@ -35,9 +35,18 @@ class StravaApi {
       options: Options(headers: {'Authorization': 'Bearer ${await _token()}'}),
     );
     return [
-      for (final item in response.data ?? const [])
+      for (final item in response.data ?? const <dynamic>[])
         StravaActivity.fromJson(item as Map<String, dynamic>),
     ];
+  }
+
+  /// One activity in detail (adds calories).
+  Future<StravaActivity> activity(int id) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '$_base/activities/$id',
+      options: Options(headers: {'Authorization': 'Bearer ${await _token()}'}),
+    );
+    return StravaActivity.fromJson(response.data!);
   }
 }
 

@@ -148,6 +148,7 @@ class ActivityFormat {
     Activity activity, {
     VoidCallback? onTap,
     Widget? trailing,
+    Widget? footer,
   }) =>
       ActivityCard(
         icon: icon(sportKindOf(activity.sportType)),
@@ -157,5 +158,6 @@ class ActivityFormat {
         stats: stats(activity),
         onTap: onTap,
         trailing: trailing,
+        footer: footer,
       );
 }

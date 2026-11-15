@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
@@ -19,6 +19,16 @@ class ActivityRepository {
           (a) => OrderingTerm.desc(a.id),
         ]))
       .watch();
+
+  Stream<Activity?> watchById(int id) => (_db.select(
+        _table,
+      )..where((a) => a.id.equals(id)))
+          .watchSingleOrNull();
+
+  Future<void> setCalories(int id, double calories) =>
+      (_db.update(_table)..where((a) => a.id.equals(id))).write(
+        ActivitiesCompanion(calories: Value(calories)),
+      );
 
   Future<Activity?> byId(int id) =>
       (_db.select(_table)..where((a) => a.id.equals(id))).getSingleOrNull();
@@ -74,6 +84,7 @@ class ActivityRepository {
               averageSpeed: Value(a.averageSpeed),
               averageHeartrate: Value(a.averageHeartrate),
               elevationGain: Value(a.totalElevationGain),
+              calories: Value(a.calories),
             ),
             onConflict: DoUpdate(
               (old) => ActivitiesCompanion(
@@ -87,6 +98,10 @@ class ActivityRepository {
                 averageSpeed: Value(a.averageSpeed),
                 averageHeartrate: Value(a.averageHeartrate),
                 elevationGain: Value(a.totalElevationGain),
+                // The list has no calories; keep any fetched from detail.
+                calories: a.calories == null
+                    ? const Value.absent()
+                    : Value(a.calories),
               ),
               target: [_table.source, _table.sourceId],
             ),
@@ -150,7 +165,7 @@ final activitiesProvider = StreamProvider<List<Activity>>(
 );
 
 /// One activity by ID; null when it no longer exists.
-final FutureProviderFamily<Activity?, int> activityByIdProvider =
-    FutureProvider.family<Activity?, int>(
-  (ref, id) => ref.watch(activityRepositoryProvider).byId(id),
+final StreamProviderFamily<Activity?, int> activityByIdProvider =
+    StreamProvider.family<Activity?, int>(
+  (ref, id) => ref.watch(activityRepositoryProvider).watchById(id),
 );

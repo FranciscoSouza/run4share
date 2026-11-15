@@ -3,13 +3,15 @@ import 'package:go_router/go_router.dart';
 import 'package:run4share/app/app_shell.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/features/activities/activity_form_screen.dart';
-import 'package:run4share/features/create/crop_preview_screen.dart';
 import 'package:run4share/features/create/crop_screen.dart';
 import 'package:run4share/features/creations/creations_screen.dart';
+import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/photos/photo_step_screen.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
 import 'package:run4share/features/strava/connect_strava_screen.dart';
+import 'package:run4share/features/templates/template_activity_screen.dart';
+import 'package:run4share/features/templates/template_preview_screen.dart';
 
 /// Route paths, so screens never spell them out.
 abstract final class AppRoutes {
@@ -22,7 +24,9 @@ abstract final class AppRoutes {
   static String choosePhoto(int activityId) => '/create/$activityId/photo';
   static String crop(int activityId, String photoId) =>
       '/create/$activityId/photo/${Uri.encodeComponent(photoId)}';
-  static const createPreview = '/create/preview';
+  static const editor = '/create/editor';
+  static String template(String id) => '/template/$id';
+  static String templateActivity(String id) => '/template/$id/activity';
 }
 
 final _rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -72,9 +76,24 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(
-        path: AppRoutes.createPreview,
+        path: AppRoutes.editor,
         parentNavigatorKey: _rootKey,
-        builder: (context, state) => const CropPreviewScreen(),
+        builder: (context, state) => const EditorScreen(),
+      ),
+      GoRoute(
+        path: '/template/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) =>
+            TemplatePreviewScreen(templateId: state.pathParameters['id']!),
+        routes: [
+          GoRoute(
+            path: 'activity',
+            parentNavigatorKey: _rootKey,
+            builder: (context, state) => TemplateActivityScreen(
+              templateId: state.pathParameters['id']!,
+            ),
+          ),
+        ],
       ),
       GoRoute(
         path: '/create/:activityId/photo',

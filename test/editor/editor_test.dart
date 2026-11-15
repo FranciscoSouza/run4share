@@ -1,0 +1,131 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:run4share/app/clock.dart';
+import 'package:run4share/app/material.dart';
+import 'package:run4share/app/router.dart';
+import 'package:run4share/data/activity_repository.dart';
+import 'package:run4share/data/database.dart';
+import 'package:run4share/features/create/creation_draft.dart';
+import 'package:run4share/features/editor/editor_screen.dart';
+import 'package:run4share/features/editor/sticker_view.dart';
+import 'package:run4share/features/photos/photo_library.dart';
+
+import '../helpers/pump_app.dart';
+import '../photos/fake_photo_library.dart';
+import '../photos/photo_flow_test.dart' show settle;
+import '../strava/fakes.dart';
+
+void main() {
+  late AppDatabase db;
+  late ProviderContainer container;
+
+  CreationDraft draft() => container.read(creationDraftProvider)!;
+
+  /// Scrolls the theme carousel to [name] and taps it.
+  Future<void> tapTheme(WidgetTester tester, String name) async {
+    await tester
+        .ensureVisible(find.bySemanticsLabel(name, skipOffstage: false));
+    await settle(tester);
+    await tester.tap(find.bySemanticsLabel(name));
+    await settle(tester);
+  }
+
+  Future<void> openEditor(WidgetTester tester) async {
+    db = testDatabase();
+    late int id;
+    await tester.runAsync(() async {
+      id = await ActivityRepository(db).saveManual(
+        name: 'Lunch Run',
+        sportType: 'Run',
+        startLocal: DateTime.utc(2026, 11, 12, 12, 31),
+        movingTime: 1994,
+        distance: 5020,
+      );
+    });
+    await tester.pumpApp(
+      overrides: [
+        ...baseOverrides(db: db),
+        clockProvider.overrideWithValue(() => testNow),
+        photoLibraryProvider.overrideWithValue(
+          FakePhotoLibrary(current: PhotoAccess.granted),
+        ),
+      ],
+    );
+    container = ProviderScope.containerOf(
+      tester.element(find.byType(MaterialApp)),
+    );
+    container.read(creationDraftProvider.notifier).set(
+          CreationDraft(
+            activityId: id,
+            photoId: 'photo-0',
+            format: ShareFormat.feed,
+            crop: const Rect.fromLTWH(0.1, 0, 0.8, 1),
+            themeId: 'inline-top',
+            sticker: const StickerPlacement(center: Offset(0.5, 0.72)),
+          ),
+        );
+    // push completes only when the editor is closed, so don't await it.
+    unawaited(container.read(routerProvider).push(AppRoutes.editor));
+    await settle(tester, rounds: 15);
+    expect(find.byType(EditorScreen), findsOneWidget);
+  }
+
+  testWidgets('themes: choose, and unusable ones say why', (tester) async {
+    await openEditor(tester);
+
+    expect(find.text('Lunch Run'), findsOneWidget);
+    expect(find.text('7 themes · more added over time'), findsOneWidget);
+
+    await tapTheme(tester, 'Heart Ring');
+    expect(find.text('No heart rate in this activity'), findsOneWidget);
+    expect(draft().themeId, 'inline-top');
+
+    await tapTheme(tester, 'Big Distance');
+    expect(draft().themeId, 'big-distance');
+    expect(draft().sticker?.center, const Offset(0.5, 0.2));
+    expect(
+      await tester.runAsync(() => db.readPreference(themePreference)),
+      'big-distance',
+    );
+  });
+
+  testWidgets('select, move, remove and bring back the sticker', (
+    tester,
+  ) async {
+    await openEditor(tester);
+    final sticker = find.byType(StickerView).first;
+
+    await tester.tap(sticker);
+    await settle(tester);
+    expect(find.bySemanticsLabel('Remove sticker'), findsOneWidget);
+    expect(find.bySemanticsLabel('Rotate sticker'), findsOneWidget);
+    // Selecting closes the theme carousel; the toolbar shows instead.
+    expect(find.text('7 themes · more added over time'), findsNothing);
+
+    final before = draft().sticker!.center;
+    await tester.drag(sticker, const Offset(0, -60));
+    await settle(tester);
+    expect(draft().sticker!.center.dy, lessThan(before.dy));
+    expect(draft().sticker!.center.dx, closeTo(before.dx, 0.001));
+
+    await tester.tap(find.bySemanticsLabel('Remove sticker'));
+    await settle(tester);
+    expect(draft().sticker, isNull);
+    expect(find.text('Pick a theme to add the sticker back'), findsOneWidget);
+
+    await tester.tap(find.text('Theme'));
+    await settle(tester);
+    await tapTheme(tester, 'Inline Top');
+    expect(draft().sticker, isNotNull);
+    expect(draft().themeId, 'inline-top');
+  });
+
+  testWidgets('Share is not ready yet', (tester) async {
+    await openEditor(tester);
+    await tester.tap(find.text('Share'));
+    await tester.pump();
+    expect(find.text('Coming in a later update'), findsOneWidget);
+  });
+}

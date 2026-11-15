@@ -4,8 +4,8 @@ import 'package:run4share/app/clock.dart';
 import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/create/creation_draft.dart';
-import 'package:run4share/features/create/crop_preview_screen.dart';
 import 'package:run4share/features/create/crop_screen.dart';
+import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/photos/photo_step_screen.dart';
@@ -60,7 +60,7 @@ void main() {
     await settle(tester);
   }
 
-  testWidgets('first time: explain, ask, choose, crop, preview', (
+  testWidgets('first time: explain, ask, choose, crop, then the editor', (
     tester,
   ) async {
     await pump(tester);
@@ -91,9 +91,9 @@ void main() {
     await tester.tap(find.text('Next'));
     await settle(tester);
 
-    expect(find.byType(CropPreviewScreen), findsOneWidget);
+    expect(find.byType(EditorScreen), findsOneWidget);
     final container = ProviderScope.containerOf(
-      tester.element(find.byType(CropPreviewScreen)),
+      tester.element(find.byType(EditorScreen)),
     );
     final draft = container.read(creationDraftProvider)!;
     expect(draft.photoId, 'photo-2');
@@ -105,10 +105,8 @@ void main() {
       'square',
     );
 
-    await tester.tap(find.text('Done'));
-    await settle(tester);
-    expect(find.byType(HomeScreen), findsOneWidget);
-    expect(container.read(creationDraftProvider), isNull);
+    expect(draft.themeId, 'inline-top');
+    expect(draft.sticker?.center, const Offset(0.5, 0.72));
   });
 
   testWidgets('denied at the prompt: access-off screen', (tester) async {

@@ -154,6 +154,24 @@ void main() {
     expect(await db.readPreference('strava.lastSyncedAt'), isNull);
   });
 
+  test('details add calories once, for Strava activities only', () async {
+    await sync().sync();
+    final first = (await repo().watchAll().first).first;
+    expect(first.calories, isNull);
+
+    await sync().fetchDetails(first);
+    final updated = await repo().byId(first.id);
+    expect(updated?.calories, 321);
+    expect(api.detailCalls, [1]);
+
+    await sync().fetchDetails(updated!);
+    expect(api.detailCalls, [1], reason: 'calories already known');
+
+    // A later list sync must not wipe the calories.
+    await sync().sync();
+    expect((await repo().byId(first.id))?.calories, 321);
+  });
+
   test('nothing is fetched while disconnected', () async {
     final offline = ProviderContainer.test(
       overrides: [

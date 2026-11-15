@@ -74,6 +74,14 @@ class DemoStravaApi extends StravaApi {
         : all.where((a) => a.startDate.isBefore(before)).toList();
     return matching.skip((page - 1) * perPage).take(perPage).toList();
   }
+
+  @override
+  Future<StravaActivity> activity(int id) async {
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    final summary = demoActivities(_now()).firstWhere((a) => a.id == id);
+    // Roughly 10 kcal a minute, like the design's 320 kcal for 33 minutes.
+    return summary.copyWith(calories: (summary.movingTime / 6).roundToDouble());
+  }
 }
 
 /// Sample activities, newest first, dated relative to [now]: seven named

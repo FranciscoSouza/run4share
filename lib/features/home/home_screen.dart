@@ -13,8 +13,11 @@ import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/activities/activity_format.dart';
 import 'package:run4share/features/activities/strava_sync.dart';
+import 'package:run4share/features/create/creation_draft.dart';
+import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
+import 'package:run4share/features/templates/template_canvas.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/coming_soon.dart';
 import 'package:run4share/shared/widgets/app_header.dart';
@@ -90,7 +93,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         if (sync.syncing) _PullingBanner(text: l10n.homePulling),
         _Heading(l10n.homePopularTemplates, style: textTheme.headlineSmall),
         const SizedBox(height: AppSpacing.md),
-        _TemplateCarousel(onTap: (_) => showComingSoon(context)),
+        const _TemplateCarousel(),
         const SizedBox(height: AppSpacing.xl),
         if (activities == null || checking)
           const SizedBox.shrink()
@@ -363,7 +366,10 @@ class _ActivityTile extends ConsumerWidget {
       ),
       child: format.card(
         activity,
-        onTap: () => context.push(AppRoutes.choosePhoto(activity.id)),
+        onTap: () {
+          ref.read(templateChoiceProvider.notifier).choose(null);
+          unawaited(context.push(AppRoutes.choosePhoto(activity.id)));
+        },
         trailing: manual
             ? PopupMenuButton<_ActivityAction>(
                 icon: const Icon(AppIcons.more),
@@ -443,25 +449,8 @@ class _Heading extends StatelessWidget {
   }
 }
 
-/// Placeholder for a popular template until themes exist (phase 4a).
-@immutable
-class _TemplatePreview {
-  const _TemplatePreview(this.name, this.colours);
-
-  final String name;
-  final List<Color> colours;
-}
-
-const _templates = [
-  _TemplatePreview('Story Hero', [Color(0xFF4A9AD8), Color(0xFF3F7A6A)]),
-  _TemplatePreview('Top Line', [Color(0xFF6A3F9A), Color(0xFF1A1426)]),
-  _TemplatePreview('Left Stack', [Color(0xFF1E3F6E), Color(0xFFB8492F)]),
-];
-
 class _TemplateCarousel extends StatelessWidget {
-  const _TemplateCarousel({required this.onTap});
-
-  final ValueChanged<String> onTap;
+  const _TemplateCarousel();
 
   static const _width = 100.0;
   static const _height = 178.0;
@@ -474,28 +463,29 @@ class _TemplateCarousel extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
-        itemCount: _templates.length,
+        itemCount: storyTemplates.length,
         separatorBuilder: (context, index) =>
             const SizedBox(width: AppSpacing.md - 2),
         itemBuilder: (context, index) {
-          final template = _templates[index];
+          final template = storyTemplates[index];
           return SizedBox(
             width: _width,
             child: InkWell(
-              onTap: () => onTap(template.name),
+              onTap: () => context.push(AppRoutes.template(template.id)),
               borderRadius: BorderRadius.circular(AppRadius.thumb),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Ink(
-                    width: _width,
-                    height: _height,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppRadius.thumb),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: template.colours,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadius.thumb),
+                    child: SizedBox(
+                      width: _width,
+                      height: _height,
+                      child: ExcludeSemantics(
+                        child: TemplateCanvas(
+                          template: template,
+                          watermark: false,
+                        ),
                       ),
                     ),
                   ),

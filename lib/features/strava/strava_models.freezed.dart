@@ -470,6 +470,9 @@ mixin _$StravaActivity {
   double? get averageHeartrate;
   double? get totalElevationGain;
 
+  /// Only in Strava's single-activity detail, not in the list.
+  double? get calories;
+
   /// Create a copy of StravaActivity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -506,7 +509,9 @@ mixin _$StravaActivity {
             (identical(other.averageHeartrate, _this.averageHeartrate) ||
                 other.averageHeartrate == _this.averageHeartrate) &&
             (identical(other.totalElevationGain, _this.totalElevationGain) ||
-                other.totalElevationGain == _this.totalElevationGain));
+                other.totalElevationGain == _this.totalElevationGain) &&
+            (identical(other.calories, _this.calories) ||
+                other.calories == _this.calories));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -525,13 +530,14 @@ mixin _$StravaActivity {
         _this.elapsedTime,
         _this.averageSpeed,
         _this.averageHeartrate,
-        _this.totalElevationGain);
+        _this.totalElevationGain,
+        _this.calories);
   }
 
   @override
   String toString() {
     final _this = this as StravaActivity;
-    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain})';
+    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain}, calories: ${_this.calories})';
   }
 }
 
@@ -552,7 +558,8 @@ abstract mixin class $StravaActivityCopyWith<$Res> {
       int elapsedTime,
       double? averageSpeed,
       double? averageHeartrate,
-      double? totalElevationGain});
+      double? totalElevationGain,
+      double? calories});
 }
 
 /// @nodoc
@@ -579,6 +586,7 @@ class _$StravaActivityCopyWithImpl<$Res>
     Object? averageSpeed = freezed,
     Object? averageHeartrate = freezed,
     Object? totalElevationGain = freezed,
+    Object? calories = freezed,
   }) {
     return _then(StravaActivity(
       id: null == id
@@ -624,6 +632,10 @@ class _$StravaActivityCopyWithImpl<$Res>
       totalElevationGain: freezed == totalElevationGain
           ? _self.totalElevationGain
           : totalElevationGain // ignore: cast_nullable_to_non_nullable
+              as double?,
+      calories: freezed == calories
+          ? _self.calories
+          : calories // ignore: cast_nullable_to_non_nullable
               as double?,
     ));
   }
@@ -733,7 +745,8 @@ extension StravaActivityPatterns on StravaActivity {
             int elapsedTime,
             double? averageSpeed,
             double? averageHeartrate,
-            double? totalElevationGain)?
+            double? totalElevationGain,
+            double? calories)?
         $default, {
     required TResult orElse(),
   }) {
@@ -751,7 +764,8 @@ extension StravaActivityPatterns on StravaActivity {
             _that.elapsedTime,
             _that.averageSpeed,
             _that.averageHeartrate,
-            _that.totalElevationGain);
+            _that.totalElevationGain,
+            _that.calories);
       case _:
         return orElse();
     }
@@ -783,7 +797,8 @@ extension StravaActivityPatterns on StravaActivity {
             int elapsedTime,
             double? averageSpeed,
             double? averageHeartrate,
-            double? totalElevationGain)
+            double? totalElevationGain,
+            double? calories)
         $default,
   ) {
     final _that = this;
@@ -800,7 +815,8 @@ extension StravaActivityPatterns on StravaActivity {
             _that.elapsedTime,
             _that.averageSpeed,
             _that.averageHeartrate,
-            _that.totalElevationGain);
+            _that.totalElevationGain,
+            _that.calories);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -831,7 +847,8 @@ extension StravaActivityPatterns on StravaActivity {
             int elapsedTime,
             double? averageSpeed,
             double? averageHeartrate,
-            double? totalElevationGain)?
+            double? totalElevationGain,
+            double? calories)?
         $default,
   ) {
     final _that = this;
@@ -848,7 +865,8 @@ extension StravaActivityPatterns on StravaActivity {
             _that.elapsedTime,
             _that.averageSpeed,
             _that.averageHeartrate,
-            _that.totalElevationGain);
+            _that.totalElevationGain,
+            _that.calories);
       case _:
         return null;
     }
@@ -869,7 +887,8 @@ class _StravaActivity implements StravaActivity {
       this.elapsedTime = 0,
       this.averageSpeed,
       this.averageHeartrate,
-      this.totalElevationGain});
+      this.totalElevationGain,
+      this.calories});
   factory _StravaActivity.fromJson(Map<String, dynamic> json) =>
       _$StravaActivityFromJson(json);
 
@@ -911,6 +930,10 @@ class _StravaActivity implements StravaActivity {
   @override
   final double? totalElevationGain;
 
+  /// Only in Strava's single-activity detail, not in the list.
+  @override
+  final double? calories;
+
   /// Create a copy of StravaActivity
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -950,7 +973,9 @@ class _StravaActivity implements StravaActivity {
             (identical(other.averageHeartrate, averageHeartrate) ||
                 other.averageHeartrate == averageHeartrate) &&
             (identical(other.totalElevationGain, totalElevationGain) ||
-                other.totalElevationGain == totalElevationGain));
+                other.totalElevationGain == totalElevationGain) &&
+            (identical(other.calories, calories) ||
+                other.calories == calories));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -968,12 +993,13 @@ class _StravaActivity implements StravaActivity {
         elapsedTime,
         averageSpeed,
         averageHeartrate,
-        totalElevationGain);
+        totalElevationGain,
+        calories);
   }
 
   @override
   String toString() {
-    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain)';
+    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain, calories: $calories)';
   }
 }
 
@@ -996,7 +1022,8 @@ abstract mixin class _$StravaActivityCopyWith<$Res>
       int elapsedTime,
       double? averageSpeed,
       double? averageHeartrate,
-      double? totalElevationGain});
+      double? totalElevationGain,
+      double? calories});
 }
 
 /// @nodoc
@@ -1023,6 +1050,7 @@ class __$StravaActivityCopyWithImpl<$Res>
     Object? averageSpeed = freezed,
     Object? averageHeartrate = freezed,
     Object? totalElevationGain = freezed,
+    Object? calories = freezed,
   }) {
     return _then(_StravaActivity(
       id: null == id
@@ -1068,6 +1096,10 @@ class __$StravaActivityCopyWithImpl<$Res>
       totalElevationGain: freezed == totalElevationGain
           ? _self.totalElevationGain
           : totalElevationGain // ignore: cast_nullable_to_non_nullable
+              as double?,
+      calories: freezed == calories
+          ? _self.calories
+          : calories // ignore: cast_nullable_to_non_nullable
               as double?,
     ));
   }

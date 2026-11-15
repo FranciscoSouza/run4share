@@ -105,7 +105,8 @@ void main() {
     testWidgets('unfinished actions say they are coming', (tester) async {
       await tester.pumpApp();
 
-      await tester.tap(find.text('Story Hero'));
+      // Apple Health's Connect (Strava's is the first).
+      await tester.tap(find.text('Connect').at(1));
       await tester.pump();
 
       expect(find.text('Coming in a later update'), findsOneWidget);

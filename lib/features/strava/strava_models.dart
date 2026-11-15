@@ -60,6 +60,9 @@ abstract class StravaActivity with _$StravaActivity {
     double? averageSpeed,
     double? averageHeartrate,
     double? totalElevationGain,
+
+    /// Only in Strava's single-activity detail, not in the list.
+    double? calories,
   }) = _StravaActivity;
 
   factory StravaActivity.fromJson(Map<String, dynamic> json) =>

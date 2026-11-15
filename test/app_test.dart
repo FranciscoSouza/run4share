@@ -105,7 +105,7 @@ void main() {
     testWidgets('unfinished actions say they are coming', (tester) async {
       await tester.pumpApp();
 
-      await tester.tap(find.text('Connect Strava'));
+      await tester.tap(find.text('Add activity manually'));
       await tester.pump();
 
       expect(find.text('Coming in a later update'), findsOneWidget);

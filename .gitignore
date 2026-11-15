@@ -24,6 +24,12 @@ lib/l10n/app_localizations*.dart
 *.env
 strava_SECRETS.txt
 secrets.json
+# Build-time Strava settings (copy config/strava.example.json)
+config/strava.json
+# Cloudflare Worker local state
+server/**/.wrangler/
+server/**/node_modules/
+server/**/.dev.vars
 
 # Android
 android/local.properties

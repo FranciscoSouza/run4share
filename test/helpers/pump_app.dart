@@ -1,12 +1,32 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/app.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/app/theme/app_theme.dart';
+import 'package:run4share/features/strava/strava_config.dart';
+import 'package:run4share/features/strava/strava_session_store.dart';
 import 'package:run4share/l10n/app_localizations.dart';
 
 /// A 390 x 844 phone, the size the design is drawn at.
 const phoneSize = Size(390, 844);
+
+const testStravaConfig = StravaConfig(
+  clientId: '12345',
+  tokenUrl: 'https://token.test',
+);
+
+/// Overrides every test needs: no platform storage, a known Strava config.
+List<Override> baseOverrides({
+  MemoryStravaSessionStore? store,
+  StravaConfig config = testStravaConfig,
+}) =>
+    [
+      stravaSessionStoreProvider.overrideWithValue(
+        store ?? MemoryStravaSessionStore(),
+      ),
+      stravaConfigProvider.overrideWithValue(config),
+    ];
 
 extension PumpApp on WidgetTester {
   void _usePhone() {
@@ -17,9 +37,17 @@ extension PumpApp on WidgetTester {
   }
 
   /// Pumps the whole app (router, theme, l10n) in [locale].
-  Future<void> pumpApp({Locale locale = const Locale('en')}) async {
+  Future<void> pumpApp({
+    Locale locale = const Locale('en'),
+    List<Override>? overrides,
+  }) async {
     _usePhone();
-    await pumpWidget(ProviderScope(child: App(locale: locale)));
+    await pumpWidget(
+      ProviderScope(
+        overrides: overrides ?? baseOverrides(),
+        child: App(locale: locale),
+      ),
+    );
     await pumpAndSettle();
   }
 
@@ -28,6 +56,7 @@ extension PumpApp on WidgetTester {
     _usePhone();
     await pumpWidget(
       ProviderScope(
+        overrides: baseOverrides(),
         child: MaterialApp(
           theme: AppTheme.light,
           locale: const Locale('en'),

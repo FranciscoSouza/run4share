@@ -1,20 +1,23 @@
 {
   "@@locale": "en",
   "appName": "run4share",
-  "@appName": {"description": "Brand name. Do not translate."},
+  "@appName": {
+    "description": "Brand name. Do not translate."
+  },
   "languageName": "English",
-  "@languageName": {"description": "Name of this language, written in this language."},
-
+  "@languageName": {
+    "description": "Name of this language, written in this language."
+  },
   "navActivities": "Activities",
   "navCreations": "My Creations",
   "settingsTooltip": "Settings",
   "comingSoon": "Coming in a later update",
-  "@comingSoon": {"description": "Snack bar for buttons that do nothing yet."},
-
+  "@comingSoon": {
+    "description": "Snack bar for buttons that do nothing yet."
+  },
   "actionConnect": "Connect",
   "actionDisconnect": "Disconnect",
   "actionUnlock": "Unlock",
-
   "homeConnectStrava": "Connect Strava",
   "homePopularTemplates": "Popular templates",
   "homeBringWorkouts": "Bring in your workouts",
@@ -22,19 +25,22 @@
   "sourceStravaSubtitle": "Runs, rides and more",
   "sourceOnIphone": "On iPhone",
   "sourceOnAndroid": "On Android",
-
   "statDistance": "Distance",
   "statTime": "Time",
   "statPace": "Pace",
   "statSpeed": "Speed",
-
   "creationsTitle": "My Creations",
   "creationsCount": "{count, plural, =0{No images} =1{1 image} other{{count} images}}",
-  "@creationsCount": {"placeholders": {"count": {"type": "int"}}},
+  "@creationsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "creationsEmptyTitle": "Nothing here yet",
   "creationsEmptyBody": "Images you save or share will appear here.",
   "creationsEmptyAction": "Create your first image",
-
   "settingsTitle": "Settings",
   "settingsSectionSources": "Workout sources",
   "settingsSectionPurchase": "Purchase",
@@ -50,7 +56,13 @@
   "unitMi": "mi",
   "settingsLanguage": "Language",
   "settingsLanguageSubtitle": "Follows your phone · {language}",
-  "@settingsLanguageSubtitle": {"placeholders": {"language": {"type": "String"}}},
+  "@settingsLanguageSubtitle": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "settingsPhotoAccess": "Photo access",
   "settingsPhotoAccessSubtitle": "Managed in phone settings",
   "settingsRate": "Rate run4share",
@@ -59,5 +71,39 @@
   "settingsInviteSubtitle": "Send your invite link",
   "settingsPrivacy": "Privacy policy",
   "settingsVersion": "run4share {version}",
-  "@settingsVersion": {"placeholders": {"version": {"type": "String"}}}
+  "@settingsVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "actionRetry": "Try again",
+  "connectTitle": "Connect your Strava",
+  "connectBody": "Pull your latest workouts and turn them into images worth sharing.",
+  "connectReadsActivities": "Reads your activities",
+  "connectReadsActivitiesDetail": "Distance, time, pace, heart rate and calories.",
+  "connectReadsProfile": "Reads your public profile",
+  "connectReadsProfileDetail": "Only your name, to label the connection.",
+  "connectNeverPosts": "Never posts for you",
+  "connectNeverPostsDetail": "run4share cannot write to your Strava account.",
+  "connectContinue": "Continue to Strava",
+  "connectFootnote": "You will sign in and authorise on strava.com.",
+  "stravaConnectedAs": "Connected as {name}",
+  "stravaConnected": "Connected",
+  "stravaDisconnected": "Disconnected from Strava",
+  "stravaErrorDenied": "Strava access wasn’t granted.",
+  "stravaErrorScope": "run4share needs permission to read your activities. Allow it on Strava and try again.",
+  "stravaErrorNetwork": "Couldn’t reach Strava. Check your connection and try again.",
+  "stravaErrorNotConfigured": "Strava isn’t set up in this build.",
+  "homeYourActivities": "Your activities",
+  "homeNoActivities": "No activities on Strava yet.",
+  "homeActivitiesError": "Couldn’t load your activities.",
+  "@stravaConnectedAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -46,6 +46,20 @@ Notes from phase 0:
 - The design's Portuguese Home artboard is European Portuguese ("As tuas
   atividades"); the ARB follows the decision below (Brazilian).
 
+**Phase 1 status (Strava):** code done, not yet tried against real
+Strava. Connect screen (`/connect/strava`), OAuth via flutter_web_auth_2
+to `run4share://localhost`, session in flutter_secure_storage, refresh
+5 min before expiry, disconnect revokes on Strava, Settings and Home show
+the connection, Home lists the latest 30 activities (interim; phase 2
+adds caching, paging, manual activities).
+- Token exchange: Cloudflare Worker in `server/strava-token/` (deploy
+  steps in its README). Client ID and secret are Worker secrets.
+- App config: `--dart-define-from-file=config/strava.json` (gitignored;
+  copy `config/strava.example.json`). VS Code launch.json passes it.
+- Strava API app must have Authorization Callback Domain `localhost`.
+- The connect screen's Strava tile is a placeholder: use Strava's official
+  brand assets and check their guidelines before release (phase 7).
+
 ## Decisions already taken (do not reopen without asking)
 
 - Clean start: nothing from `~/development/src/run_sharing` (older

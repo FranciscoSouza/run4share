@@ -5,12 +5,14 @@ import 'package:run4share/app/material.dart';
 import 'package:run4share/features/creations/creations_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
+import 'package:run4share/features/strava/connect_strava_screen.dart';
 
 /// Route paths, so screens never spell them out.
 abstract final class AppRoutes {
   static const activities = '/activities';
   static const creations = '/creations';
   static const settings = '/settings';
+  static const connectStrava = '/connect/strava';
 }
 
 final _rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -46,6 +48,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.settings,
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.connectStrava,
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => const ConnectStravaScreen(),
       ),
     ],
   );

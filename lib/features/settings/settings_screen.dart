@@ -4,8 +4,11 @@ import 'package:run4share/app/app_icons.dart';
 import 'package:run4share/app/app_info.dart';
 import 'package:run4share/app/brand.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/app/router.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/strava/strava_connection.dart';
+import 'package:run4share/features/strava/strava_models.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/coming_soon.dart';
 import 'package:run4share/shared/widgets/grouped_list.dart';
@@ -21,6 +24,7 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     final units = ref.watch(unitsProvider);
+    final strava = ref.watch(stravaConnectionProvider).value;
     void soon() => showComingSoon(context);
 
     return Scaffold(
@@ -43,8 +47,22 @@ class SettingsScreen extends ConsumerWidget {
                 GroupedListTile(
                   icon: AppIcons.link,
                   title: Brand.strava,
-                  subtitle: l10n.settingsNotConnected,
-                  trailing: _connect(l10n, soon),
+                  subtitle: switch (strava) {
+                    null => l10n.settingsNotConnected,
+                    StravaSession(:final athleteName?) =>
+                      l10n.stravaConnectedAs(athleteName),
+                    _ => l10n.stravaConnected,
+                  },
+                  trailing: strava == null
+                      ? _connect(
+                          l10n,
+                          () => context.push(AppRoutes.connectStrava),
+                        )
+                      : AppPill(
+                          label: l10n.actionDisconnect,
+                          variant: AppPillVariant.destructive,
+                          onPressed: () => _disconnect(context, ref),
+                        ),
                 ),
                 GroupedListTile(
                   icon: AppIcons.heart,
@@ -139,6 +157,15 @@ class SettingsScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _disconnect(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final message = context.l10n.stravaDisconnected;
+    await ref.read(stravaConnectionProvider.notifier).disconnect();
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   Widget _connect(AppLocalizations l10n, VoidCallback onPressed) => AppPill(

@@ -1,0 +1,8 @@
+name = "run4share-strava"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+# STRAVA_CLIENT_ID and STRAVA_CLIENT_SECRET are secrets, set with
+#   npx wrangler secret put STRAVA_CLIENT_ID
+#   npx wrangler secret put STRAVA_CLIENT_SECRET
+# They are never written in this repository.

@@ -50,13 +50,25 @@ add go_router go_router
 add flutter_localizations 'flutter_localizations:{"sdk":"flutter"}'
 add intl intl:any
 add lucide_icons_flutter lucide_icons_flutter
+add dio dio
+add flutter_web_auth_2 flutter_web_auth_2
+add flutter_secure_storage flutter_secure_storage
+add freezed_annotation freezed_annotation
+add json_annotation json_annotation
+add build_runner dev:build_runner
+add freezed dev:freezed
+add json_serializable dev:json_serializable
+add http_mock_adapter dev:http_mock_adapter
 add very_good_analysis dev:very_good_analysis
 
-# 4. Generate localisations, then check
+# 4. Generate localisations and models, then check
 flutter pub get
 flutter gen-l10n
+dart run build_runner build --delete-conflicting-outputs
+[ -f config/strava.json ] || cp config/strava.example.json config/strava.json
 dart format lib test
 flutter analyze
 flutter test
 
-echo "== Done. Plug in the Android phone and run:  flutter run"
+echo "== Done. Fill in config/strava.json, plug in the Android phone and run:"
+echo "   flutter run --dart-define-from-file=config/strava.json"

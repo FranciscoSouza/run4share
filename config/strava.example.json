@@ -1,0 +1,4 @@
+{
+  "STRAVA_CLIENT_ID": "your Strava client ID",
+  "STRAVA_TOKEN_URL": "https://run4share-strava.your-subdomain.workers.dev"
+}

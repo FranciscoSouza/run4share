@@ -287,5 +287,27 @@
         "type": "int"
       }
     }
-  }
+  },
+  "shareSave": "Save to Photos",
+  "shareInstagram": "Instagram Stories",
+  "shareMore": "More",
+  "shareStickerOnly": "Sticker only",
+  "shareStickerOnlySubtitle": "Transparent background, no photo",
+  "shareRemoveWatermark": "Remove watermark",
+  "shareIncludedInPro": "Included in Pro",
+  "shareKept": "Also kept in My Creations",
+  "shareSaveNoAccess": "run4share needs permission to save to Photos.",
+  "shareSaveFailed": "Couldn’t save to Photos.",
+  "savedTitle": "Saved to Photos",
+  "savedBody": "Also kept in My Creations.",
+  "savedCreateAnother": "Create another",
+  "savedViewCreations": "View My Creations",
+  "creationsToday": "Today",
+  "creationsYesterday": "Yesterday",
+  "creationShareAgain": "Share again",
+  "creationDeleteTitle": "Delete this image?",
+  "creationDeleteBody": "It’s removed from My Creations. Copies saved to Photos stay there.",
+  "creationEditUnavailable": "This image can’t be edited.",
+  "creationActivityGone": "The activity behind this image is no longer in run4share.",
+  "creationPhotoGone": "The original photo is no longer on this phone."
 }

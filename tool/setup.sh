@@ -62,6 +62,14 @@ add http_mock_adapter dev:http_mock_adapter
 add drift drift
 add drift_flutter drift_flutter
 add drift_dev dev:drift_dev
+add gal gal
+add share_plus share_plus
+add path_provider path_provider
+add path path
+add photo_manager photo_manager
+add crop_your_image crop_your_image
+add image dev:image
+add sqlite3 dev:sqlite3
 add very_good_analysis dev:very_good_analysis
 
 # 4. Generate localisations and models, then check

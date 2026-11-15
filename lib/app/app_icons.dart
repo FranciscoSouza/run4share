@@ -16,6 +16,8 @@ abstract final class AppIcons {
   static const IconData contrast = LucideIcons.contrast;
   static const IconData layers = LucideIcons.layers;
   static const IconData share = LucideIcons.share;
+  static const IconData download = LucideIcons.download;
+  static const IconData moreHorizontal = LucideIcons.ellipsis;
   static const IconData info = LucideIcons.info;
   static const IconData refresh = LucideIcons.refreshCw;
   static const IconData link = LucideIcons.link;
@@ -28,7 +30,7 @@ abstract final class AppIcons {
   static const IconData image = LucideIcons.image;
   static const IconData imageOff = LucideIcons.imageOff;
   static const IconData down = LucideIcons.chevronDown;
-  static const IconData story = LucideIcons.rectangleVertical;
+  static const IconData story = LucideIcons.squarePlus;
   static const IconData square = LucideIcons.square;
   static const IconData sparkle = LucideIcons.sparkle;
   static const IconData invite = LucideIcons.userPlus;

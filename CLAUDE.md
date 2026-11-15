@@ -129,8 +129,8 @@ Francisco moved on to phase 4b on 15 Nov 2026 without reporting problems.
 - Last theme and format used are offered first. Share says "coming"
   until phase 5.
 
-**Phase 4b status (sticker controls):** committed (`phase-4b-controls`),
-deployed to Francisco's phone, waiting for his check.
+**Phase 4b status (sticker controls):** committed (`phase-4b-controls`);
+Francisco moved on to phase 5 on 15 Nov 2026 without reporting problems.
 - Selected sticker's "A" handle opens Text colour (White, Black, Amber,
   Red, Blue, Green); the contrast handle opens Sticker background, one
   slider from white through transparent (snaps within 0.06) to black.
@@ -140,6 +140,22 @@ deployed to Francisco's phone, waiting for his check.
   Heart Ring colours the ring and gets a round backing. Text shadow only
   for light text without a backing.
 - French "Time" is "Durée", as in the Editor · Français artboard.
+
+**Phase 5 status (share / My Creations):** code done, installed on
+Francisco's phone, waiting for his check. Not committed yet.
+- Share screen (`/create/share`): its preview is a RepaintBoundary
+  exported at 1080 px wide (1080×1920 / ×1350 / ×1080) from a photo copy
+  up to 3072 px. "Sticker only" exports the sticker alone on transparency
+  with a small run4share mark under it, 1080 wide. PNG throughout.
+- Save to Photos uses gal (album "run4share"), then the Saved screen.
+  Instagram Stories and More both open the system share sheet (no Meta
+  App ID yet). "Remove watermark · PRO" says "coming" until Pro exists.
+- Every export is a creation (drift `creations` table, schema 2, PNG in
+  the app's documents/creations folder) with its settings as JSON; one
+  creation per variant per Share visit, so save + share don't duplicate.
+- My Creations: two staggered columns; detail with Share again, Edit
+  (reopens the editor if the activity and original photo still exist,
+  else says which is missing) and Delete (Photos copies stay).
 
 ## Decisions already taken (do not reopen without asking)
 
@@ -186,10 +202,16 @@ Answered 15 Nov 2026 for phase 4a:
   come after phase 4b.
 - No undo/redo for now.
 
+Answered 15 Nov 2026 for phase 5:
+- Instagram Stories: system share sheet until a Meta App ID exists.
+- Sticker-only exports carry a small watermark; Pro removes it later.
+- Share screen shows the Pro row as "coming soon".
+- Edit-again from My Creations: yes, reopens the editor.
+
 ## Open questions (ask Francisco, don't assume)
 
 Still open from design: free/Pro split and price, duplicate rule across
-sources, edit-again from My Creations, when the rate sheet
+sources, when the rate sheet
 appears, invite reward, native review of translations, Effort formula.
 
 ## How Francisco works

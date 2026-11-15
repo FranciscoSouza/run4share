@@ -908,16 +908,534 @@ class PreferencesCompanion extends UpdateCompanion<Preference> {
   }
 }
 
+class $CreationsTable extends Creations
+    with TableInfo<$CreationsTable, Creation> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CreationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _activityIdMeta =
+      const VerificationMeta('activityId');
+  @override
+  late final GeneratedColumn<int> activityId = GeneratedColumn<int>(
+      'activity_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _activityNameMeta =
+      const VerificationMeta('activityName');
+  @override
+  late final GeneratedColumn<String> activityName = GeneratedColumn<String>(
+      'activity_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _formatMeta = const VerificationMeta('format');
+  @override
+  late final GeneratedColumn<String> format = GeneratedColumn<String>(
+      'format', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _stickerOnlyMeta =
+      const VerificationMeta('stickerOnly');
+  @override
+  late final GeneratedColumn<bool> stickerOnly = GeneratedColumn<bool>(
+      'sticker_only', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("sticker_only" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _fileNameMeta =
+      const VerificationMeta('fileName');
+  @override
+  late final GeneratedColumn<String> fileName = GeneratedColumn<String>(
+      'file_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _widthMeta = const VerificationMeta('width');
+  @override
+  late final GeneratedColumn<int> width = GeneratedColumn<int>(
+      'width', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _heightMeta = const VerificationMeta('height');
+  @override
+  late final GeneratedColumn<int> height = GeneratedColumn<int>(
+      'height', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _settingsMeta =
+      const VerificationMeta('settings');
+  @override
+  late final GeneratedColumn<String> settings = GeneratedColumn<String>(
+      'settings', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        activityId,
+        activityName,
+        createdAt,
+        format,
+        stickerOnly,
+        fileName,
+        width,
+        height,
+        settings
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'creations';
+  @override
+  VerificationContext validateIntegrity(Insertable<Creation> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('activity_id')) {
+      context.handle(
+          _activityIdMeta,
+          activityId.isAcceptableOrUnknown(
+              data['activity_id']!, _activityIdMeta));
+    }
+    if (data.containsKey('activity_name')) {
+      context.handle(
+          _activityNameMeta,
+          activityName.isAcceptableOrUnknown(
+              data['activity_name']!, _activityNameMeta));
+    } else if (isInserting) {
+      context.missing(_activityNameMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('format')) {
+      context.handle(_formatMeta,
+          format.isAcceptableOrUnknown(data['format']!, _formatMeta));
+    } else if (isInserting) {
+      context.missing(_formatMeta);
+    }
+    if (data.containsKey('sticker_only')) {
+      context.handle(
+          _stickerOnlyMeta,
+          stickerOnly.isAcceptableOrUnknown(
+              data['sticker_only']!, _stickerOnlyMeta));
+    }
+    if (data.containsKey('file_name')) {
+      context.handle(_fileNameMeta,
+          fileName.isAcceptableOrUnknown(data['file_name']!, _fileNameMeta));
+    } else if (isInserting) {
+      context.missing(_fileNameMeta);
+    }
+    if (data.containsKey('width')) {
+      context.handle(
+          _widthMeta, width.isAcceptableOrUnknown(data['width']!, _widthMeta));
+    } else if (isInserting) {
+      context.missing(_widthMeta);
+    }
+    if (data.containsKey('height')) {
+      context.handle(_heightMeta,
+          height.isAcceptableOrUnknown(data['height']!, _heightMeta));
+    } else if (isInserting) {
+      context.missing(_heightMeta);
+    }
+    if (data.containsKey('settings')) {
+      context.handle(_settingsMeta,
+          settings.isAcceptableOrUnknown(data['settings']!, _settingsMeta));
+    } else if (isInserting) {
+      context.missing(_settingsMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Creation map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Creation(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      activityId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}activity_id']),
+      activityName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}activity_name'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      format: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}format'])!,
+      stickerOnly: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}sticker_only'])!,
+      fileName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}file_name'])!,
+      width: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}width'])!,
+      height: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}height'])!,
+      settings: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}settings'])!,
+    );
+  }
+
+  @override
+  $CreationsTable createAlias(String alias) {
+    return $CreationsTable(attachedDatabase, alias);
+  }
+}
+
+class Creation extends DataClass implements Insertable<Creation> {
+  final int id;
+
+  /// The activity it was made from; null once that activity is deleted.
+  final int? activityId;
+
+  /// Copied so the creation keeps its caption after the activity goes.
+  final String activityName;
+  final DateTime createdAt;
+
+  /// story, feed or square.
+  final String format;
+
+  /// Sticker on a transparent background, without the photo.
+  final bool stickerOnly;
+
+  /// File name inside the app's creations folder.
+  final String fileName;
+  final int width;
+  final int height;
+
+  /// The editor settings (photo, crop, theme, sticker, style) as JSON.
+  final String settings;
+  const Creation(
+      {required this.id,
+      this.activityId,
+      required this.activityName,
+      required this.createdAt,
+      required this.format,
+      required this.stickerOnly,
+      required this.fileName,
+      required this.width,
+      required this.height,
+      required this.settings});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || activityId != null) {
+      map['activity_id'] = Variable<int>(activityId);
+    }
+    map['activity_name'] = Variable<String>(activityName);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['format'] = Variable<String>(format);
+    map['sticker_only'] = Variable<bool>(stickerOnly);
+    map['file_name'] = Variable<String>(fileName);
+    map['width'] = Variable<int>(width);
+    map['height'] = Variable<int>(height);
+    map['settings'] = Variable<String>(settings);
+    return map;
+  }
+
+  CreationsCompanion toCompanion(bool nullToAbsent) {
+    return CreationsCompanion(
+      id: Value(id),
+      activityId: activityId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(activityId),
+      activityName: Value(activityName),
+      createdAt: Value(createdAt),
+      format: Value(format),
+      stickerOnly: Value(stickerOnly),
+      fileName: Value(fileName),
+      width: Value(width),
+      height: Value(height),
+      settings: Value(settings),
+    );
+  }
+
+  factory Creation.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Creation(
+      id: serializer.fromJson<int>(json['id']),
+      activityId: serializer.fromJson<int?>(json['activityId']),
+      activityName: serializer.fromJson<String>(json['activityName']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      format: serializer.fromJson<String>(json['format']),
+      stickerOnly: serializer.fromJson<bool>(json['stickerOnly']),
+      fileName: serializer.fromJson<String>(json['fileName']),
+      width: serializer.fromJson<int>(json['width']),
+      height: serializer.fromJson<int>(json['height']),
+      settings: serializer.fromJson<String>(json['settings']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'activityId': serializer.toJson<int?>(activityId),
+      'activityName': serializer.toJson<String>(activityName),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'format': serializer.toJson<String>(format),
+      'stickerOnly': serializer.toJson<bool>(stickerOnly),
+      'fileName': serializer.toJson<String>(fileName),
+      'width': serializer.toJson<int>(width),
+      'height': serializer.toJson<int>(height),
+      'settings': serializer.toJson<String>(settings),
+    };
+  }
+
+  Creation copyWith(
+          {int? id,
+          Value<int?> activityId = const Value.absent(),
+          String? activityName,
+          DateTime? createdAt,
+          String? format,
+          bool? stickerOnly,
+          String? fileName,
+          int? width,
+          int? height,
+          String? settings}) =>
+      Creation(
+        id: id ?? this.id,
+        activityId: activityId.present ? activityId.value : this.activityId,
+        activityName: activityName ?? this.activityName,
+        createdAt: createdAt ?? this.createdAt,
+        format: format ?? this.format,
+        stickerOnly: stickerOnly ?? this.stickerOnly,
+        fileName: fileName ?? this.fileName,
+        width: width ?? this.width,
+        height: height ?? this.height,
+        settings: settings ?? this.settings,
+      );
+  Creation copyWithCompanion(CreationsCompanion data) {
+    return Creation(
+      id: data.id.present ? data.id.value : this.id,
+      activityId:
+          data.activityId.present ? data.activityId.value : this.activityId,
+      activityName: data.activityName.present
+          ? data.activityName.value
+          : this.activityName,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      format: data.format.present ? data.format.value : this.format,
+      stickerOnly:
+          data.stickerOnly.present ? data.stickerOnly.value : this.stickerOnly,
+      fileName: data.fileName.present ? data.fileName.value : this.fileName,
+      width: data.width.present ? data.width.value : this.width,
+      height: data.height.present ? data.height.value : this.height,
+      settings: data.settings.present ? data.settings.value : this.settings,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Creation(')
+          ..write('id: $id, ')
+          ..write('activityId: $activityId, ')
+          ..write('activityName: $activityName, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('format: $format, ')
+          ..write('stickerOnly: $stickerOnly, ')
+          ..write('fileName: $fileName, ')
+          ..write('width: $width, ')
+          ..write('height: $height, ')
+          ..write('settings: $settings')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, activityId, activityName, createdAt,
+      format, stickerOnly, fileName, width, height, settings);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Creation &&
+          other.id == this.id &&
+          other.activityId == this.activityId &&
+          other.activityName == this.activityName &&
+          other.createdAt == this.createdAt &&
+          other.format == this.format &&
+          other.stickerOnly == this.stickerOnly &&
+          other.fileName == this.fileName &&
+          other.width == this.width &&
+          other.height == this.height &&
+          other.settings == this.settings);
+}
+
+class CreationsCompanion extends UpdateCompanion<Creation> {
+  final Value<int> id;
+  final Value<int?> activityId;
+  final Value<String> activityName;
+  final Value<DateTime> createdAt;
+  final Value<String> format;
+  final Value<bool> stickerOnly;
+  final Value<String> fileName;
+  final Value<int> width;
+  final Value<int> height;
+  final Value<String> settings;
+  const CreationsCompanion({
+    this.id = const Value.absent(),
+    this.activityId = const Value.absent(),
+    this.activityName = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.format = const Value.absent(),
+    this.stickerOnly = const Value.absent(),
+    this.fileName = const Value.absent(),
+    this.width = const Value.absent(),
+    this.height = const Value.absent(),
+    this.settings = const Value.absent(),
+  });
+  CreationsCompanion.insert({
+    this.id = const Value.absent(),
+    this.activityId = const Value.absent(),
+    required String activityName,
+    required DateTime createdAt,
+    required String format,
+    this.stickerOnly = const Value.absent(),
+    required String fileName,
+    required int width,
+    required int height,
+    required String settings,
+  })  : activityName = Value(activityName),
+        createdAt = Value(createdAt),
+        format = Value(format),
+        fileName = Value(fileName),
+        width = Value(width),
+        height = Value(height),
+        settings = Value(settings);
+  static Insertable<Creation> custom({
+    Expression<int>? id,
+    Expression<int>? activityId,
+    Expression<String>? activityName,
+    Expression<DateTime>? createdAt,
+    Expression<String>? format,
+    Expression<bool>? stickerOnly,
+    Expression<String>? fileName,
+    Expression<int>? width,
+    Expression<int>? height,
+    Expression<String>? settings,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (activityId != null) 'activity_id': activityId,
+      if (activityName != null) 'activity_name': activityName,
+      if (createdAt != null) 'created_at': createdAt,
+      if (format != null) 'format': format,
+      if (stickerOnly != null) 'sticker_only': stickerOnly,
+      if (fileName != null) 'file_name': fileName,
+      if (width != null) 'width': width,
+      if (height != null) 'height': height,
+      if (settings != null) 'settings': settings,
+    });
+  }
+
+  CreationsCompanion copyWith(
+      {Value<int>? id,
+      Value<int?>? activityId,
+      Value<String>? activityName,
+      Value<DateTime>? createdAt,
+      Value<String>? format,
+      Value<bool>? stickerOnly,
+      Value<String>? fileName,
+      Value<int>? width,
+      Value<int>? height,
+      Value<String>? settings}) {
+    return CreationsCompanion(
+      id: id ?? this.id,
+      activityId: activityId ?? this.activityId,
+      activityName: activityName ?? this.activityName,
+      createdAt: createdAt ?? this.createdAt,
+      format: format ?? this.format,
+      stickerOnly: stickerOnly ?? this.stickerOnly,
+      fileName: fileName ?? this.fileName,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      settings: settings ?? this.settings,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (activityId.present) {
+      map['activity_id'] = Variable<int>(activityId.value);
+    }
+    if (activityName.present) {
+      map['activity_name'] = Variable<String>(activityName.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (format.present) {
+      map['format'] = Variable<String>(format.value);
+    }
+    if (stickerOnly.present) {
+      map['sticker_only'] = Variable<bool>(stickerOnly.value);
+    }
+    if (fileName.present) {
+      map['file_name'] = Variable<String>(fileName.value);
+    }
+    if (width.present) {
+      map['width'] = Variable<int>(width.value);
+    }
+    if (height.present) {
+      map['height'] = Variable<int>(height.value);
+    }
+    if (settings.present) {
+      map['settings'] = Variable<String>(settings.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CreationsCompanion(')
+          ..write('id: $id, ')
+          ..write('activityId: $activityId, ')
+          ..write('activityName: $activityName, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('format: $format, ')
+          ..write('stickerOnly: $stickerOnly, ')
+          ..write('fileName: $fileName, ')
+          ..write('width: $width, ')
+          ..write('height: $height, ')
+          ..write('settings: $settings')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ActivitiesTable activities = $ActivitiesTable(this);
   late final $PreferencesTable preferences = $PreferencesTable(this);
+  late final $CreationsTable creations = $CreationsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [activities, preferences];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [activities, preferences, creations];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
@@ -1353,6 +1871,245 @@ typedef $$PreferencesTableProcessedTableManager = ProcessedTableManager<
     (Preference, BaseReferences<_$AppDatabase, $PreferencesTable, Preference>),
     Preference,
     PrefetchHooks Function()>;
+typedef $$CreationsTableCreateCompanionBuilder = CreationsCompanion Function({
+  Value<int> id,
+  Value<int?> activityId,
+  required String activityName,
+  required DateTime createdAt,
+  required String format,
+  Value<bool> stickerOnly,
+  required String fileName,
+  required int width,
+  required int height,
+  required String settings,
+});
+typedef $$CreationsTableUpdateCompanionBuilder = CreationsCompanion Function({
+  Value<int> id,
+  Value<int?> activityId,
+  Value<String> activityName,
+  Value<DateTime> createdAt,
+  Value<String> format,
+  Value<bool> stickerOnly,
+  Value<String> fileName,
+  Value<int> width,
+  Value<int> height,
+  Value<String> settings,
+});
+
+class $$CreationsTableFilterComposer
+    extends Composer<_$AppDatabase, $CreationsTable> {
+  $$CreationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get activityId => $composableBuilder(
+      column: $table.activityId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get activityName => $composableBuilder(
+      column: $table.activityName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get format => $composableBuilder(
+      column: $table.format, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get stickerOnly => $composableBuilder(
+      column: $table.stickerOnly, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get fileName => $composableBuilder(
+      column: $table.fileName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get width => $composableBuilder(
+      column: $table.width, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get height => $composableBuilder(
+      column: $table.height, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get settings => $composableBuilder(
+      column: $table.settings, builder: (column) => ColumnFilters(column));
+}
+
+class $$CreationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $CreationsTable> {
+  $$CreationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get activityId => $composableBuilder(
+      column: $table.activityId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get activityName => $composableBuilder(
+      column: $table.activityName,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get format => $composableBuilder(
+      column: $table.format, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get stickerOnly => $composableBuilder(
+      column: $table.stickerOnly, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get fileName => $composableBuilder(
+      column: $table.fileName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get width => $composableBuilder(
+      column: $table.width, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get height => $composableBuilder(
+      column: $table.height, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get settings => $composableBuilder(
+      column: $table.settings, builder: (column) => ColumnOrderings(column));
+}
+
+class $$CreationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CreationsTable> {
+  $$CreationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get activityId => $composableBuilder(
+      column: $table.activityId, builder: (column) => column);
+
+  GeneratedColumn<String> get activityName => $composableBuilder(
+      column: $table.activityName, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get format =>
+      $composableBuilder(column: $table.format, builder: (column) => column);
+
+  GeneratedColumn<bool> get stickerOnly => $composableBuilder(
+      column: $table.stickerOnly, builder: (column) => column);
+
+  GeneratedColumn<String> get fileName =>
+      $composableBuilder(column: $table.fileName, builder: (column) => column);
+
+  GeneratedColumn<int> get width =>
+      $composableBuilder(column: $table.width, builder: (column) => column);
+
+  GeneratedColumn<int> get height =>
+      $composableBuilder(column: $table.height, builder: (column) => column);
+
+  GeneratedColumn<String> get settings =>
+      $composableBuilder(column: $table.settings, builder: (column) => column);
+}
+
+class $$CreationsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $CreationsTable,
+    Creation,
+    $$CreationsTableFilterComposer,
+    $$CreationsTableOrderingComposer,
+    $$CreationsTableAnnotationComposer,
+    $$CreationsTableCreateCompanionBuilder,
+    $$CreationsTableUpdateCompanionBuilder,
+    (Creation, BaseReferences<_$AppDatabase, $CreationsTable, Creation>),
+    Creation,
+    PrefetchHooks Function()> {
+  $$CreationsTableTableManager(_$AppDatabase db, $CreationsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CreationsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CreationsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CreationsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int?> activityId = const Value.absent(),
+            Value<String> activityName = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<String> format = const Value.absent(),
+            Value<bool> stickerOnly = const Value.absent(),
+            Value<String> fileName = const Value.absent(),
+            Value<int> width = const Value.absent(),
+            Value<int> height = const Value.absent(),
+            Value<String> settings = const Value.absent(),
+          }) =>
+              CreationsCompanion(
+            id: id,
+            activityId: activityId,
+            activityName: activityName,
+            createdAt: createdAt,
+            format: format,
+            stickerOnly: stickerOnly,
+            fileName: fileName,
+            width: width,
+            height: height,
+            settings: settings,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int?> activityId = const Value.absent(),
+            required String activityName,
+            required DateTime createdAt,
+            required String format,
+            Value<bool> stickerOnly = const Value.absent(),
+            required String fileName,
+            required int width,
+            required int height,
+            required String settings,
+          }) =>
+              CreationsCompanion.insert(
+            id: id,
+            activityId: activityId,
+            activityName: activityName,
+            createdAt: createdAt,
+            format: format,
+            stickerOnly: stickerOnly,
+            fileName: fileName,
+            width: width,
+            height: height,
+            settings: settings,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable<$CreationsTable, Creation>(table),
+                    BaseReferences<_$AppDatabase, $CreationsTable, Creation>(
+                        db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$CreationsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $CreationsTable,
+    Creation,
+    $$CreationsTableFilterComposer,
+    $$CreationsTableOrderingComposer,
+    $$CreationsTableAnnotationComposer,
+    $$CreationsTableCreateCompanionBuilder,
+    $$CreationsTableUpdateCompanionBuilder,
+    (Creation, BaseReferences<_$AppDatabase, $CreationsTable, Creation>),
+    Creation,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1361,4 +2118,6 @@ class $AppDatabaseManager {
       $$ActivitiesTableTableManager(_db, _db.activities);
   $$PreferencesTableTableManager get preferences =>
       $$PreferencesTableTableManager(_db, _db.preferences);
+  $$CreationsTableTableManager get creations =>
+      $$CreationsTableTableManager(_db, _db.creations);
 }

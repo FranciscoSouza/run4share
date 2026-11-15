@@ -23,6 +23,9 @@ class FakePhotoLibrary implements PhotoLibrary {
   int requests = 0;
   int settingsOpened = 0;
 
+  /// Photo IDs that are gone from the phone.
+  final missing = <String>{};
+
   @override
   Future<PhotoAccess> access() async => current;
 
@@ -58,9 +61,9 @@ class FakePhotoLibrary implements PhotoLibrary {
 
   @override
   Future<Uint8List?> thumbnail(String photoId, {required int size}) async =>
-      testPhoto;
+      missing.contains(photoId) ? null : testPhoto;
 
   @override
   Future<Uint8List?> preview(String photoId, {required int maxSide}) async =>
-      testPhoto;
+      missing.contains(photoId) ? null : testPhoto;
 }

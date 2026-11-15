@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart' show DatabaseConnection;
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,11 +8,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/app.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/app/theme/app_theme.dart';
+import 'package:run4share/data/creation_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/lab/lab.dart';
+import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/features/strava/strava_config.dart';
 import 'package:run4share/features/strava/strava_session_store.dart';
 import 'package:run4share/l10n/app_localizations.dart';
+
+import '../share/fake_share_actions.dart';
 
 /// A 390 x 844 phone, the size the design is drawn at.
 const phoneSize = Size(390, 844);
@@ -26,6 +32,8 @@ List<Override> baseOverrides({
   StravaConfig config = testStravaConfig,
   LabStore? lab,
   AppDatabase? db,
+  Directory? folder,
+  ShareActions? share,
 }) =>
     [
       stravaSessionStoreProvider.overrideWithValue(
@@ -34,6 +42,10 @@ List<Override> baseOverrides({
       stravaConfigProvider.overrideWithValue(config),
       labStoreProvider.overrideWithValue(lab ?? MemoryLabStore()),
       appDatabaseProvider.overrideWithValue(db ?? testDatabase()),
+      creationsFolderProvider.overrideWithValue(
+        () async => folder ?? Directory.systemTemp.createTempSync('creations'),
+      ),
+      shareActionsProvider.overrideWithValue(share ?? FakeShareActions()),
     ];
 
 /// A fresh in-memory database.

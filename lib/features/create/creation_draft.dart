@@ -56,6 +56,62 @@ class CreationDraft {
   /// Text colour and background; kept when the theme changes.
   final StickerStyle style;
 
+  /// Settings as JSON, stored with each creation so it can be edited again.
+  Map<String, Object?> toJson() => {
+        'activityId': activityId,
+        'photoId': photoId,
+        'format': format.name,
+        'crop': [crop.left, crop.top, crop.width, crop.height],
+        'themeId': themeId,
+        'sticker': switch (sticker) {
+          final s? => {
+              'x': s.center.dx,
+              'y': s.center.dy,
+              'scale': s.scale,
+              'rotation': s.rotation,
+            },
+          null => null,
+        },
+        'style': {'colour': style.colour?.name, 'background': style.background},
+      };
+
+  /// Null if [json] isn't a draft this version understands.
+  static CreationDraft? fromJson(Map<String, Object?> json) {
+    try {
+      final crop = (json['crop']! as List).cast<num>();
+      final sticker = json['sticker'] as Map<String, Object?>?;
+      final style = json['style'] as Map<String, Object?>? ?? const {};
+      return CreationDraft(
+        activityId: json['activityId']! as int,
+        photoId: json['photoId']! as String,
+        format: ShareFormat.values.byName(json['format']! as String),
+        crop: Rect.fromLTWH(
+          crop[0].toDouble(),
+          crop[1].toDouble(),
+          crop[2].toDouble(),
+          crop[3].toDouble(),
+        ),
+        themeId: json['themeId']! as String,
+        sticker: sticker == null
+            ? null
+            : StickerPlacement(
+                center: Offset(
+                  (sticker['x']! as num).toDouble(),
+                  (sticker['y']! as num).toDouble(),
+                ),
+                scale: (sticker['scale']! as num).toDouble(),
+                rotation: (sticker['rotation']! as num).toDouble(),
+              ),
+        style: StickerStyle(
+          colour: StickerColour.values.asNameMap()[style['colour']],
+          background: (style['background'] as num?)?.toDouble() ?? 0,
+        ),
+      );
+    } on Object {
+      return null;
+    }
+  }
+
   CreationDraft copyWith({
     String? themeId,
     StickerPlacement? sticker,

@@ -12,6 +12,7 @@ import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
 import 'package:run4share/features/editor/style_panels.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/share/share_screen.dart';
 
 import '../helpers/pump_app.dart';
 import '../photos/fake_photo_library.dart';
@@ -168,10 +169,10 @@ void main() {
     expect(find.byType(BackgroundSlider), findsNothing);
   });
 
-  testWidgets('Share is not ready yet', (tester) async {
+  testWidgets('Share opens the share screen', (tester) async {
     await openEditor(tester);
     await tester.tap(find.text('Share'));
-    await tester.pump();
-    expect(find.text('Coming in a later update'), findsOneWidget);
+    await settle(tester, rounds: 15);
+    expect(find.byType(ShareScreen), findsOneWidget);
   });
 }

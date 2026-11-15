@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:run4share/app/app_icons.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/app/router.dart';
 import 'package:run4share/app/theme/app_colors.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/app/theme/app_theme.dart';
@@ -23,7 +24,6 @@ import 'package:run4share/features/editor/theme_messages.dart';
 import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/l10n/l10n.dart';
-import 'package:run4share/shared/coming_soon.dart';
 import 'package:run4share/shared/widgets/pills.dart';
 
 /// Step 3: the photo with its sticker. Choose a theme, move, size and turn
@@ -134,8 +134,9 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                   child: AppPill(
                     label: l10n.actionShare,
                     icon: AppIcons.share,
-                    // Saving and sharing come in phase 5.
-                    onPressed: () => showComingSoon(context),
+                    onPressed: draft == null
+                        ? null
+                        : () => context.push(AppRoutes.share),
                   ),
                 ),
               ],

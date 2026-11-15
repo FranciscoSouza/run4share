@@ -4,11 +4,14 @@ import 'package:run4share/app/app_shell.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/features/activities/activity_form_screen.dart';
 import 'package:run4share/features/create/crop_screen.dart';
+import 'package:run4share/features/creations/creation_detail_screen.dart';
 import 'package:run4share/features/creations/creations_screen.dart';
 import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/photos/photo_step_screen.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
+import 'package:run4share/features/share/saved_screen.dart';
+import 'package:run4share/features/share/share_screen.dart';
 import 'package:run4share/features/strava/connect_strava_screen.dart';
 import 'package:run4share/features/templates/template_activity_screen.dart';
 import 'package:run4share/features/templates/template_preview_screen.dart';
@@ -25,6 +28,9 @@ abstract final class AppRoutes {
   static String crop(int activityId, String photoId) =>
       '/create/$activityId/photo/${Uri.encodeComponent(photoId)}';
   static const editor = '/create/editor';
+  static const share = '/create/share';
+  static String saved(int creationId) => '/saved/$creationId';
+  static String creation(int id) => '/creation/$id';
   static String template(String id) => '/template/$id';
   static String templateActivity(String id) => '/template/$id/activity';
 }
@@ -79,6 +85,25 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.editor,
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const EditorScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.share,
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => const ShareScreen(),
+      ),
+      GoRoute(
+        path: '/saved/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => SavedScreen(
+          creationId: int.tryParse(state.pathParameters['id']!) ?? 0,
+        ),
+      ),
+      GoRoute(
+        path: '/creation/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => CreationDetailScreen(
+          creationId: int.tryParse(state.pathParameters['id']!) ?? 0,
+        ),
       ),
       GoRoute(
         path: '/template/:id',

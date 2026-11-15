@@ -47,6 +47,33 @@ class Activities extends Table {
       ];
 }
 
+/// Images the user saved or shared, with what's needed to edit them again.
+@DataClassName('Creation')
+class Creations extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  /// The activity it was made from; null once that activity is deleted.
+  IntColumn get activityId => integer().nullable()();
+
+  /// Copied so the creation keeps its caption after the activity goes.
+  TextColumn get activityName => text()();
+  DateTimeColumn get createdAt => dateTime()();
+
+  /// story, feed or square.
+  TextColumn get format => text()();
+
+  /// Sticker on a transparent background, without the photo.
+  BoolColumn get stickerOnly => boolean().withDefault(const Constant(false))();
+
+  /// File name inside the app's creations folder.
+  TextColumn get fileName => text()();
+  IntColumn get width => integer()();
+  IntColumn get height => integer()();
+
+  /// The editor settings (photo, crop, theme, sticker, style) as JSON.
+  TextColumn get settings => text()();
+}
+
 /// Small key/value settings (units, sync state).
 class Preferences extends Table {
   TextColumn get key => text()();
@@ -56,7 +83,7 @@ class Preferences extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Activities, Preferences])
+@DriftDatabase(tables: [Activities, Preferences, Creations])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? driftDatabase(name: 'run4share'));
@@ -65,7 +92,15 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onUpgrade: (m, from, to) async {
+          // 2: My Creations.
+          if (from < 2) await m.createTable(creations);
+        },
+      );
 
   Future<String?> readPreference(String key) async {
     final row = await (select(

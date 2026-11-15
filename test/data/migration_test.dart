@@ -39,6 +39,9 @@ void main() {
 
     final activities = await ActivityRepository(db).watchAll().first;
     expect(activities.single.name, 'Old run');
+    // Schema 3 columns, with their defaults.
+    expect(activities.single.race, isFalse);
+    expect(activities.single.prCount, isNull);
     expect(await db.readPreference('units'), 'mi');
     expect(await db.select(db.creations).get(), isEmpty);
   });

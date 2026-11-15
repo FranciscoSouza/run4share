@@ -12,6 +12,8 @@ import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
 import 'package:run4share/features/editor/style_panels.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/pro/pro.dart';
+import 'package:run4share/features/pro/pro_screen.dart';
 import 'package:run4share/features/share/share_screen.dart';
 
 import '../helpers/pump_app.dart';
@@ -34,7 +36,7 @@ void main() {
     await settle(tester);
   }
 
-  Future<void> openEditor(WidgetTester tester) async {
+  Future<void> openEditor(WidgetTester tester, {bool pro = false}) async {
     db = testDatabase();
     late int id;
     await tester.runAsync(() async {
@@ -53,6 +55,7 @@ void main() {
         photoLibraryProvider.overrideWithValue(
           FakePhotoLibrary(current: PhotoAccess.granted),
         ),
+        proAtLaunchProvider.overrideWithValue(pro),
       ],
     );
     container = ProviderScope.containerOf(
@@ -174,5 +177,58 @@ void main() {
     await tester.tap(find.text('Share'));
     await settle(tester, rounds: 15);
     expect(find.byType(ShareScreen), findsOneWidget);
+  });
+
+  Future<void> openStickers(WidgetTester tester) async {
+    await tester.tap(find.byTooltip('Hide themes'));
+    await settle(tester);
+    await tester.tap(find.text('Stickers'));
+    await settle(tester);
+  }
+
+  testWidgets('Stickers without Pro lead to the Pro screen', (tester) async {
+    await openEditor(tester);
+    await openStickers(tester);
+    expect(find.text('For this activity'.toUpperCase()), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel('Start time'));
+    await settle(tester);
+    expect(find.byType(ProScreen), findsOneWidget);
+    expect(draft().extras, isEmpty);
+  });
+
+  testWidgets('with Pro: add, recolour and remove extra stickers', (
+    tester,
+  ) async {
+    await openEditor(tester, pro: true);
+    await openStickers(tester);
+
+    await tester.tap(find.bySemanticsLabel('Start time'));
+    await settle(tester);
+    expect(draft().extras.single.kind, ExtraKind.time);
+    expect(find.text('12:31'), findsOneWidget, reason: 'the start time');
+    // The new sticker is selected: its handles are showing.
+    expect(find.bySemanticsLabel('Remove sticker'), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel('Text colour'));
+    await settle(tester);
+    await tester.tap(find.bySemanticsLabel('Red'));
+    await settle(tester);
+    expect(draft().extras.single.colour, StickerColour.red);
+    expect(draft().style.colour, isNull, reason: 'theme sticker untouched');
+
+    await tester.tap(find.bySemanticsLabel('Remove sticker'));
+    await settle(tester);
+    expect(draft().extras, isEmpty);
+    expect(draft().sticker, isNotNull, reason: 'theme sticker stays');
+
+    // A phrase, by mood.
+    await tester.tap(find.text('Stickers'));
+    await settle(tester);
+    await tester.tap(find.text('Tired'));
+    await settle(tester);
+    await tester.tap(find.text('Tired, but not done.'));
+    await settle(tester);
+    expect(draft().extras.single.value, 'tired.1');
   });
 }

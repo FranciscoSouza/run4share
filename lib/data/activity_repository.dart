@@ -85,6 +85,8 @@ class ActivityRepository {
               averageHeartrate: Value(a.averageHeartrate),
               elevationGain: Value(a.totalElevationGain),
               calories: Value(a.calories),
+              prCount: Value(a.prCount),
+              race: Value(a.isRace),
             ),
             onConflict: DoUpdate(
               (old) => ActivitiesCompanion(
@@ -98,6 +100,8 @@ class ActivityRepository {
                 averageSpeed: Value(a.averageSpeed),
                 averageHeartrate: Value(a.averageHeartrate),
                 elevationGain: Value(a.totalElevationGain),
+                prCount: Value(a.prCount),
+                race: Value(a.isRace),
                 // The list has no calories; keep any fetched from detail.
                 calories: a.calories == null
                     ? const Value.absent()
@@ -122,6 +126,7 @@ class ActivityRepository {
     double? distance,
     double? calories,
     double? averageHeartrate,
+    bool race = false,
     int? id,
   }) async {
     final companion = ActivitiesCompanion(
@@ -137,6 +142,7 @@ class ActivityRepository {
       ),
       calories: Value(calories),
       averageHeartrate: Value(averageHeartrate),
+      race: Value(race),
     );
     if (id == null) return await _db.into(_table).insert(companion);
     await (_db.update(_table)

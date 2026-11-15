@@ -19,6 +19,16 @@ abstract final class AppIcons {
   static const IconData download = LucideIcons.download;
   static const IconData copy = LucideIcons.copy;
   static const IconData close = LucideIcons.x;
+  static const IconData sticker = LucideIcons.sticker;
+  static const IconData trophy = LucideIcons.trophy;
+  static const IconData route = LucideIcons.route;
+  static const IconData flag = LucideIcons.flag;
+  static const IconData timer = LucideIcons.timer;
+  static const IconData sunrise = LucideIcons.sunrise;
+  static const IconData sun = LucideIcons.sun;
+  static const IconData sunset = LucideIcons.sunset;
+  static const IconData moon = LucideIcons.moon;
+  static const IconData rain = LucideIcons.cloudRain;
   static const IconData moreHorizontal = LucideIcons.ellipsis;
   static const IconData info = LucideIcons.info;
   static const IconData refresh = LucideIcons.refreshCw;

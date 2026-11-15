@@ -40,6 +40,8 @@ _StravaActivity _$StravaActivityFromJson(Map<String, dynamic> json) =>
       averageHeartrate: (json['average_heartrate'] as num?)?.toDouble(),
       totalElevationGain: (json['total_elevation_gain'] as num?)?.toDouble(),
       calories: (json['calories'] as num?)?.toDouble(),
+      prCount: (json['pr_count'] as num?)?.toInt(),
+      workoutType: (json['workout_type'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$StravaActivityToJson(_StravaActivity instance) =>
@@ -56,4 +58,6 @@ Map<String, dynamic> _$StravaActivityToJson(_StravaActivity instance) =>
       'average_heartrate': instance.averageHeartrate,
       'total_elevation_gain': instance.totalElevationGain,
       'calories': instance.calories,
+      'pr_count': instance.prCount,
+      'workout_type': instance.workoutType,
     };

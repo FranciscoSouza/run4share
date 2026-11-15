@@ -24,6 +24,9 @@ import 'package:run4share/features/editor/theme_messages.dart';
 import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/stickers/extra_sticker_view.dart';
+import 'package:run4share/features/stickers/sticker_catalogue.dart';
+import 'package:run4share/features/stickers/stickers_panel.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/pills.dart';
 
@@ -39,7 +42,9 @@ class EditorScreen extends ConsumerStatefulWidget {
 class _EditorScreenState extends ConsumerState<EditorScreen> {
   Future<Uint8List?>? _photo;
   _Panel? _panel = _Panel.themes;
-  bool _selected = false;
+
+  /// The selected item: [themeItemId], an extra sticker's ID, or null.
+  Object? _selected;
 
   StickerTool? get _tool => switch (_panel) {
         _Panel.textColour => StickerTool.textColour,
@@ -83,6 +88,41 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     unawaited(
       ref.read(appDatabaseProvider).writePreference(themePreference, theme.id),
     );
+  }
+
+  void _select(Object? id) => setState(() {
+        _selected = id;
+        // Selecting hides the pickers; leaving a sticker closes its panels.
+        if (id != null &&
+            (_panel == _Panel.themes || _panel == _Panel.stickers)) {
+          _panel = null;
+        }
+        if (id == null && _tool != null) _panel = null;
+      });
+
+  /// Adds an extra sticker (Pro) and selects it.
+  void _addExtra(ExtraKind kind, String value) {
+    if (!ref.read(isProProvider)) {
+      unawaited(context.push(AppRoutes.pro));
+      return;
+    }
+    final id = ref.read(creationDraftProvider.notifier).addExtra(kind, value);
+    setState(() {
+      _panel = null;
+      _selected = id;
+    });
+  }
+
+  /// The colour shown as chosen in the text colour panel, for whichever
+  /// sticker is selected.
+  StickerColour _selectedColour(CreationDraft draft) {
+    if (_selected case final int id) {
+      final extra = draft.extras.where((e) => e.id == id).firstOrNull;
+      if (extra != null) return extra.colour ?? defaultColour(extra.kind);
+    }
+    return draft.style.colour ??
+        themeById(draft.themeId)?.colour ??
+        StickerColour.white;
   }
 
   /// Makes sure the draft's theme can be drawn; else takes the first that
@@ -179,6 +219,10 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   data: data,
                                   placement: draft.sticker,
                                   style: draft.style,
+                                  extras: extraItems(
+                                    draft,
+                                    activity!.startLocal,
+                                  ),
                                   editable: true,
                                   selected: _selected,
                                   activeTool: _tool,
@@ -189,38 +233,39 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                     textColour: l10n.editorTextColour,
                                     background: l10n.editorBackground,
                                   ),
-                                  onSelect: (selected) => setState(() {
-                                    _selected = selected;
-                                    // Selecting hides the carousel; leaving
-                                    // the sticker closes its style panels.
-                                    if (selected && _panel == _Panel.themes) {
-                                      _panel = null;
-                                    }
-                                    if (!selected && _tool != null) {
-                                      _panel = null;
-                                    }
+                                  onSelect: _select,
+                                  onTool: (id, tool) => setState(() {
+                                    final panel = switch (tool) {
+                                      StickerTool.textColour =>
+                                        _Panel.textColour,
+                                      StickerTool.background =>
+                                        _Panel.background,
+                                    };
+                                    _panel = _panel == panel ? null : panel;
                                   }),
-                                  onTextColour: () => setState(
-                                    () => _panel = _panel == _Panel.textColour
-                                        ? null
-                                        : _Panel.textColour,
-                                  ),
-                                  onBackground: () => setState(
-                                    () => _panel = _panel == _Panel.background
-                                        ? null
-                                        : _Panel.background,
-                                  ),
-                                  onPlacement: ref
-                                      .read(creationDraftProvider.notifier)
-                                      .place,
-                                  onRemove: () {
+                                  onPlacement: (id, placement) {
+                                    final drafts = ref.read(
+                                      creationDraftProvider.notifier,
+                                    );
+                                    if (id case final int extra) {
+                                      drafts.placeExtra(extra, placement);
+                                    } else {
+                                      drafts.place(placement);
+                                    }
+                                  },
+                                  onRemove: (id) {
                                     setState(() {
-                                      _selected = false;
+                                      _selected = null;
                                       _panel = null;
                                     });
-                                    ref
-                                        .read(creationDraftProvider.notifier)
-                                        .removeSticker();
+                                    final drafts = ref.read(
+                                      creationDraftProvider.notifier,
+                                    );
+                                    if (id case final int extra) {
+                                      drafts.removeExtra(extra);
+                                    } else {
+                                      drafts.removeSticker();
+                                    }
                                   },
                                 ),
                               ),
@@ -235,13 +280,27 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   onChoose: (t) => _chooseTheme(t, data),
                                   onClose: () => setState(() => _panel = null),
                                 ),
+                              _Panel.stickers => StickersPanel(
+                                  activity: activity,
+                                  history:
+                                      ref.watch(activitiesProvider).value ??
+                                          const [],
+                                  isPro: ref.watch(isProProvider),
+                                  onAdd: _addExtra,
+                                  onClose: () => setState(() => _panel = null),
+                                ),
                               _Panel.textColour => TextColourPanel(
-                                  selected: draft.style.colour ??
-                                      themeById(draft.themeId)?.colour ??
-                                      StickerColour.white,
-                                  onChoose: ref
-                                      .read(creationDraftProvider.notifier)
-                                      .setColour,
+                                  selected: _selectedColour(draft),
+                                  onChoose: (colour) {
+                                    final drafts = ref.read(
+                                      creationDraftProvider.notifier,
+                                    );
+                                    if (_selected case final int extra) {
+                                      drafts.setExtraColour(extra, colour);
+                                    } else {
+                                      drafts.setColour(colour);
+                                    }
+                                  },
                                   onClose: () => setState(() => _panel = null),
                                 ),
                               _Panel.background => BackgroundPanel(
@@ -252,9 +311,14 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   onClose: () => setState(() => _panel = null),
                                 ),
                               null => _Toolbar(
+                                  isPro: ref.watch(isProProvider),
                                   onThemes: () => setState(() {
                                     _panel = _Panel.themes;
-                                    _selected = false;
+                                    _selected = null;
+                                  }),
+                                  onStickers: () => setState(() {
+                                    _panel = _Panel.stickers;
+                                    _selected = null;
                                   }),
                                 ),
                             },
@@ -282,7 +346,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
 }
 
 /// What the bottom of the editor shows; null is the toolbar.
-enum _Panel { themes, textColour, background }
+enum _Panel { themes, stickers, textColour, background }
 
 class _BottomPanel extends StatelessWidget {
   const _BottomPanel({required this.child});
@@ -308,24 +372,70 @@ class _BottomPanel extends StatelessWidget {
 }
 
 class _Toolbar extends StatelessWidget {
-  const _Toolbar({required this.onThemes});
+  const _Toolbar({
+    required this.isPro,
+    required this.onThemes,
+    required this.onStickers,
+  });
 
+  final bool isPro;
   final VoidCallback onThemes;
+  final VoidCallback onStickers;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _Tool(
+            icon: AppIcons.layers,
+            label: l10n.editorTheme,
+            onTap: onThemes,
+          ),
+          const SizedBox(width: AppSpacing.xl),
+          _Tool(
+            icon: AppIcons.sticker,
+            label: l10n.editorStickers,
+            pro: !isPro,
+            onTap: onStickers,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Tool extends StatelessWidget {
+  const _Tool({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.pro = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  /// Shows a small PRO mark.
+  final bool pro;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Calories, Quotes, Text and Stickers join after phase 4b.
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
-      child: Center(
-        child: InkWell(
-          onTap: onThemes,
-          borderRadius: BorderRadius.circular(AppRadius.thumb),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.sm),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.thumb),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
               children: [
                 Container(
                   width: 56,
@@ -334,18 +444,41 @@ class _Toolbar extends StatelessWidget {
                     color: theme.colorScheme.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(AppRadius.thumb),
                   ),
-                  child: const Icon(AppIcons.layers),
+                  child: Icon(icon),
                 ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  context.l10n.editorTheme,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                if (pro)
+                  Positioned(
+                    right: -8,
+                    top: -6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.warning60,
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                      ),
+                      child: Text(
+                        'PRO',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: AppColors.neutral0,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
               ],
             ),
-          ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );

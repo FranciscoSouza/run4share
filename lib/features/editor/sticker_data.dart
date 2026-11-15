@@ -122,4 +122,5 @@ final sampleActivity = Activity(
   averageSpeed: 5020 / 1994,
   averageHeartrate: 152,
   calories: 320,
+  race: false,
 );

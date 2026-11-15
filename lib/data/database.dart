@@ -41,6 +41,13 @@ class Activities extends Table {
   RealColumn get calories => real().nullable()();
   RealColumn get elevationGain => real().nullable()();
 
+  /// Personal records Strava found in it (best efforts); null when not
+  /// from Strava.
+  IntColumn get prCount => integer().nullable()();
+
+  /// A race: Strava's "Race" workout type, or the manual form's switch.
+  BoolColumn get race => boolean().withDefault(const Constant(false))();
+
   @override
   List<Set<Column>> get uniqueKeys => [
         {source, sourceId},
@@ -92,13 +99,18 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onUpgrade: (m, from, to) async {
           // 2: My Creations.
           if (from < 2) await m.createTable(creations);
+          // 3: records and races, for the automatic labels.
+          if (from < 3) {
+            await m.addColumn(activities, activities.prCount);
+            await m.addColumn(activities, activities.race);
+          }
         },
       );
 

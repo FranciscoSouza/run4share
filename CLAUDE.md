@@ -22,7 +22,8 @@ or share to Instagram.
 
 0 foundations → 1 Strava → 2 home/activities → 3 photo/crop →
 4a editor core → 4b sticker controls → 5 share/My Creations →
-6 settings/languages → 7 hardening/release.
+6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
+time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts).
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -176,9 +177,8 @@ Francisco moved on to phase 6 on 15 Nov 2026 without reporting problems.
   refuses rows that drop a placeholder.
 - Pro and Restore purchase stay "coming" until phase 7.
 
-**Phase 7 status (hardening / release):** code done, installed on
-Francisco's phone, waiting for his check. Not committed yet. What's left
-needs his accounts: see `docs/release-checklist.md`.
+**Phase 7 status (hardening / release):** committed (`phase-7-release`).
+What's left needs Francisco's accounts: see `docs/release-checklist.md`.
 - Release signing: upload key `~/.run4share/run4share-upload.jks`,
   `android/key.properties` (gitignored) read by `build.gradle.kts`;
   falls back to the debug key when absent. Signed AAB verified.
@@ -200,6 +200,34 @@ needs his accounts: see `docs/release-checklist.md`.
 - Workout sources show only the phone's own health source: Apple Health
   on iPhone, Health Connect on Android (`lib/app/platform.dart`).
 - A test keeps `AppInfo.version` equal to pubspec's version.
+
+**Phase 8a status (Pro sticker pack, part 1):** code done, installed on
+Francisco's phone, waiting for his check. Not committed yet.
+- Editor "Stickers" tool (Pro): extra stickers as canvas layers above the
+  theme sticker (`CanvasItem`s in `StoryCanvas`), each movable, sizable,
+  rotatable, recolourable and removable; saved in the draft/creation
+  JSON (`extras`), exported with the image. Without Pro, tapping one
+  opens the Pro screen.
+- Kinds (`lib/features/stickers/`): automatic labels (Record, Long run,
+  Race day, Sub-X), start time with time-of-day icon, 15 mood phrases (5
+  moods x 3) in all languages, 6 stamps/seals (4 round with ring text, 2
+  rectangular). All need native review via the translation sheet.
+- Schema 3: activities gain `pr_count` (Strava) and `race` (Strava
+  workout type 1/11, or the manual form's "This was a race" switch).
+- Demo data has "City 10K" (race, PR) to show the labels.
+- Sticker-only export still contains only the theme sticker.
+
+Label rules (Francisco, 15 Nov 2026):
+- Record: Strava PR (pr_count > 0); otherwise run4share history of the
+  same sport: the longest, or the fastest among activities at least as
+  long.
+- Long run (Longão): a run of 15 km or more.
+- Race day: Strava "Race" or the manual switch.
+- Sub-X: runs within 4.95-5.4 km, 9.9-10.6 km, 21.0-21.7 km or
+  42.1-43.1 km, under the best round mark beaten: 5K 20/25/30, 10K
+  40/45/50/60, half 1:30/1:45/2:00, marathon 3/3:30/4.
+- Shoe sticker (8b) asks Strava's profile:read_all permission; manual
+  activities type a shoe name and km.
 
 ## Decisions already taken (do not reopen without asking)
 

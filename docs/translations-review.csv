@@ -212,3 +212,39 @@ shareWithPro,Share screen,,With your Pro,Com o seu Pro,Con tu Pro,Avec votre Pro
 labPretendPro,Settings: Laboratory (test builds only),,Pretend Pro,Simular Pro,Simular Pro,Simuler Pro,Pro simulieren
 labPretendProSubtitle,Settings: Laboratory (test builds only),,"Act as if Pro was bought, without paying","Agir como se o Pro tivesse sido comprado, sem pagar","Actuar como si se hubiera comprado Pro, sin pagar","Faire comme si Pro était acheté, sans payer","So tun, als wäre Pro gekauft, ohne zu zahlen"
 actionDone,Buttons used in several places,,Done,Concluir,Listo,Terminé,Fertig
+formRace,Add / edit activity form,,This was a race,Foi uma prova,Fue una carrera,C’était une course,Das war ein Wettkampf
+editorStickers,Editor,,Stickers,Stickers,Stickers,Stickers,Sticker
+stickersForActivity,,,For this activity,Desta atividade,De esta actividad,Pour cette activité,Zu dieser Aktivität
+stickersTime,,,Start time,Horário,Hora de inicio,Heure de départ,Startzeit
+stickersPhrases,,,Phrases,Frases,Frases,Phrases,Sprüche
+stickersStamps,,,Stamps and seals,Carimbos e selos,Sellos,Tampons et sceaux,Stempel und Siegel
+labelRecord,Settings: Laboratory (test builds only),,Record,Recorde,Récord,Record,Rekord
+labelLongRun,Settings: Laboratory (test builds only),,Long run,Longão,Tirada larga,Sortie longue,Langer Lauf
+labelRaceDay,Settings: Laboratory (test builds only),,Race day,Dia de Prova,Día de carrera,Jour de course,Wettkampftag
+labelSub,Settings: Laboratory (test builds only),"Label for beating a round race time, e.g. Sub-25 (minutes) or Sub-1:45. Keep {mark} as is.",Sub-{mark},Sub-{mark},Sub-{mark},Sub-{mark},Sub-{mark}
+moodProud,,,Proud,Orgulho,Orgullo,Fierté,Stolz
+moodTired,,,Tired,Cansaço,Cansancio,Fatigue,Müde
+moodHappy,,,Happy,Alegria,Alegría,Joie,Glücklich
+moodMotivated,,,Motivated,Motivação,Motivación,Motivation,Motiviert
+moodFunny,,,Funny,Humor,Humor,Humour,Witzig
+phraseProud0,,,Earned it.,Mereci.,Me lo gané.,Je l’ai mérité.,Verdient.
+phraseProud1,,,Every kilometre counted.,Cada quilômetro contou.,Cada kilómetro contó.,Chaque kilomètre a compté.,Jeder Kilometer zählte.
+phraseProud2,,,Stronger than yesterday.,Mais forte que ontem.,Más fuerte que ayer.,Plus fort qu’hier.,Stärker als gestern.
+phraseTired0,,,Legs: gone. Smile: still here.,Pernas: foram. Sorriso: ficou.,Piernas: se fueron. Sonrisa: sigue aquí.,Jambes : parties. Sourire : toujours là.,Beine: weg. Lächeln: noch da.
+phraseTired1,,,"Tired, but not done.","Cansado, mas não acabou.","Cansado, pero no he terminado.","Fatigué, mais pas fini.","Müde, aber nicht fertig."
+phraseTired2,,,Running on coffee and stubbornness.,Movido a café e teimosia.,Funciono con café y terquedad.,Carburant : café et entêtement.,Angetrieben von Kaffee und Sturheit.
+phraseHappy0,,,Best part of my day.,A melhor parte do meu dia.,La mejor parte de mi día.,Le meilleur moment de ma journée.,Der beste Teil meines Tages.
+phraseHappy1,,,"Pure joy, one step at a time.","Alegria pura, passo a passo.","Alegría pura, paso a paso.","Pure joie, pas à pas.","Pure Freude, Schritt für Schritt."
+phraseHappy2,,,Sunshine and endorphins.,Sol e endorfina.,Sol y endorfinas.,Soleil et endorphines.,Sonne und Endorphine.
+phraseMotivated0,,,"Small steps, big goals.","Passos pequenos, metas grandes.","Pasos pequeños, metas grandes.","Petits pas, grands objectifs.","Kleine Schritte, große Ziele."
+phraseMotivated1,,,Show up. Run. Repeat.,Apareça. Corra. Repita.,Preséntate. Corre. Repite.,Venir. Courir. Recommencer.,Auftauchen. Laufen. Wiederholen.
+phraseMotivated2,,,The hardest part was lacing up.,O mais difícil foi amarrar o tênis.,Lo más difícil fue atarme las zapatillas.,"Le plus dur, c’était de lacer mes chaussures.","Das Schwerste war, die Schuhe zu binden."
+phraseFunny0,,,I run because pizza.,Corro porque pizza.,Corro por la pizza.,Je cours pour la pizza.,Ich laufe für Pizza.
+phraseFunny1,,,Will run for snacks.,Corro em troca de lanche.,Corro a cambio de snacks.,Je cours pour le goûter.,Ich laufe für Snacks.
+phraseFunny2,,,Powered by bananas.,Movido a banana.,Funciono con plátanos.,Carburant : bananes.,Angetrieben von Bananen.
+stampEarlyBird,,,Early bird,Madrugador,Madrugador,Lève-tôt,Frühaufsteher
+stampNightOwl,,,Night owl,Coruja,Noctámbulo,Oiseau de nuit,Nachteule
+stampRainOrShine,,,Rain or shine,Faça chuva ou sol,Llueva o truene,Qu’il pleuve ou qu’il vente,Bei jedem Wetter
+stampWeekendWarrior,,,Weekend warrior,Guerreiro de fim de semana,Guerrero de fin de semana,Guerrier du week-end,Wochenendkrieger
+stampDone,,,Done,Feito,Hecho,Fait,Erledigt
+stampNoExcuses,,,No excuses,Sem desculpas,Sin excusas,Sans excuses,Keine Ausreden

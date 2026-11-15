@@ -102,6 +102,8 @@ List<StravaActivity> demoActivities(DateTime now) {
     required double metres,
     required int seconds,
     double? heartRate,
+    int? prCount,
+    int? workoutType,
   }) =>
       StravaActivity(
         id: id,
@@ -114,6 +116,8 @@ List<StravaActivity> demoActivities(DateTime now) {
         elapsedTime: seconds + 90,
         averageSpeed: metres > 0 ? metres / seconds : null,
         averageHeartrate: heartRate,
+        prCount: prCount,
+        workoutType: workoutType,
       );
 
   return [
@@ -134,6 +138,18 @@ List<StravaActivity> demoActivities(DateTime now) {
       metres: 22500,
       seconds: 3490,
       heartRate: 138,
+    ),
+    // A race with a PR: earns Record, Race day and Sub-50.
+    activity(
+      8,
+      'City 10K',
+      'Run',
+      at(3, 8, 0),
+      metres: 10050,
+      seconds: 2820,
+      heartRate: 171,
+      prCount: 2,
+      workoutType: 1,
     ),
     activity(
       3,

@@ -30,6 +30,7 @@ Activity activity({
       movingTime: 1994,
       averageHeartrate: heartRate,
       calories: calories,
+      race: false,
     );
 
 void main() {

@@ -94,6 +94,21 @@ class $ActivitiesTable extends Activities
   late final GeneratedColumn<double> elevationGain = GeneratedColumn<double>(
       'elevation_gain', aliasedName, true,
       type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _prCountMeta =
+      const VerificationMeta('prCount');
+  @override
+  late final GeneratedColumn<int> prCount = GeneratedColumn<int>(
+      'pr_count', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _raceMeta = const VerificationMeta('race');
+  @override
+  late final GeneratedColumn<bool> race = GeneratedColumn<bool>(
+      'race', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("race" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -109,7 +124,9 @@ class $ActivitiesTable extends Activities
         averageSpeed,
         averageHeartrate,
         calories,
-        elevationGain
+        elevationGain,
+        prCount,
+        race
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -192,6 +209,14 @@ class $ActivitiesTable extends Activities
           elevationGain.isAcceptableOrUnknown(
               data['elevation_gain']!, _elevationGainMeta));
     }
+    if (data.containsKey('pr_count')) {
+      context.handle(_prCountMeta,
+          prCount.isAcceptableOrUnknown(data['pr_count']!, _prCountMeta));
+    }
+    if (data.containsKey('race')) {
+      context.handle(
+          _raceMeta, race.isAcceptableOrUnknown(data['race']!, _raceMeta));
+    }
     return context;
   }
 
@@ -234,6 +259,10 @@ class $ActivitiesTable extends Activities
           .read(DriftSqlType.double, data['${effectivePrefix}calories']),
       elevationGain: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}elevation_gain']),
+      prCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}pr_count']),
+      race: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}race'])!,
     );
   }
 
@@ -277,6 +306,13 @@ class Activity extends DataClass implements Insertable<Activity> {
   final double? averageHeartrate;
   final double? calories;
   final double? elevationGain;
+
+  /// Personal records Strava found in it (best efforts); null when not
+  /// from Strava.
+  final int? prCount;
+
+  /// A race: Strava's "Race" workout type, or the manual form's switch.
+  final bool race;
   const Activity(
       {required this.id,
       required this.source,
@@ -291,7 +327,9 @@ class Activity extends DataClass implements Insertable<Activity> {
       this.averageSpeed,
       this.averageHeartrate,
       this.calories,
-      this.elevationGain});
+      this.elevationGain,
+      this.prCount,
+      required this.race});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -328,6 +366,10 @@ class Activity extends DataClass implements Insertable<Activity> {
     if (!nullToAbsent || elevationGain != null) {
       map['elevation_gain'] = Variable<double>(elevationGain);
     }
+    if (!nullToAbsent || prCount != null) {
+      map['pr_count'] = Variable<int>(prCount);
+    }
+    map['race'] = Variable<bool>(race);
     return map;
   }
 
@@ -363,6 +405,10 @@ class Activity extends DataClass implements Insertable<Activity> {
       elevationGain: elevationGain == null && nullToAbsent
           ? const Value.absent()
           : Value(elevationGain),
+      prCount: prCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(prCount),
+      race: Value(race),
     );
   }
 
@@ -385,6 +431,8 @@ class Activity extends DataClass implements Insertable<Activity> {
       averageHeartrate: serializer.fromJson<double?>(json['averageHeartrate']),
       calories: serializer.fromJson<double?>(json['calories']),
       elevationGain: serializer.fromJson<double?>(json['elevationGain']),
+      prCount: serializer.fromJson<int?>(json['prCount']),
+      race: serializer.fromJson<bool>(json['race']),
     );
   }
   @override
@@ -406,6 +454,8 @@ class Activity extends DataClass implements Insertable<Activity> {
       'averageHeartrate': serializer.toJson<double?>(averageHeartrate),
       'calories': serializer.toJson<double?>(calories),
       'elevationGain': serializer.toJson<double?>(elevationGain),
+      'prCount': serializer.toJson<int?>(prCount),
+      'race': serializer.toJson<bool>(race),
     };
   }
 
@@ -423,7 +473,9 @@ class Activity extends DataClass implements Insertable<Activity> {
           Value<double?> averageSpeed = const Value.absent(),
           Value<double?> averageHeartrate = const Value.absent(),
           Value<double?> calories = const Value.absent(),
-          Value<double?> elevationGain = const Value.absent()}) =>
+          Value<double?> elevationGain = const Value.absent(),
+          Value<int?> prCount = const Value.absent(),
+          bool? race}) =>
       Activity(
         id: id ?? this.id,
         source: source ?? this.source,
@@ -443,6 +495,8 @@ class Activity extends DataClass implements Insertable<Activity> {
         calories: calories.present ? calories.value : this.calories,
         elevationGain:
             elevationGain.present ? elevationGain.value : this.elevationGain,
+        prCount: prCount.present ? prCount.value : this.prCount,
+        race: race ?? this.race,
       );
   Activity copyWithCompanion(ActivitiesCompanion data) {
     return Activity(
@@ -469,6 +523,8 @@ class Activity extends DataClass implements Insertable<Activity> {
       elevationGain: data.elevationGain.present
           ? data.elevationGain.value
           : this.elevationGain,
+      prCount: data.prCount.present ? data.prCount.value : this.prCount,
+      race: data.race.present ? data.race.value : this.race,
     );
   }
 
@@ -488,7 +544,9 @@ class Activity extends DataClass implements Insertable<Activity> {
           ..write('averageSpeed: $averageSpeed, ')
           ..write('averageHeartrate: $averageHeartrate, ')
           ..write('calories: $calories, ')
-          ..write('elevationGain: $elevationGain')
+          ..write('elevationGain: $elevationGain, ')
+          ..write('prCount: $prCount, ')
+          ..write('race: $race')
           ..write(')'))
         .toString();
   }
@@ -508,7 +566,9 @@ class Activity extends DataClass implements Insertable<Activity> {
       averageSpeed,
       averageHeartrate,
       calories,
-      elevationGain);
+      elevationGain,
+      prCount,
+      race);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -526,7 +586,9 @@ class Activity extends DataClass implements Insertable<Activity> {
           other.averageSpeed == this.averageSpeed &&
           other.averageHeartrate == this.averageHeartrate &&
           other.calories == this.calories &&
-          other.elevationGain == this.elevationGain);
+          other.elevationGain == this.elevationGain &&
+          other.prCount == this.prCount &&
+          other.race == this.race);
 }
 
 class ActivitiesCompanion extends UpdateCompanion<Activity> {
@@ -544,6 +606,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
   final Value<double?> averageHeartrate;
   final Value<double?> calories;
   final Value<double?> elevationGain;
+  final Value<int?> prCount;
+  final Value<bool> race;
   const ActivitiesCompanion({
     this.id = const Value.absent(),
     this.source = const Value.absent(),
@@ -559,6 +623,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     this.averageHeartrate = const Value.absent(),
     this.calories = const Value.absent(),
     this.elevationGain = const Value.absent(),
+    this.prCount = const Value.absent(),
+    this.race = const Value.absent(),
   });
   ActivitiesCompanion.insert({
     this.id = const Value.absent(),
@@ -575,6 +641,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     this.averageHeartrate = const Value.absent(),
     this.calories = const Value.absent(),
     this.elevationGain = const Value.absent(),
+    this.prCount = const Value.absent(),
+    this.race = const Value.absent(),
   })  : source = Value(source),
         name = Value(name),
         sportType = Value(sportType),
@@ -595,6 +663,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     Expression<double>? averageHeartrate,
     Expression<double>? calories,
     Expression<double>? elevationGain,
+    Expression<int>? prCount,
+    Expression<bool>? race,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -611,6 +681,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       if (averageHeartrate != null) 'average_heartrate': averageHeartrate,
       if (calories != null) 'calories': calories,
       if (elevationGain != null) 'elevation_gain': elevationGain,
+      if (prCount != null) 'pr_count': prCount,
+      if (race != null) 'race': race,
     });
   }
 
@@ -628,7 +700,9 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       Value<double?>? averageSpeed,
       Value<double?>? averageHeartrate,
       Value<double?>? calories,
-      Value<double?>? elevationGain}) {
+      Value<double?>? elevationGain,
+      Value<int?>? prCount,
+      Value<bool>? race}) {
     return ActivitiesCompanion(
       id: id ?? this.id,
       source: source ?? this.source,
@@ -644,6 +718,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       averageHeartrate: averageHeartrate ?? this.averageHeartrate,
       calories: calories ?? this.calories,
       elevationGain: elevationGain ?? this.elevationGain,
+      prCount: prCount ?? this.prCount,
+      race: race ?? this.race,
     );
   }
 
@@ -693,6 +769,12 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     if (elevationGain.present) {
       map['elevation_gain'] = Variable<double>(elevationGain.value);
     }
+    if (prCount.present) {
+      map['pr_count'] = Variable<int>(prCount.value);
+    }
+    if (race.present) {
+      map['race'] = Variable<bool>(race.value);
+    }
     return map;
   }
 
@@ -712,7 +794,9 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
           ..write('averageSpeed: $averageSpeed, ')
           ..write('averageHeartrate: $averageHeartrate, ')
           ..write('calories: $calories, ')
-          ..write('elevationGain: $elevationGain')
+          ..write('elevationGain: $elevationGain, ')
+          ..write('prCount: $prCount, ')
+          ..write('race: $race')
           ..write(')'))
         .toString();
   }
@@ -1456,6 +1540,8 @@ typedef $$ActivitiesTableCreateCompanionBuilder = ActivitiesCompanion Function({
   Value<double?> averageHeartrate,
   Value<double?> calories,
   Value<double?> elevationGain,
+  Value<int?> prCount,
+  Value<bool> race,
 });
 typedef $$ActivitiesTableUpdateCompanionBuilder = ActivitiesCompanion Function({
   Value<int> id,
@@ -1472,6 +1558,8 @@ typedef $$ActivitiesTableUpdateCompanionBuilder = ActivitiesCompanion Function({
   Value<double?> averageHeartrate,
   Value<double?> calories,
   Value<double?> elevationGain,
+  Value<int?> prCount,
+  Value<bool> race,
 });
 
 class $$ActivitiesTableFilterComposer
@@ -1527,6 +1615,12 @@ class $$ActivitiesTableFilterComposer
 
   ColumnFilters<double> get elevationGain => $composableBuilder(
       column: $table.elevationGain, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get prCount => $composableBuilder(
+      column: $table.prCount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get race => $composableBuilder(
+      column: $table.race, builder: (column) => ColumnFilters(column));
 }
 
 class $$ActivitiesTableOrderingComposer
@@ -1582,6 +1676,12 @@ class $$ActivitiesTableOrderingComposer
   ColumnOrderings<double> get elevationGain => $composableBuilder(
       column: $table.elevationGain,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get prCount => $composableBuilder(
+      column: $table.prCount, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get race => $composableBuilder(
+      column: $table.race, builder: (column) => ColumnOrderings(column));
 }
 
 class $$ActivitiesTableAnnotationComposer
@@ -1634,6 +1734,12 @@ class $$ActivitiesTableAnnotationComposer
 
   GeneratedColumn<double> get elevationGain => $composableBuilder(
       column: $table.elevationGain, builder: (column) => column);
+
+  GeneratedColumn<int> get prCount =>
+      $composableBuilder(column: $table.prCount, builder: (column) => column);
+
+  GeneratedColumn<bool> get race =>
+      $composableBuilder(column: $table.race, builder: (column) => column);
 }
 
 class $$ActivitiesTableTableManager extends RootTableManager<
@@ -1673,6 +1779,8 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             Value<double?> averageHeartrate = const Value.absent(),
             Value<double?> calories = const Value.absent(),
             Value<double?> elevationGain = const Value.absent(),
+            Value<int?> prCount = const Value.absent(),
+            Value<bool> race = const Value.absent(),
           }) =>
               ActivitiesCompanion(
             id: id,
@@ -1689,6 +1797,8 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             averageHeartrate: averageHeartrate,
             calories: calories,
             elevationGain: elevationGain,
+            prCount: prCount,
+            race: race,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -1705,6 +1815,8 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             Value<double?> averageHeartrate = const Value.absent(),
             Value<double?> calories = const Value.absent(),
             Value<double?> elevationGain = const Value.absent(),
+            Value<int?> prCount = const Value.absent(),
+            Value<bool> race = const Value.absent(),
           }) =>
               ActivitiesCompanion.insert(
             id: id,
@@ -1721,6 +1833,8 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             averageHeartrate: averageHeartrate,
             calories: calories,
             elevationGain: elevationGain,
+            prCount: prCount,
+            race: race,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (

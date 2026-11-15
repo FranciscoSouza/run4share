@@ -27,6 +27,7 @@ import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/rate/rate_prompt.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/share/share_actions.dart';
+import 'package:run4share/features/stickers/extra_sticker_view.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/logo.dart';
 
@@ -231,6 +232,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                               theme: theme,
                                               data: data,
                                               watermark: !isPro,
+                                              start: activity!.startLocal,
                                             ),
                                 ),
                               ),
@@ -313,9 +315,13 @@ class _ImagePreview extends StatelessWidget {
     required this.theme,
     required this.data,
     required this.watermark,
+    required this.start,
   });
 
   final bool watermark;
+
+  /// The activity's start, for the time sticker.
+  final DateTime start;
 
   final GlobalKey boundary;
   final CreationDraft draft;
@@ -347,6 +353,7 @@ class _ImagePreview extends StatelessWidget {
             data: data,
             placement: draft.sticker,
             style: draft.style,
+            extras: extraItems(draft, start),
             watermark: watermark,
           ),
         ),

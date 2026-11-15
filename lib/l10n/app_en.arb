@@ -339,5 +339,49 @@
         "type": "String"
       }
     }
+  },
+  "formRace": "This was a race",
+  "editorStickers": "Stickers",
+  "stickersForActivity": "For this activity",
+  "stickersTime": "Start time",
+  "stickersPhrases": "Phrases",
+  "stickersStamps": "Stamps and seals",
+  "labelRecord": "Record",
+  "labelLongRun": "Long run",
+  "labelRaceDay": "Race day",
+  "labelSub": "Sub-{mark}",
+  "moodProud": "Proud",
+  "moodTired": "Tired",
+  "moodHappy": "Happy",
+  "moodMotivated": "Motivated",
+  "moodFunny": "Funny",
+  "phraseProud0": "Earned it.",
+  "phraseProud1": "Every kilometre counted.",
+  "phraseProud2": "Stronger than yesterday.",
+  "phraseTired0": "Legs: gone. Smile: still here.",
+  "phraseTired1": "Tired, but not done.",
+  "phraseTired2": "Running on coffee and stubbornness.",
+  "phraseHappy0": "Best part of my day.",
+  "phraseHappy1": "Pure joy, one step at a time.",
+  "phraseHappy2": "Sunshine and endorphins.",
+  "phraseMotivated0": "Small steps, big goals.",
+  "phraseMotivated1": "Show up. Run. Repeat.",
+  "phraseMotivated2": "The hardest part was lacing up.",
+  "phraseFunny0": "I run because pizza.",
+  "phraseFunny1": "Will run for snacks.",
+  "phraseFunny2": "Powered by bananas.",
+  "stampEarlyBird": "Early bird",
+  "stampNightOwl": "Night owl",
+  "stampRainOrShine": "Rain or shine",
+  "stampWeekendWarrior": "Weekend warrior",
+  "stampDone": "Done",
+  "stampNoExcuses": "No excuses",
+  "@labelSub": {
+    "placeholders": {
+      "mark": {
+        "type": "String"
+      }
+    },
+    "description": "Label for beating a round race time, e.g. Sub-25 (minutes) or Sub-1:45."
   }
 }

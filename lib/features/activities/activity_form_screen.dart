@@ -59,6 +59,7 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
   final _heartRate = TextEditingController();
 
   String _sportType = manualSportTypes.first;
+  bool _race = false;
   late DateTime _start;
   bool _loading = false;
   bool _saving = false;
@@ -96,6 +97,7 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
           ? activity.sportType
           : manualSportTypes.first;
       _start = activity.startLocal;
+      _race = activity.race;
       _name.text = activity.name;
       _duration.text = format.duration(activity.movingTime);
       if (activity.distance case final metres?) {
@@ -177,6 +179,7 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
           distance: distance == null ? null : distance * format.metresPerUnit,
           calories: parseNumber(_calories.text),
           averageHeartrate: parseNumber(_heartRate.text),
+          race: _race,
         );
     messenger
       ..hideCurrentSnackBar()
@@ -325,7 +328,14 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
                               const Expanded(child: SizedBox()),
                             ],
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.md),
+                          SwitchListTile(
+                            value: _race,
+                            onChanged: (value) => setState(() => _race = value),
+                            title: Text(l10n.formRace),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
                           Text(
                             l10n.formFootnote,
                             style: theme.textTheme.bodySmall?.copyWith(

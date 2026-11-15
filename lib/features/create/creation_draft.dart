@@ -38,6 +38,7 @@ class CreationDraft {
     required this.themeId,
     this.sticker,
     this.style = const StickerStyle(),
+    this.extras = const [],
   });
 
   final int activityId;
@@ -56,6 +57,10 @@ class CreationDraft {
   /// Text colour and background; kept when the theme changes.
   final StickerStyle style;
 
+  /// Extra stickers (Pro): labels, time, phrases, stamps; drawn above the
+  /// theme sticker in this order.
+  final List<ExtraSticker> extras;
+
   /// Settings as JSON, stored with each creation so it can be edited again.
   Map<String, Object?> toJson() => {
         'activityId': activityId,
@@ -73,6 +78,7 @@ class CreationDraft {
           null => null,
         },
         'style': {'colour': style.colour?.name, 'background': style.background},
+        'extras': [for (final extra in extras) extra.toJson()],
       };
 
   /// Null if [json] isn't a draft this version understands.
@@ -106,6 +112,12 @@ class CreationDraft {
           colour: StickerColour.values.asNameMap()[style['colour']],
           background: (style['background'] as num?)?.toDouble() ?? 0,
         ),
+        extras: [
+          for (final item in (json['extras'] as List?) ?? const [])
+            if (ExtraSticker.fromJson(item as Map<String, Object?>)
+                case final extra?)
+              extra,
+        ],
       );
     } on Object {
       return null;
@@ -117,6 +129,7 @@ class CreationDraft {
     StickerPlacement? sticker,
     bool removeSticker = false,
     StickerStyle? style,
+    List<ExtraSticker>? extras,
   }) =>
       CreationDraft(
         activityId: activityId,
@@ -126,7 +139,87 @@ class CreationDraft {
         themeId: themeId ?? this.themeId,
         sticker: removeSticker ? null : sticker ?? this.sticker,
         style: style ?? this.style,
+        extras: extras ?? this.extras,
       );
+}
+
+enum ExtraKind {
+  /// Record, Long run, Race day, Sub-X.
+  label,
+
+  /// The start time, "05:42".
+  time,
+
+  /// A mood phrase.
+  phrase,
+
+  /// A stamp or seal.
+  stamp,
+}
+
+/// One extra sticker on the image.
+@immutable
+class ExtraSticker {
+  const ExtraSticker({
+    required this.id,
+    required this.kind,
+    required this.value,
+    required this.placement,
+    this.colour,
+  });
+
+  /// Unique within its draft.
+  final int id;
+  final ExtraKind kind;
+
+  /// Which one: a label ("record", "subMark:25"), a phrase ("proud.0"), a
+  /// stamp ("earlyBird"); empty for the time.
+  final String value;
+  final StickerPlacement placement;
+
+  /// Null: the sticker's own colours.
+  final StickerColour? colour;
+
+  ExtraSticker copyWith({StickerPlacement? placement, StickerColour? colour}) =>
+      ExtraSticker(
+        id: id,
+        kind: kind,
+        value: value,
+        placement: placement ?? this.placement,
+        colour: colour ?? this.colour,
+      );
+
+  Map<String, Object?> toJson() => {
+        'id': id,
+        'kind': kind.name,
+        'value': value,
+        'x': placement.center.dx,
+        'y': placement.center.dy,
+        'scale': placement.scale,
+        'rotation': placement.rotation,
+        'colour': colour?.name,
+      };
+
+  static ExtraSticker? fromJson(Map<String, Object?> json) {
+    try {
+      return ExtraSticker(
+        id: json['id']! as int,
+        kind: ExtraKind.values.byName(json['kind']! as String),
+        value: json['value']! as String,
+        placement: StickerPlacement(
+          center: Offset(
+            (json['x']! as num).toDouble(),
+            (json['y']! as num).toDouble(),
+          ),
+          scale: (json['scale']! as num).toDouble(),
+          rotation: (json['rotation']! as num).toDouble(),
+        ),
+        colour: StickerColour.values.asNameMap()[json['colour']],
+      );
+    } on Object {
+      return null;
+    }
+  }
 }
 
 /// The six text colours of the design's swatch row.
@@ -285,6 +378,54 @@ class CreationDraftNotifier extends Notifier<CreationDraft?> {
     final clamped = value.clamp(-1.0, 1.0);
     final snapped = clamped.abs() < StickerStyle.snap ? 0.0 : clamped;
     state = draft.copyWith(style: draft.style.copyWith(background: snapped));
+  }
+
+  /// Adds an extra sticker in the upper middle of the image; returns its
+  /// ID so the editor can select it.
+  int addExtra(ExtraKind kind, String value) {
+    final draft = state;
+    if (draft == null) return -1;
+    final id = draft.extras.fold(0, (max, e) => e.id > max ? e.id : max) + 1;
+    state = draft.copyWith(
+      extras: [
+        ...draft.extras,
+        ExtraSticker(
+          id: id,
+          kind: kind,
+          value: value,
+          placement: const StickerPlacement(center: Offset(0.5, 0.4)),
+        ),
+      ],
+    );
+    return id;
+  }
+
+  void _updateExtra(int id, ExtraSticker Function(ExtraSticker) change) {
+    final draft = state;
+    if (draft == null) return;
+    state = draft.copyWith(
+      extras: [
+        for (final e in draft.extras)
+          if (e.id == id) change(e) else e,
+      ],
+    );
+  }
+
+  void placeExtra(int id, StickerPlacement placement) =>
+      _updateExtra(id, (e) => e.copyWith(placement: placement));
+
+  void setExtraColour(int id, StickerColour colour) =>
+      _updateExtra(id, (e) => e.copyWith(colour: colour));
+
+  void removeExtra(int id) {
+    final draft = state;
+    if (draft == null) return;
+    state = draft.copyWith(
+      extras: [
+        for (final e in draft.extras)
+          if (e.id != id) e,
+      ],
+    );
   }
 
   void removeSticker() {

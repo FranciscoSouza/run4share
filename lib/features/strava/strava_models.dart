@@ -63,8 +63,19 @@ abstract class StravaActivity with _$StravaActivity {
 
     /// Only in Strava's single-activity detail, not in the list.
     double? calories,
+
+    /// Personal records Strava found in it.
+    int? prCount,
+
+    /// Strava's workout type: 1 is a run race, 11 a ride race.
+    int? workoutType,
   }) = _StravaActivity;
+
+  const StravaActivity._();
 
   factory StravaActivity.fromJson(Map<String, dynamic> json) =>
       _$StravaActivityFromJson(json);
+
+  /// Marked as a race on Strava.
+  bool get isRace => workoutType == 1 || workoutType == 11;
 }

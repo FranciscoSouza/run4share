@@ -473,6 +473,12 @@ mixin _$StravaActivity {
   /// Only in Strava's single-activity detail, not in the list.
   double? get calories;
 
+  /// Personal records Strava found in it.
+  int? get prCount;
+
+  /// Strava's workout type: 1 is a run race, 11 a ride race.
+  int? get workoutType;
+
   /// Create a copy of StravaActivity
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -511,7 +517,11 @@ mixin _$StravaActivity {
             (identical(other.totalElevationGain, _this.totalElevationGain) ||
                 other.totalElevationGain == _this.totalElevationGain) &&
             (identical(other.calories, _this.calories) ||
-                other.calories == _this.calories));
+                other.calories == _this.calories) &&
+            (identical(other.prCount, _this.prCount) ||
+                other.prCount == _this.prCount) &&
+            (identical(other.workoutType, _this.workoutType) ||
+                other.workoutType == _this.workoutType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -531,13 +541,15 @@ mixin _$StravaActivity {
         _this.averageSpeed,
         _this.averageHeartrate,
         _this.totalElevationGain,
-        _this.calories);
+        _this.calories,
+        _this.prCount,
+        _this.workoutType);
   }
 
   @override
   String toString() {
     final _this = this as StravaActivity;
-    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain}, calories: ${_this.calories})';
+    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain}, calories: ${_this.calories}, prCount: ${_this.prCount}, workoutType: ${_this.workoutType})';
   }
 }
 
@@ -559,7 +571,9 @@ abstract mixin class $StravaActivityCopyWith<$Res> {
       double? averageSpeed,
       double? averageHeartrate,
       double? totalElevationGain,
-      double? calories});
+      double? calories,
+      int? prCount,
+      int? workoutType});
 }
 
 /// @nodoc
@@ -587,6 +601,8 @@ class _$StravaActivityCopyWithImpl<$Res>
     Object? averageHeartrate = freezed,
     Object? totalElevationGain = freezed,
     Object? calories = freezed,
+    Object? prCount = freezed,
+    Object? workoutType = freezed,
   }) {
     return _then(StravaActivity(
       id: null == id
@@ -637,6 +653,14 @@ class _$StravaActivityCopyWithImpl<$Res>
           ? _self.calories
           : calories // ignore: cast_nullable_to_non_nullable
               as double?,
+      prCount: freezed == prCount
+          ? _self.prCount
+          : prCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      workoutType: freezed == workoutType
+          ? _self.workoutType
+          : workoutType // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -746,7 +770,9 @@ extension StravaActivityPatterns on StravaActivity {
             double? averageSpeed,
             double? averageHeartrate,
             double? totalElevationGain,
-            double? calories)?
+            double? calories,
+            int? prCount,
+            int? workoutType)?
         $default, {
     required TResult orElse(),
   }) {
@@ -765,7 +791,9 @@ extension StravaActivityPatterns on StravaActivity {
             _that.averageSpeed,
             _that.averageHeartrate,
             _that.totalElevationGain,
-            _that.calories);
+            _that.calories,
+            _that.prCount,
+            _that.workoutType);
       case _:
         return orElse();
     }
@@ -798,7 +826,9 @@ extension StravaActivityPatterns on StravaActivity {
             double? averageSpeed,
             double? averageHeartrate,
             double? totalElevationGain,
-            double? calories)
+            double? calories,
+            int? prCount,
+            int? workoutType)
         $default,
   ) {
     final _that = this;
@@ -816,7 +846,9 @@ extension StravaActivityPatterns on StravaActivity {
             _that.averageSpeed,
             _that.averageHeartrate,
             _that.totalElevationGain,
-            _that.calories);
+            _that.calories,
+            _that.prCount,
+            _that.workoutType);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -848,7 +880,9 @@ extension StravaActivityPatterns on StravaActivity {
             double? averageSpeed,
             double? averageHeartrate,
             double? totalElevationGain,
-            double? calories)?
+            double? calories,
+            int? prCount,
+            int? workoutType)?
         $default,
   ) {
     final _that = this;
@@ -866,7 +900,9 @@ extension StravaActivityPatterns on StravaActivity {
             _that.averageSpeed,
             _that.averageHeartrate,
             _that.totalElevationGain,
-            _that.calories);
+            _that.calories,
+            _that.prCount,
+            _that.workoutType);
       case _:
         return null;
     }
@@ -875,7 +911,7 @@ extension StravaActivityPatterns on StravaActivity {
 
 /// @nodoc
 @JsonSerializable()
-class _StravaActivity implements StravaActivity {
+class _StravaActivity extends StravaActivity {
   const _StravaActivity(
       {required this.id,
       required this.name,
@@ -888,7 +924,10 @@ class _StravaActivity implements StravaActivity {
       this.averageSpeed,
       this.averageHeartrate,
       this.totalElevationGain,
-      this.calories});
+      this.calories,
+      this.prCount,
+      this.workoutType})
+      : super._();
   factory _StravaActivity.fromJson(Map<String, dynamic> json) =>
       _$StravaActivityFromJson(json);
 
@@ -934,6 +973,14 @@ class _StravaActivity implements StravaActivity {
   @override
   final double? calories;
 
+  /// Personal records Strava found in it.
+  @override
+  final int? prCount;
+
+  /// Strava's workout type: 1 is a run race, 11 a ride race.
+  @override
+  final int? workoutType;
+
   /// Create a copy of StravaActivity
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -975,7 +1022,10 @@ class _StravaActivity implements StravaActivity {
             (identical(other.totalElevationGain, totalElevationGain) ||
                 other.totalElevationGain == totalElevationGain) &&
             (identical(other.calories, calories) ||
-                other.calories == calories));
+                other.calories == calories) &&
+            (identical(other.prCount, prCount) || other.prCount == prCount) &&
+            (identical(other.workoutType, workoutType) ||
+                other.workoutType == workoutType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -994,12 +1044,14 @@ class _StravaActivity implements StravaActivity {
         averageSpeed,
         averageHeartrate,
         totalElevationGain,
-        calories);
+        calories,
+        prCount,
+        workoutType);
   }
 
   @override
   String toString() {
-    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain, calories: $calories)';
+    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain, calories: $calories, prCount: $prCount, workoutType: $workoutType)';
   }
 }
 
@@ -1023,7 +1075,9 @@ abstract mixin class _$StravaActivityCopyWith<$Res>
       double? averageSpeed,
       double? averageHeartrate,
       double? totalElevationGain,
-      double? calories});
+      double? calories,
+      int? prCount,
+      int? workoutType});
 }
 
 /// @nodoc
@@ -1051,6 +1105,8 @@ class __$StravaActivityCopyWithImpl<$Res>
     Object? averageHeartrate = freezed,
     Object? totalElevationGain = freezed,
     Object? calories = freezed,
+    Object? prCount = freezed,
+    Object? workoutType = freezed,
   }) {
     return _then(_StravaActivity(
       id: null == id
@@ -1101,6 +1157,14 @@ class __$StravaActivityCopyWithImpl<$Res>
           ? _self.calories
           : calories // ignore: cast_nullable_to_non_nullable
               as double?,
+      prCount: freezed == prCount
+          ? _self.prCount
+          : prCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      workoutType: freezed == workoutType
+          ? _self.workoutType
+          : workoutType // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }

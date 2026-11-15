@@ -25,64 +25,30 @@ Offset rotateVector(Offset v, double radians) {
   return Offset(v.dx * c - v.dy * s, v.dx * s + v.dy * c);
 }
 
-/// The image being made: background, one sticker and the watermark, laid
-/// out in canvas units ([canvasUnits] wide) and scaled to whatever size it
-/// is given. The same widget draws the editor, thumbnails and the export,
-/// so they cannot differ.
-class StoryCanvas extends StatefulWidget {
-  const StoryCanvas({
-    required this.format,
-    required this.background,
-    this.theme,
-    this.data,
-    this.placement,
-    this.style = const StickerStyle(),
-    this.watermark = true,
-    this.editable = false,
-    this.selected = false,
-    this.onSelect,
-    this.onPlacement,
-    this.onRemove,
-    this.onTextColour,
-    this.onBackground,
-    this.activeTool,
-    this.handleLabels = const HandleLabels(),
-    super.key,
-  });
-
-  final ShareFormat format;
-  final Widget background;
-  final StickerTheme? theme;
-  final StickerData? data;
-
-  /// Null hides the sticker.
-  final StickerPlacement? placement;
-  final StickerStyle style;
-  final bool watermark;
-
-  /// Gestures and handles (the editor); off for thumbnails and export.
-  final bool editable;
-  final bool selected;
-  final ValueChanged<bool>? onSelect;
-  final ValueChanged<StickerPlacement>? onPlacement;
-  final VoidCallback? onRemove;
-
-  /// The "A" handle: open the text colour panel.
-  final VoidCallback? onTextColour;
-
-  /// The contrast handle: open the sticker background panel.
-  final VoidCallback? onBackground;
-
-  /// Which of those two panels is open, to highlight its handle.
-  final StickerTool? activeTool;
-  final HandleLabels handleLabels;
-
-  @override
-  State<StoryCanvas> createState() => _StoryCanvasState();
-}
+/// ID of the theme sticker among the canvas items.
+const themeItemId = 'theme';
 
 /// The sticker's style tools, opened from its handles.
 enum StickerTool { textColour, background }
+
+/// One movable thing on the canvas: the theme sticker or an extra one.
+/// [child] is drawn at canvas units.
+@immutable
+class CanvasItem {
+  const CanvasItem({
+    required this.id,
+    required this.child,
+    required this.placement,
+    this.tools = const {StickerTool.textColour},
+  });
+
+  final Object id;
+  final Widget child;
+  final StickerPlacement placement;
+
+  /// Style handles shown when selected (rotate, remove and resize always).
+  final Set<StickerTool> tools;
+}
 
 /// Accessibility labels for the sticker handles.
 @immutable
@@ -102,39 +68,116 @@ class HandleLabels {
   final String background;
 }
 
+/// The image being made: background, the theme sticker, extra stickers and
+/// the watermark, laid out in canvas units ([canvasUnits] wide) and scaled
+/// to whatever size it is given. The same widget draws the editor,
+/// thumbnails and the export, so they cannot differ.
+class StoryCanvas extends StatefulWidget {
+  const StoryCanvas({
+    required this.format,
+    required this.background,
+    this.theme,
+    this.data,
+    this.placement,
+    this.style = const StickerStyle(),
+    this.extras = const [],
+    this.watermark = true,
+    this.editable = false,
+    this.selected,
+    this.onSelect,
+    this.onPlacement,
+    this.onRemove,
+    this.onTool,
+    this.activeTool,
+    this.handleLabels = const HandleLabels(),
+    super.key,
+  });
+
+  final ShareFormat format;
+  final Widget background;
+  final StickerTheme? theme;
+  final StickerData? data;
+
+  /// The theme sticker's placement; null hides it.
+  final StickerPlacement? placement;
+  final StickerStyle style;
+
+  /// Extra stickers, above the theme sticker.
+  final List<CanvasItem> extras;
+  final bool watermark;
+
+  /// Gestures and handles (the editor); off for thumbnails and export.
+  final bool editable;
+
+  /// The selected item's ID ([themeItemId] or an extra's), or null.
+  final Object? selected;
+  final ValueChanged<Object?>? onSelect;
+  final void Function(Object id, StickerPlacement placement)? onPlacement;
+  final ValueChanged<Object>? onRemove;
+  final void Function(Object id, StickerTool tool)? onTool;
+
+  /// The open style panel, to highlight its handle.
+  final StickerTool? activeTool;
+  final HandleLabels handleLabels;
+
+  @override
+  State<StoryCanvas> createState() => _StoryCanvasState();
+}
+
 class _StoryCanvasState extends State<StoryCanvas> {
   final GlobalKey _canvasKey = GlobalKey();
 
-  /// The sticker's size in canvas units, measured after layout.
-  Size? _stickerSize;
+  /// Each item's size in canvas units, measured after layout.
+  final Map<Object, Size> _sizes = {};
 
+  Object? _active;
   StickerPlacement? _start;
   Offset? _startFocal;
   double _startAngle = 0;
   double _startDistance = 1;
+
+  List<CanvasItem> get _items {
+    final theme = widget.theme;
+    final data = widget.data;
+    final placement = widget.placement;
+    return [
+      if (theme != null && data != null && placement != null)
+        CanvasItem(
+          id: themeItemId,
+          child: StickerView(theme: theme, data: data, style: widget.style),
+          placement: placement,
+          tools: const {StickerTool.textColour, StickerTool.background},
+        ),
+      ...widget.extras,
+    ];
+  }
 
   Offset _toGlobal(Offset local) {
     final box = _canvasKey.currentContext?.findRenderObject() as RenderBox?;
     return box?.localToGlobal(local) ?? local;
   }
 
-  void _emit(StickerPlacement placement) => widget.onPlacement?.call(placement);
+  void _emit(Object id, StickerPlacement placement) =>
+      widget.onPlacement?.call(id, placement);
 
-  // Dragging and pinching the sticker itself.
-  void _onScaleStart(ScaleStartDetails details) {
-    _start = widget.placement;
+  // Dragging and pinching an item itself.
+  void _onScaleStart(CanvasItem item, ScaleStartDetails details) {
+    _active = item.id;
+    _start = item.placement;
     _startFocal = details.focalPoint;
-    widget.onSelect?.call(true);
+    widget.onSelect?.call(item.id);
   }
 
   void _onScaleUpdate(ScaleUpdateDetails details, Size canvas) {
+    final id = _active;
     final start = _start;
     final focal = _startFocal;
-    if (start == null || focal == null) return;
+    if (id == null || start == null || focal == null) return;
     final delta = details.focalPoint - focal;
     final center = start.center +
         Offset(delta.dx / canvas.width, delta.dy / canvas.height);
     _emit(
+      id,
       start.copyWith(
         center: Offset(center.dx.clamp(0, 1), center.dy.clamp(0, 1)),
         scale: (start.scale * details.scale).clamp(
@@ -149,18 +192,25 @@ class _StoryCanvasState extends State<StoryCanvas> {
   }
 
   // The rotate and resize handles turn and size around the centre.
-  void _onHandleStart(DragStartDetails details, Offset centerLocal) {
-    _start = widget.placement;
+  void _onHandleStart(
+    CanvasItem item,
+    DragStartDetails details,
+    Offset centerLocal,
+  ) {
+    _active = item.id;
+    _start = item.placement;
     final v = details.globalPosition - _toGlobal(centerLocal);
     _startAngle = v.direction;
     _startDistance = math.max(v.distance, 1);
   }
 
   void _onRotate(DragUpdateDetails details, Offset centerLocal) {
+    final id = _active;
     final start = _start;
-    if (start == null) return;
+    if (id == null || start == null) return;
     final v = details.globalPosition - _toGlobal(centerLocal);
     _emit(
+      id,
       start.copyWith(
         rotation: snapRotation(start.rotation + v.direction - _startAngle),
       ),
@@ -168,10 +218,12 @@ class _StoryCanvasState extends State<StoryCanvas> {
   }
 
   void _onResize(DragUpdateDetails details, Offset centerLocal) {
+    final id = _active;
     final start = _start;
-    if (start == null) return;
+    if (id == null || start == null) return;
     final v = details.globalPosition - _toGlobal(centerLocal);
     _emit(
+      id,
       start.copyWith(
         scale: (start.scale * v.distance / _startDistance).clamp(
           StickerPlacement.minScale,
@@ -179,6 +231,114 @@ class _StoryCanvasState extends State<StoryCanvas> {
         ),
       ),
     );
+  }
+
+  Offset _centerOf(CanvasItem item, Size size) => Offset(
+        item.placement.center.dx * size.width,
+        item.placement.center.dy * size.height,
+      );
+
+  Widget _positioned(CanvasItem item, Size size, double k) {
+    Widget child = _MeasureSize(
+      onSize: (s) {
+        if (_sizes[item.id] != s) setState(() => _sizes[item.id] = s);
+      },
+      child: item.child,
+    );
+    if (widget.editable) {
+      child = GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => widget.onSelect?.call(item.id),
+        onScaleStart: (d) => _onScaleStart(item, d),
+        onScaleUpdate: (d) => _onScaleUpdate(d, size),
+        child: child,
+      );
+    }
+    final center = _centerOf(item, size);
+    return Positioned(
+      key: ValueKey(item.id),
+      left: center.dx,
+      top: center.dy,
+      child: FractionalTranslation(
+        translation: const Offset(-0.5, -0.5),
+        child: Transform.rotate(
+          angle: item.placement.rotation,
+          child: Transform.scale(
+            scale: k * item.placement.scale,
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _handles(CanvasItem item, Size size, double k) {
+    final measured = _sizes[item.id];
+    if (measured == null) return const [];
+    final placement = item.placement;
+    final center = _centerOf(item, size);
+    final half = Offset(
+      measured.width * k * placement.scale / 2,
+      measured.height * k * placement.scale / 2,
+    );
+    const pad = 10.0;
+    Offset at(double x, double y) =>
+        center + rotateVector(Offset(x, y), placement.rotation);
+    final labels = widget.handleLabels;
+    return [
+      Positioned(
+        left: center.dx,
+        top: center.dy,
+        child: IgnorePointer(
+          child: FractionalTranslation(
+            translation: const Offset(-0.5, -0.5),
+            child: Transform.rotate(
+              angle: placement.rotation,
+              child: CustomPaint(
+                size: Size(half.dx * 2 + pad * 2, half.dy * 2 + pad * 2),
+                painter: const _DashedFrame(stem: 44),
+              ),
+            ),
+          ),
+        ),
+      ),
+      _Handle(
+        at: at(0, -half.dy - pad - 44),
+        icon: AppIcons.refresh,
+        label: labels.rotate,
+        onPanStart: (d) => _onHandleStart(item, d, center),
+        onPanUpdate: (d) => _onRotate(d, center),
+      ),
+      _Handle(
+        at: at(half.dx + pad, -half.dy - pad),
+        icon: AppIcons.trash,
+        label: labels.remove,
+        onTap: () => widget.onRemove?.call(item.id),
+      ),
+      if (item.tools.contains(StickerTool.textColour))
+        _Handle(
+          at: at(-half.dx - pad, -half.dy - pad),
+          icon: AppIcons.textColour,
+          label: labels.textColour,
+          active: widget.activeTool == StickerTool.textColour,
+          onTap: () => widget.onTool?.call(item.id, StickerTool.textColour),
+        ),
+      if (item.tools.contains(StickerTool.background))
+        _Handle(
+          at: at(-half.dx - pad, half.dy + pad),
+          icon: AppIcons.contrast,
+          label: labels.background,
+          active: widget.activeTool == StickerTool.background,
+          onTap: () => widget.onTool?.call(item.id, StickerTool.background),
+        ),
+      _Handle(
+        at: at(half.dx + pad, half.dy + pad),
+        icon: AppIcons.resize,
+        label: labels.resize,
+        onPanStart: (d) => _onHandleStart(item, d, center),
+        onPanUpdate: (d) => _onResize(d, center),
+      ),
+    ];
   }
 
   @override
@@ -189,54 +349,9 @@ class _StoryCanvasState extends State<StoryCanvas> {
         builder: (context, box) {
           final size = box.biggest;
           final k = size.width / canvasUnits;
-          final theme = widget.theme;
-          final data = widget.data;
-          final placement = widget.placement;
-          final showSticker =
-              theme != null && data != null && placement != null;
-          final center = showSticker
-              ? Offset(
-                  placement.center.dx * size.width,
-                  placement.center.dy * size.height,
-                )
-              : Offset.zero;
-
-          Widget sticker = const SizedBox.shrink();
-          if (showSticker) {
-            sticker = _MeasureSize(
-              onSize: (s) {
-                if (s != _stickerSize) setState(() => _stickerSize = s);
-              },
-              child: StickerView(
-                theme: theme,
-                data: data,
-                style: widget.style,
-              ),
-            );
-            if (widget.editable) {
-              sticker = GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => widget.onSelect?.call(true),
-                onScaleStart: _onScaleStart,
-                onScaleUpdate: (d) => _onScaleUpdate(d, size),
-                child: sticker,
-              );
-            }
-            sticker = Positioned(
-              left: center.dx,
-              top: center.dy,
-              child: FractionalTranslation(
-                translation: const Offset(-0.5, -0.5),
-                child: Transform.rotate(
-                  angle: placement.rotation,
-                  child: Transform.scale(
-                    scale: k * placement.scale,
-                    child: sticker,
-                  ),
-                ),
-              ),
-            );
-          }
+          final items = _items;
+          // Forget sizes of items that are gone.
+          _sizes.removeWhere((id, _) => !items.any((i) => i.id == id));
 
           final picture = ClipRect(
             child: Stack(
@@ -245,12 +360,12 @@ class _StoryCanvasState extends State<StoryCanvas> {
                   child: widget.editable
                       ? GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTap: () => widget.onSelect?.call(false),
+                          onTap: () => widget.onSelect?.call(null),
                           child: widget.background,
                         )
                       : widget.background,
                 ),
-                sticker,
+                for (final item in items) _positioned(item, size, k),
                 if (widget.watermark)
                   Positioned(
                     right: 30 * k,
@@ -268,89 +383,15 @@ class _StoryCanvasState extends State<StoryCanvas> {
             ),
           );
 
-          final measured = _stickerSize;
-          if (!widget.editable ||
-              !widget.selected ||
-              !showSticker ||
-              measured == null) {
-            return Stack(
-              key: _canvasKey,
-              children: [Positioned.fill(child: picture)],
-            );
-          }
-
-          // Handles, in screen units around the turned sticker.
-          final half = Offset(
-            measured.width * k * placement.scale / 2,
-            measured.height * k * placement.scale / 2,
-          );
-          const pad = 10.0;
-          Offset at(double x, double y) =>
-              center + rotateVector(Offset(x, y), placement.rotation);
-          final topRight = at(half.dx + pad, -half.dy - pad);
-          final bottomRight = at(half.dx + pad, half.dy + pad);
-          final topLeft = at(-half.dx - pad, -half.dy - pad);
-          final bottomLeft = at(-half.dx - pad, half.dy + pad);
-          final top = at(0, -half.dy - pad - 44);
-
+          final selected = widget.editable
+              ? items.where((i) => i.id == widget.selected).firstOrNull
+              : null;
           return Stack(
             key: _canvasKey,
             clipBehavior: Clip.none,
             children: [
               Positioned.fill(child: picture),
-              Positioned(
-                left: center.dx,
-                top: center.dy,
-                child: IgnorePointer(
-                  child: FractionalTranslation(
-                    translation: const Offset(-0.5, -0.5),
-                    child: Transform.rotate(
-                      angle: placement.rotation,
-                      child: CustomPaint(
-                        size: Size(
-                          half.dx * 2 + pad * 2,
-                          half.dy * 2 + pad * 2,
-                        ),
-                        painter: const _DashedFrame(stem: 44),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              _Handle(
-                at: top,
-                icon: AppIcons.refresh,
-                label: widget.handleLabels.rotate,
-                onPanStart: (d) => _onHandleStart(d, center),
-                onPanUpdate: (d) => _onRotate(d, center),
-              ),
-              _Handle(
-                at: topRight,
-                icon: AppIcons.trash,
-                label: widget.handleLabels.remove,
-                onTap: widget.onRemove,
-              ),
-              _Handle(
-                at: topLeft,
-                icon: AppIcons.textColour,
-                label: widget.handleLabels.textColour,
-                active: widget.activeTool == StickerTool.textColour,
-                onTap: widget.onTextColour,
-              ),
-              _Handle(
-                at: bottomLeft,
-                icon: AppIcons.contrast,
-                label: widget.handleLabels.background,
-                active: widget.activeTool == StickerTool.background,
-                onTap: widget.onBackground,
-              ),
-              _Handle(
-                at: bottomRight,
-                icon: AppIcons.resize,
-                label: widget.handleLabels.resize,
-                onPanStart: (d) => _onHandleStart(d, center),
-                onPanUpdate: (d) => _onResize(d, center),
-              ),
+              if (selected != null) ..._handles(selected, size, k),
             ],
           );
         },
@@ -372,12 +413,12 @@ class _Handle extends StatelessWidget {
 
   static const size = 40.0;
 
-  /// Its tool's panel is open: blue, like the design.
-  final bool active;
-
   final Offset at;
   final IconData icon;
   final String label;
+
+  /// Its tool's panel is open: blue, like the design.
+  final bool active;
   final VoidCallback? onTap;
   final GestureDragStartCallback? onPanStart;
   final GestureDragUpdateCallback? onPanUpdate;

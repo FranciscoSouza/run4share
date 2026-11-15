@@ -25,6 +25,7 @@ Activity row({
       averageSpeed: distance == null ? null : distance / movingTime,
       calories: calories,
       averageHeartrate: heartRate,
+      race: false,
     );
 
 void main() {

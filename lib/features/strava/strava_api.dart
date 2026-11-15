@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:run4share/app/clock.dart';
+import 'package:run4share/features/lab/lab.dart';
 import 'package:run4share/features/strava/strava_auth.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
+import 'package:run4share/features/strava/strava_demo.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
 /// Strava REST API v3, read-only.
@@ -15,14 +18,20 @@ class StravaApi {
 
   static const _base = 'https://www.strava.com/api/v3';
 
-  /// The athlete's activities, newest first.
+  /// The athlete's activities, newest first; only those that started
+  /// before [before] when given.
   Future<List<StravaActivity>> activities({
+    required int perPage,
     int page = 1,
-    int perPage = 30,
+    DateTime? before,
   }) async {
     final response = await _dio.get<List<dynamic>>(
       '$_base/athlete/activities',
-      queryParameters: {'page': page, 'per_page': perPage},
+      queryParameters: {
+        'page': page,
+        'per_page': perPage,
+        if (before != null) 'before': before.millisecondsSinceEpoch ~/ 1000,
+      },
       options: Options(headers: {'Authorization': 'Bearer ${await _token()}'}),
     );
     return [
@@ -32,24 +41,13 @@ class StravaApi {
   }
 }
 
+/// Real Strava, or sample activities when Laboratory says so.
 final stravaApiProvider = Provider<StravaApi>(
-  (ref) => StravaApi(
-    dio: ref.watch(dioProvider),
-    token: () => ref.read(stravaConnectionProvider.notifier).accessToken(),
-  ),
-);
-
-/// Latest Strava activities, refetched when the connected athlete changes.
-/// Empty when Strava is not connected.
-final stravaActivitiesProvider = FutureProvider<List<StravaActivity>>(
-  (ref) async {
-    final athlete = await ref.watch(
-      stravaConnectionProvider.selectAsync(
-        (session) => session == null ? null : (session.athleteId ?? 0),
-      ),
-    );
-    if (athlete == null) return const [];
-    return await ref.read(stravaApiProvider).activities();
-  },
-  retry: (count, error) => null,
+  (ref) => ref.watch(stravaDemoProvider)
+      ? DemoStravaApi(clock: ref.watch(clockProvider))
+      : StravaApi(
+          dio: ref.watch(dioProvider),
+          token: () =>
+              ref.read(stravaConnectionProvider.notifier).accessToken(),
+        ),
 );

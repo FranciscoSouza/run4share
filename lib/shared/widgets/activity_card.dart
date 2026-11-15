@@ -25,6 +25,7 @@ class ActivityCard extends StatelessWidget {
     required this.stats,
     super.key,
     this.onTap,
+    this.trailing,
   });
 
   final IconData icon;
@@ -32,6 +33,9 @@ class ActivityCard extends StatelessWidget {
   final String subtitle;
   final List<ActivityStat> stats;
   final VoidCallback? onTap;
+
+  /// Replaces the chevron, e.g. with a menu button.
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +85,9 @@ class ActivityCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (onTap != null)
+                  if (trailing != null)
+                    trailing!
+                  else if (onTap != null)
                     Icon(AppIcons.right, color: scheme.outline),
                 ],
               ),

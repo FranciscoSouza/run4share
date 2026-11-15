@@ -23,7 +23,14 @@ abstract final class AppIcons {
   static const IconData sparkle = LucideIcons.sparkle;
   static const IconData invite = LucideIcons.userPlus;
   static const IconData shield = LucideIcons.shield;
+  static const IconData flask = LucideIcons.flaskConical;
   static const IconData run = LucideIcons.footprints;
   static const IconData bike = LucideIcons.bike;
   static const IconData hike = LucideIcons.mountain;
+  static const IconData walk = LucideIcons.personStanding;
+  static const IconData gym = LucideIcons.dumbbell;
+  static const IconData more = LucideIcons.ellipsisVertical;
+  static const IconData calendar = LucideIcons.calendar;
+  static const IconData edit = LucideIcons.pencil;
+  static const IconData trash = LucideIcons.trash2;
 }

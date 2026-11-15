@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:run4share/app/clock.dart';
+import 'package:run4share/features/activities/strava_sync.dart';
 import 'package:run4share/features/strava/strava_auth.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 import 'package:run4share/features/strava/strava_session_store.dart';
@@ -30,10 +31,13 @@ class StravaConnection extends AsyncNotifier<StravaSession?> {
     return session;
   }
 
+  /// Revokes access on Strava and removes Strava activities from the
+  /// phone, as Strava's API terms ask. Manual activities stay.
   Future<void> disconnect() async {
     final session = state.value;
     state = const AsyncData(null);
     await _store.clear();
+    await ref.read(stravaSyncProvider.notifier).reset();
     if (session != null) unawaited(_auth.deauthorize(session.accessToken));
   }
 

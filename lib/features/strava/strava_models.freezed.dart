@@ -450,6 +450,9 @@ mixin _$StravaActivity {
   String get name;
   String get sportType;
 
+  /// When it started, in UTC.
+  DateTime get startDate;
+
   /// Wall-clock start time where the activity happened. Strava marks it
   /// with a Z, but it is not UTC: show its fields as they are and never
   /// call toLocal() on it.
@@ -488,6 +491,8 @@ mixin _$StravaActivity {
             (identical(other.name, _this.name) || other.name == _this.name) &&
             (identical(other.sportType, _this.sportType) ||
                 other.sportType == _this.sportType) &&
+            (identical(other.startDate, _this.startDate) ||
+                other.startDate == _this.startDate) &&
             (identical(other.startDateLocal, _this.startDateLocal) ||
                 other.startDateLocal == _this.startDateLocal) &&
             (identical(other.distance, _this.distance) ||
@@ -513,6 +518,7 @@ mixin _$StravaActivity {
         _this.id,
         _this.name,
         _this.sportType,
+        _this.startDate,
         _this.startDateLocal,
         _this.distance,
         _this.movingTime,
@@ -525,7 +531,7 @@ mixin _$StravaActivity {
   @override
   String toString() {
     final _this = this as StravaActivity;
-    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain})';
+    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain})';
   }
 }
 
@@ -539,6 +545,7 @@ abstract mixin class $StravaActivityCopyWith<$Res> {
       {int id,
       String name,
       String sportType,
+      DateTime startDate,
       DateTime startDateLocal,
       double distance,
       int movingTime,
@@ -564,6 +571,7 @@ class _$StravaActivityCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? sportType = null,
+    Object? startDate = null,
     Object? startDateLocal = null,
     Object? distance = null,
     Object? movingTime = null,
@@ -585,6 +593,10 @@ class _$StravaActivityCopyWithImpl<$Res>
           ? _self.sportType
           : sportType // ignore: cast_nullable_to_non_nullable
               as String,
+      startDate: null == startDate
+          ? _self.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       startDateLocal: null == startDateLocal
           ? _self.startDateLocal
           : startDateLocal // ignore: cast_nullable_to_non_nullable
@@ -714,6 +726,7 @@ extension StravaActivityPatterns on StravaActivity {
             int id,
             String name,
             String sportType,
+            DateTime startDate,
             DateTime startDateLocal,
             double distance,
             int movingTime,
@@ -731,6 +744,7 @@ extension StravaActivityPatterns on StravaActivity {
             _that.id,
             _that.name,
             _that.sportType,
+            _that.startDate,
             _that.startDateLocal,
             _that.distance,
             _that.movingTime,
@@ -762,6 +776,7 @@ extension StravaActivityPatterns on StravaActivity {
             int id,
             String name,
             String sportType,
+            DateTime startDate,
             DateTime startDateLocal,
             double distance,
             int movingTime,
@@ -778,6 +793,7 @@ extension StravaActivityPatterns on StravaActivity {
             _that.id,
             _that.name,
             _that.sportType,
+            _that.startDate,
             _that.startDateLocal,
             _that.distance,
             _that.movingTime,
@@ -808,6 +824,7 @@ extension StravaActivityPatterns on StravaActivity {
             int id,
             String name,
             String sportType,
+            DateTime startDate,
             DateTime startDateLocal,
             double distance,
             int movingTime,
@@ -824,6 +841,7 @@ extension StravaActivityPatterns on StravaActivity {
             _that.id,
             _that.name,
             _that.sportType,
+            _that.startDate,
             _that.startDateLocal,
             _that.distance,
             _that.movingTime,
@@ -844,6 +862,7 @@ class _StravaActivity implements StravaActivity {
       {required this.id,
       required this.name,
       required this.sportType,
+      required this.startDate,
       required this.startDateLocal,
       this.distance = 0,
       this.movingTime = 0,
@@ -860,6 +879,10 @@ class _StravaActivity implements StravaActivity {
   final String name;
   @override
   final String sportType;
+
+  /// When it started, in UTC.
+  @override
+  final DateTime startDate;
 
   /// Wall-clock start time where the activity happened. Strava marks it
   /// with a Z, but it is not UTC: show its fields as they are and never
@@ -912,6 +935,8 @@ class _StravaActivity implements StravaActivity {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.sportType, sportType) ||
                 other.sportType == sportType) &&
+            (identical(other.startDate, startDate) ||
+                other.startDate == startDate) &&
             (identical(other.startDateLocal, startDateLocal) ||
                 other.startDateLocal == startDateLocal) &&
             (identical(other.distance, distance) ||
@@ -936,6 +961,7 @@ class _StravaActivity implements StravaActivity {
         id,
         name,
         sportType,
+        startDate,
         startDateLocal,
         distance,
         movingTime,
@@ -947,7 +973,7 @@ class _StravaActivity implements StravaActivity {
 
   @override
   String toString() {
-    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain)';
+    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain)';
   }
 }
 
@@ -963,6 +989,7 @@ abstract mixin class _$StravaActivityCopyWith<$Res>
       {int id,
       String name,
       String sportType,
+      DateTime startDate,
       DateTime startDateLocal,
       double distance,
       int movingTime,
@@ -988,6 +1015,7 @@ class __$StravaActivityCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? sportType = null,
+    Object? startDate = null,
     Object? startDateLocal = null,
     Object? distance = null,
     Object? movingTime = null,
@@ -1009,6 +1037,10 @@ class __$StravaActivityCopyWithImpl<$Res>
           ? _self.sportType
           : sportType // ignore: cast_nullable_to_non_nullable
               as String,
+      startDate: null == startDate
+          ? _self.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       startDateLocal: null == startDateLocal
           ? _self.startDateLocal
           : startDateLocal // ignore: cast_nullable_to_non_nullable

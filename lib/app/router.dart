@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:run4share/app/app_shell.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/features/activities/activity_form_screen.dart';
 import 'package:run4share/features/creations/creations_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
@@ -13,6 +14,8 @@ abstract final class AppRoutes {
   static const creations = '/creations';
   static const settings = '/settings';
   static const connectStrava = '/connect/strava';
+  static const newActivity = '/activity/new';
+  static String editActivity(int id) => '/activity/$id/edit';
 }
 
 final _rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -48,6 +51,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.settings,
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.newActivity,
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => const ActivityFormScreen(),
+      ),
+      GoRoute(
+        path: '/activity/:id/edit',
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => ActivityFormScreen(
+          activityId: int.tryParse(state.pathParameters['id'] ?? ''),
+        ),
       ),
       GoRoute(
         path: AppRoutes.connectStrava,

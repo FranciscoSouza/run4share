@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:run4share/app/clock.dart';
+import 'package:run4share/features/lab/lab.dart';
 import 'package:run4share/features/strava/strava_config.dart';
+import 'package:run4share/features/strava/strava_demo.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
 enum StravaAuthFailure {
@@ -167,11 +169,14 @@ final webAuthenticateProvider = Provider<WebAuthenticate>(
   (ref) => FlutterWebAuth2.authenticate,
 );
 
+/// Real Strava, or the demo stand-in when Laboratory says so.
 final stravaAuthProvider = Provider<StravaAuth>(
-  (ref) => StravaAuth(
-    config: ref.watch(stravaConfigProvider),
-    dio: ref.watch(dioProvider),
-    authenticate: ref.watch(webAuthenticateProvider),
-    clock: ref.watch(clockProvider),
-  ),
+  (ref) => ref.watch(stravaDemoProvider)
+      ? DemoStravaAuth(clock: ref.watch(clockProvider))
+      : StravaAuth(
+          config: ref.watch(stravaConfigProvider),
+          dio: ref.watch(dioProvider),
+          authenticate: ref.watch(webAuthenticateProvider),
+          clock: ref.watch(clockProvider),
+        ),
 );

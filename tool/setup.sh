@@ -59,6 +59,9 @@ add build_runner dev:build_runner
 add freezed dev:freezed
 add json_serializable dev:json_serializable
 add http_mock_adapter dev:http_mock_adapter
+add drift drift
+add drift_flutter drift_flutter
+add drift_dev dev:drift_dev
 add very_good_analysis dev:very_good_analysis
 
 # 4. Generate localisations and models, then check

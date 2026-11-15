@@ -41,6 +41,9 @@ abstract class StravaActivity with _$StravaActivity {
     required String name,
     required String sportType,
 
+    /// When it started, in UTC.
+    required DateTime startDate,
+
     /// Wall-clock start time where the activity happened. Strava marks it
     /// with a Z, but it is not UTC: show its fields as they are and never
     /// call toLocal() on it.

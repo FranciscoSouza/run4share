@@ -1,17 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:run4share/data/database.dart';
 
 enum Units { km, mi }
 
-/// Distance units for display. Kept in memory for now; persisted later.
+const unitsPreference = 'units';
+
+/// The saved units, read in main() before the first frame.
+final unitsAtLaunchProvider = Provider<Units>((ref) => Units.km);
+
+/// Distance units for display, saved between launches.
 final unitsProvider = NotifierProvider<UnitsNotifier, Units>(
   UnitsNotifier.new,
 );
 
 class UnitsNotifier extends Notifier<Units> {
   @override
-  Units build() => Units.km;
+  Units build() => ref.read(unitsAtLaunchProvider);
 
-  // Not a setter: Notifier already has `state`, and this reads as an action.
-  // ignore: use_setters_to_change_properties
-  void select(Units units) => state = units;
+  Future<void> select(Units units) async {
+    state = units;
+    await ref.read(appDatabaseProvider).writePreference(
+          unitsPreference,
+          units.name,
+        );
+  }
 }

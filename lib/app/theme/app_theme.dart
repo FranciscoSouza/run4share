@@ -89,6 +89,23 @@ abstract final class AppTheme {
         centerTitle: true,
         titleTextStyle: AppText.barTitle.copyWith(color: onSurface),
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: scheme.surfaceContainerLowest,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.lg,
+        ),
+        hintStyle: AppText.body.copyWith(
+          fontSize: 17,
+          color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
+        ),
+        border: _fieldBorder(scheme.outline),
+        enabledBorder: _fieldBorder(scheme.outline),
+        focusedBorder: _fieldBorder(scheme.primary, width: 2),
+        errorBorder: _fieldBorder(scheme.error),
+        focusedErrorBorder: _fieldBorder(scheme.error, width: 2),
+      ),
       dividerTheme: DividerThemeData(
         color: scheme.outlineVariant,
         thickness: 1,
@@ -129,4 +146,10 @@ abstract final class AppTheme {
       ),
     );
   }
+
+  static OutlineInputBorder _fieldBorder(Color colour, {double width = 1.5}) =>
+      OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.button),
+        borderSide: BorderSide(color: colour, width: width),
+      );
 }

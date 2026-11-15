@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 import 'package:flutter/services.dart';
 
 /// Loads the bundled fonts so widget tests measure text as a phone does,
 /// which makes the overflow checks in every test meaningful.
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
+  // Each test opens its own in-memory database.
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   await _loadFamily('BarlowCondensed', [
     'BarlowCondensed-SemiBold.ttf',
     'BarlowCondensed-Bold.ttf',

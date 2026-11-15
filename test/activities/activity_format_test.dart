@@ -1,12 +1,31 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/data/database.dart';
 import 'package:run4share/features/activities/activity_format.dart';
 import 'package:run4share/features/settings/units.dart';
-import 'package:run4share/features/strava/strava_models.dart';
 import 'package:run4share/l10n/app_localizations.dart';
 
-import '../strava/fakes.dart';
+Activity row({
+  String sportType = 'Run',
+  double? distance = 5020,
+  int movingTime = 1994,
+  double? calories,
+  double? heartRate,
+  ActivitySource source = ActivitySource.strava,
+}) =>
+    Activity(
+      id: 1,
+      source: source,
+      name: 'Lunch Run',
+      sportType: sportType,
+      startLocal: DateTime.utc(2026, 11, 12, 12, 31),
+      distance: distance,
+      movingTime: movingTime,
+      averageSpeed: distance == null ? null : distance / movingTime,
+      calories: calories,
+      averageHeartrate: heartRate,
+    );
 
 void main() {
   setUpAll(initializeDateFormatting);
@@ -18,10 +37,8 @@ void main() {
         units: units,
       );
 
-  final run = StravaActivity.fromJson(activityJson());
-
   test('run shows distance, time and pace per km', () {
-    final stats = format('en').stats(run);
+    final stats = format('en').stats(row());
 
     expect(stats.map((s) => s.label), ['Distance', 'Time', 'Pace']);
     expect(stats.map((s) => s.value), ['5.02', '33:14', '6:37']);
@@ -41,10 +58,9 @@ void main() {
   });
 
   test('ride shows speed instead of pace', () {
-    final ride = StravaActivity.fromJson(
-      activityJson(sportType: 'Ride', distance: 22500, movingTime: 3490),
-    );
-    final stats = format('en').stats(ride);
+    final stats = format(
+      'en',
+    ).stats(row(sportType: 'Ride', distance: 22500, movingTime: 3490));
 
     expect(stats.last.label, 'Speed');
     expect(stats.last.value, '23.2');
@@ -56,17 +72,33 @@ void main() {
     expect(format('en').duration(59), '0:59');
   });
 
-  test('subtitle keeps the wall-clock start time', () {
+  test('start keeps the wall-clock time', () {
     expect(
-      format('en').subtitle('Strava', run.startDateLocal),
-      'Strava · Thu 12 Nov · 12:31',
+      format('en').when(DateTime.utc(2026, 11, 12, 12, 31)),
+      'Thu 12 Nov · 12:31',
     );
   });
 
-  test('workouts without distance show only time', () {
-    final yoga = StravaActivity.fromJson(
-      activityJson(sportType: 'Yoga', distance: 0, movingTime: 1800),
+  test('without distance: time, then calories, else heart rate', () {
+    final f = format('en');
+    final workout = f.stats(
+      row(sportType: 'WeightTraining', distance: null, calories: 189),
     );
-    expect(format('en').stats(yoga).map((s) => s.label), ['Time']);
+    expect(workout.map((s) => s.label), ['Time', 'Calories']);
+    expect(workout.last.value, '189');
+    expect(workout.last.unit, 'kcal');
+
+    final yoga = f.stats(
+      row(sportType: 'Yoga', distance: null, heartRate: 98),
+    );
+    expect(yoga.map((s) => s.label), ['Time', 'Avg HR']);
+
+    final bare = f.stats(row(sportType: 'Yoga', distance: null));
+    expect(bare.map((s) => s.label), ['Time']);
+  });
+
+  test('manual activities are labelled as such', () {
+    final card = format('en').card(row(source: ActivitySource.manual));
+    expect(card.subtitle, 'Manual · Thu 12 Nov · 12:31');
   });
 }

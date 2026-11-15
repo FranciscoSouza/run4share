@@ -98,10 +98,81 @@
   "stravaErrorNotConfigured": "Strava isn’t set up in this build.",
   "homeYourActivities": "Your activities",
   "homeNoActivities": "No activities on Strava yet.",
-  "homeActivitiesError": "Couldn’t load your activities.",
   "@stravaConnectedAs": {
     "placeholders": {
       "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSectionLab": "Laboratory",
+  "labStravaDemo": "Strava demo data",
+  "labStravaDemoSubtitle": "Sample activities instead of your Strava account",
+  "labFootnote": "Experiments for testing. Not shown in store builds.",
+  "statCalories": "Calories",
+  "statHeartRate": "Avg HR",
+  "sourceManual": "Manual",
+  "homePulling": "Pulling your latest activities…",
+  "homeSyncing": "Syncing…",
+  "homeSyncedJustNow": "Synced just now",
+  "homeSyncedMinutes": "Synced {minutes} min ago",
+  "homeSyncedHours": "Synced {hours} h ago",
+  "homeSyncedOn": "Synced {date}",
+  "homeSyncFailed": "Couldn’t sync",
+  "homeNoActivitiesYet": "No activities yet. Add one by hand or connect Strava.",
+  "actionEdit": "Edit",
+  "actionDelete": "Delete",
+  "actionCancel": "Cancel",
+  "activityMenu": "Activity options",
+  "deleteActivityTitle": "Delete this activity?",
+  "deleteActivityBody": "It will be removed from run4share. Images you already made stay in My Creations.",
+  "activityDeleted": "Activity deleted",
+  "activitySaved": "Activity saved",
+  "formTitleNew": "Add activity",
+  "formTitleEdit": "Edit activity",
+  "formType": "Type",
+  "formName": "Name",
+  "formDate": "Date",
+  "formDuration": "Duration",
+  "formDistance": "Distance ({unit})",
+  "formOptional": "optional",
+  "formCalories": "Calories",
+  "formHeartRate": "Avg heart rate",
+  "formFootnote": "Pace is worked out from distance and duration. Empty fields are left off your stickers.",
+  "formSave": "Save activity",
+  "formDurationHint": "0:33:14",
+  "formDurationInvalid": "Enter a time like 0:33:14",
+  "formNumberInvalid": "Enter a number",
+  "formHeartRateInvalid": "Between 30 and 250",
+  "typeRun": "Run",
+  "typeRide": "Ride",
+  "typeHike": "Hike",
+  "typeWalk": "Walk",
+  "typeWorkout": "Workout",
+  "@homeSyncedMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeSyncedHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeSyncedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@formDistance": {
+    "placeholders": {
+      "unit": {
         "type": "String"
       }
     }

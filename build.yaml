@@ -5,3 +5,9 @@ targets:
         options:
           field_rename: snake
           explicit_to_json: true
+      drift_dev:
+        options:
+          # Keeps UTC DateTimes as UTC when read back. Activity start times
+          # are wall-clock values stored as UTC; drift's default (unix
+          # seconds read back as local time) would shift them.
+          store_date_time_values_as_text: true

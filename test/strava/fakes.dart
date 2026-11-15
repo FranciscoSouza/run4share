@@ -59,6 +59,7 @@ Map<String, dynamic> activityJson({
       'id': id,
       'name': name,
       'sport_type': sportType,
+      'start_date': '2026-11-12T11:31:00Z',
       'start_date_local': '2026-11-12T12:31:00Z',
       'distance': distance,
       'moving_time': movingTime,

@@ -97,14 +97,12 @@ void main() {
       headers: {'Authorization': 'Bearer access-1'},
     );
 
-    final activities = await container.read(stravaActivitiesProvider.future);
+    final activities =
+        await container.read(stravaApiProvider).activities(perPage: 30);
 
     expect(activities.map((a) => a.name), ['Lunch Run', 'Evening Ride']);
     expect(activities.first.startDateLocal.hour, 12);
+    expect(activities.first.startDate.hour, 11);
     expect(activities.first.distance, 5020);
-  });
-
-  test('no activities are fetched while disconnected', () async {
-    expect(await container.read(stravaActivitiesProvider.future), isEmpty);
   });
 }

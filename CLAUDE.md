@@ -28,8 +28,8 @@ Each phase ends with an Android build that Francisco confirms on his phone.
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
 files for en/pt/es/fr/de, shared widgets in `lib/shared/widgets/`, static
 Home · no source, My Creations empty state, Settings, tests, CI in
-`.github/workflows/ci.yml`). analyze and test pass; debug APK builds.
-Waiting for Francisco to confirm on his phone.
+`.github/workflows/ci.yml`). Confirmed on Francisco's phone (Galaxy S22,
+Android 16) on 15 Nov 2026.
 
 Notes from phase 0:
 - Material is imported only through `lib/app/material.dart`. Flutter 3.47+
@@ -46,8 +46,9 @@ Notes from phase 0:
 - The design's Portuguese Home artboard is European Portuguese ("As tuas
   atividades"); the ARB follows the decision below (Brazilian).
 
-**Phase 1 status (Strava):** code done, not yet tried against real
-Strava. Connect screen (`/connect/strava`), OAuth via flutter_web_auth_2
+**Phase 1 status (Strava):** confirmed on Francisco's phone on 15 Nov 2026
+with Laboratory demo data; never tried against real Strava (no API
+credentials yet). Connect screen (`/connect/strava`), OAuth via flutter_web_auth_2
 to `run4share://localhost`, session in flutter_secure_storage, refresh
 5 min before expiry, disconnect revokes on Strava, Settings and Home show
 the connection, Home lists the latest 30 activities (interim; phase 2
@@ -57,8 +58,35 @@ adds caching, paging, manual activities).
 - App config: `--dart-define-from-file=config/strava.json` (gitignored;
   copy `config/strava.example.json`). VS Code launch.json passes it.
 - Strava API app must have Authorization Callback Domain `localhost`.
+- No Strava API credentials yet (Strava API access is now paid). Until
+  then use Settings → Laboratory → "Strava demo data": the same connect
+  flow, a demo athlete and sample activities, nothing sent anywhere.
+  Saved on the phone; switching disconnects the current connection.
+  Laboratory is hidden in release builds unless `--dart-define=LAB=true`.
+- flutter_web_auth_2 5.1.0 (latest) still applies the Kotlin Gradle
+  Plugin; Flutter warns future versions will refuse it. Watch for an
+  update.
 - The connect screen's Strava tile is a placeholder: use Strava's official
   brand assets and check their guidelines before release (phase 7).
+
+**Phase 2 status (home/activities):** code done, running on Francisco's
+phone, waiting for his check.
+- Local database: drift (`lib/data/`), tables `activities` (every source)
+  and `preferences` (units, sync state). Start times are wall-clock values
+  stored as UTC text (`store_date_time_values_as_text` in build.yaml).
+- Strava sync (`lib/features/activities/strava_sync.dart`): first sync
+  takes the newest 30; later syncs page down until known activities (max
+  5 pages); older pages load on scroll via Strava's `before`. Auto-sync on
+  Home if older than 15 min, after connecting, and on pull-to-refresh.
+  Sync depth was not answered by Francisco; this was the recommended
+  option.
+- Disconnect deletes Strava activities from the phone (Strava API terms);
+  manual ones stay.
+- Manual activities: Add form (`/activity/new`), Edit and Delete from the
+  card's ⋮ menu (`/activity/:id/edit`). Types Run, Ride, Hike, Walk,
+  Workout.
+- Templates carousel tap still says "coming"; the guided flow comes with
+  themes in phase 4a. Tapping an activity leads to phase 3 (photo).
 
 ## Decisions already taken (do not reopen without asking)
 

@@ -6,6 +6,7 @@ import 'package:run4share/app/brand.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/app/router.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
+import 'package:run4share/features/lab/lab.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/features/strava/strava_models.dart';
@@ -25,6 +26,7 @@ class SettingsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final units = ref.watch(unitsProvider);
     final strava = ref.watch(stravaConnectionProvider).value;
+    final stravaDemo = ref.watch(stravaDemoProvider);
     void soon() => showComingSoon(context);
 
     return Scaffold(
@@ -145,6 +147,33 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
+            if (labVisible) ...[
+              SectionLabel(l10n.settingsSectionLab),
+              GroupedListCard(
+                children: [
+                  GroupedListTile(
+                    icon: AppIcons.flask,
+                    title: l10n.labStravaDemo,
+                    subtitle: l10n.labStravaDemoSubtitle,
+                    onTap: () => _setStravaDemo(ref, enabled: !stravaDemo),
+                    trailing: Switch(
+                      value: stravaDemo,
+                      onChanged: (enabled) =>
+                          _setStravaDemo(ref, enabled: enabled),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.xs,
+                  AppSpacing.sm,
+                  AppSpacing.xs,
+                  0,
+                ),
+                child: Text(l10n.labFootnote, style: theme.textTheme.bodySmall),
+              ),
+            ],
             Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
               child: Text(
@@ -158,6 +187,9 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
   }
+
+  Future<void> _setStravaDemo(WidgetRef ref, {required bool enabled}) =>
+      ref.read(stravaDemoProvider.notifier).setEnabled(enabled: enabled);
 
   Future<void> _disconnect(BuildContext context, WidgetRef ref) async {
     final messenger = ScaffoldMessenger.of(context);

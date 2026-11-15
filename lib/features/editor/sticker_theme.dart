@@ -38,6 +38,7 @@ class StickerTheme {
     required this.metrics,
     required this.position,
     this.colour = StickerColour.white,
+    this.pro = false,
   });
 
   final String id;
@@ -52,6 +53,10 @@ class StickerTheme {
 
   /// The theme's own colour, used until the user picks another.
   final StickerColour colour;
+
+  /// Pro only. The seven launch themes are free; themes added later can
+  /// be Pro (decided 15 Nov 2026).
+  final bool pro;
 }
 
 /// The catalogue, in carousel order.

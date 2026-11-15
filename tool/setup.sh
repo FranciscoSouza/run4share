@@ -72,6 +72,9 @@ add image dev:image
 add sqlite3 dev:sqlite3
 add url_launcher url_launcher
 add in_app_review in_app_review
+add in_app_purchase in_app_purchase
+add flutter_launcher_icons dev:flutter_launcher_icons
+add flutter_native_splash dev:flutter_native_splash
 add very_good_analysis dev:very_good_analysis
 
 # 4. Generate localisations and models, then check

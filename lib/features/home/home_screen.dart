@@ -7,6 +7,7 @@ import 'package:run4share/app/app_icons.dart';
 import 'package:run4share/app/brand.dart';
 import 'package:run4share/app/clock.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/app/platform.dart';
 import 'package:run4share/app/router.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/data/activity_repository.dart';
@@ -111,6 +112,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           else
             for (final activity in activities)
               _ActivityTile(activity: activity),
+          if (activities.any((a) => a.source == ActivitySource.strava))
+            const _PoweredByStrava(),
           if (connected && sync.loadingOlder)
             const Padding(
               padding: EdgeInsets.all(AppSpacing.lg),
@@ -166,26 +169,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onPressed: connect,
               ),
             ),
-            GroupedListTile(
-              icon: AppIcons.heart,
-              title: Brand.appleHealth,
-              subtitle: l10n.sourceOnIphone,
-              trailing: AppPill(
-                label: l10n.actionConnect,
-                variant: AppPillVariant.outlined,
-                onPressed: soon,
+            // Only the phone's own health source (Apple Health on
+            // iPhone, Health Connect on Android).
+            if (healthSourceFor(ref.read(platformProvider)) case final source?)
+              GroupedListTile(
+                icon: source == HealthSource.appleHealth
+                    ? AppIcons.heart
+                    : AppIcons.pulse,
+                title: source == HealthSource.appleHealth
+                    ? Brand.appleHealth
+                    : Brand.healthConnect,
+                subtitle: source == HealthSource.appleHealth
+                    ? l10n.sourceOnIphone
+                    : l10n.sourceOnAndroid,
+                trailing: AppPill(
+                  label: l10n.actionConnect,
+                  variant: AppPillVariant.outlined,
+                  onPressed: soon,
+                ),
               ),
-            ),
-            GroupedListTile(
-              icon: AppIcons.pulse,
-              title: Brand.healthConnect,
-              subtitle: l10n.sourceOnAndroid,
-              trailing: AppPill(
-                label: l10n.actionConnect,
-                variant: AppPillVariant.outlined,
-                onPressed: soon,
-              ),
-            ),
           ],
         ),
       ),
@@ -202,6 +204,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       ],
     ];
+  }
+}
+
+/// Strava's attribution, under lists that show Strava data.
+class _PoweredByStrava extends StatelessWidget {
+  const _PoweredByStrava();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      child: Center(
+        child: Image.asset(
+          'assets/strava/powered_by_strava.png',
+          width: 148,
+          height: 15,
+          semanticLabel: 'Powered by Strava',
+        ),
+      ),
+    );
   }
 }
 

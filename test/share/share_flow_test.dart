@@ -15,9 +15,12 @@ import 'package:run4share/features/creations/creations_screen.dart';
 import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/pro/pro.dart';
+import 'package:run4share/features/pro/pro_screen.dart';
 import 'package:run4share/features/share/saved_screen.dart';
 import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/features/share/share_screen.dart';
+import 'package:run4share/shared/widgets/logo.dart';
 
 import '../helpers/pump_app.dart';
 import '../photos/fake_photo_library.dart';
@@ -148,12 +151,23 @@ void main() {
     expect(find.byType(ShareScreen), findsOneWidget);
   });
 
-  testWidgets('Pro row says it is coming', (tester) async {
+  testWidgets('Remove watermark opens Pro; with Pro it is gone', (
+    tester,
+  ) async {
     await pump(tester);
     await openShare(tester);
+    expect(find.byType(AppLogo), findsOneWidget, reason: 'watermark');
+
     await tester.tap(find.text('Remove watermark'));
-    await tester.pump();
-    expect(find.text('Coming in a later update'), findsOneWidget);
+    await settle(tester);
+    expect(find.byType(ProScreen), findsOneWidget);
+    await tester.tap(find.byTooltip('Close'));
+    await settle(tester);
+
+    await container.read(proPurchasedProvider.notifier).unlock();
+    await settle(tester);
+    expect(find.text('Watermark removed'), findsOneWidget);
+    expect(find.byType(AppLogo), findsNothing);
   });
 
   testWidgets('My Creations: open, share again, edit, delete', (

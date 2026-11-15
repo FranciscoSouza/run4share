@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:run4share/app/app_icons.dart';
-import 'package:run4share/app/brand.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/app/theme/app_colors.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
@@ -91,7 +90,12 @@ class _ConnectStravaScreenState extends ConsumerState<ConnectStravaScreen> {
                           ),
                           child: Icon(AppIcons.link, color: muted),
                         ),
-                        const _StravaTile(),
+                        Image.asset(
+                          'assets/strava/compatible_with_strava.png',
+                          width: 141,
+                          height: 48,
+                          semanticLabel: 'Compatible with Strava',
+                        ),
                       ],
                     ),
                     const SizedBox(height: AppSpacing.xl),
@@ -141,10 +145,21 @@ class _ConnectStravaScreenState extends ConsumerState<ConnectStravaScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     )
                   else
-                    AppButton(
-                      label: l10n.connectContinue,
-                      variant: AppButtonVariant.dark,
-                      onPressed: _connect,
+                    // Strava's official button, unmodified.
+                    Semantics(
+                      button: true,
+                      label: 'Connect with Strava',
+                      excludeSemantics: true,
+                      child: InkWell(
+                        onTap: _connect,
+                        borderRadius: BorderRadius.circular(6),
+                        // 237 x 48 at 1x: sized up front, no jump.
+                        child: Image.asset(
+                          'assets/strava/connect_with_strava.png',
+                          width: 237,
+                          height: 48,
+                        ),
+                      ),
                     ),
                   const SizedBox(height: AppSpacing.md),
                   Text(
@@ -190,33 +205,6 @@ class _AppTile extends StatelessWidget {
           ],
         ),
         semanticsLabel: 'run4share',
-      ),
-    );
-  }
-}
-
-/// Placeholder until the official Strava brand assets are added.
-class _StravaTile extends StatelessWidget {
-  const _StravaTile();
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      width: _tileSize,
-      height: _tileSize,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(AppRadius.thumb),
-        border: Border.all(color: scheme.outline),
-      ),
-      child: Text(
-        Brand.strava,
-        style: AppText.secondary.copyWith(
-          fontWeight: FontWeight.w600,
-          color: scheme.onSurfaceVariant,
-        ),
       ),
     );
   }

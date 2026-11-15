@@ -49,7 +49,7 @@ void main() {
     expect(find.byType(ConnectStravaScreen), findsOneWidget);
     expect(find.text('Never posts for you'), findsOneWidget);
 
-    await tester.tap(find.text('Continue to Strava'));
+    await tester.tap(find.bySemanticsLabel('Connect with Strava'));
     await tester.pumpAndSettle();
 
     expect(find.byType(ConnectStravaScreen), findsNothing);
@@ -87,7 +87,7 @@ void main() {
 
     await tester.tap(find.text('Connect Strava'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue to Strava'));
+    await tester.tap(find.bySemanticsLabel('Connect with Strava'));
     await tester.pumpAndSettle();
 
     expect(find.text('Strava isn’t set up in this build.'), findsOneWidget);

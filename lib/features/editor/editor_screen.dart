@@ -22,6 +22,7 @@ import 'package:run4share/features/editor/story_canvas.dart';
 import 'package:run4share/features/editor/style_panels.dart';
 import 'package:run4share/features/editor/theme_messages.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/pills.dart';
@@ -65,6 +66,10 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
       );
 
   void _chooseTheme(StickerTheme theme, StickerData data) {
+    if (themeLocked(theme, isPro: ref.read(isProProvider))) {
+      unawaited(context.push(AppRoutes.pro));
+      return;
+    }
     final missing = data.missingFor(theme);
     if (missing != null) {
       ScaffoldMessenger.of(context)
@@ -167,6 +172,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                               ),
                               child: Center(
                                 child: StoryCanvas(
+                                  watermark: !ref.watch(isProProvider),
                                   format: draft.format,
                                   background: background,
                                   theme: themeById(draft.themeId),

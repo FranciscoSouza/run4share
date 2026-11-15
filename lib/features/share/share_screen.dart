@@ -23,11 +23,11 @@ import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
 import 'package:run4share/features/editor/story_canvas.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/rate/rate_prompt.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/l10n/l10n.dart';
-import 'package:run4share/shared/coming_soon.dart';
 import 'package:run4share/shared/widgets/logo.dart';
 
 /// Width of exported images: Instagram's 1080 for every format.
@@ -179,6 +179,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
             ),
           );
     final theme = draft == null ? null : themeById(draft.themeId);
+    final isPro = ref.watch(isProProvider);
 
     return Theme(
       data: AppTheme.dark,
@@ -221,6 +222,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                               theme: theme,
                                               data: data,
                                               style: draft.style,
+                                              watermark: !isPro,
                                             )
                                           : _ImagePreview(
                                               boundary: _boundary,
@@ -228,11 +230,13 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                               bytes: bytes,
                                               theme: theme,
                                               data: data,
+                                              watermark: !isPro,
                                             ),
                                 ),
                               ),
                             ),
                             _Options(
+                              isPro: isPro,
                               stickerOnly: _stickerOnly,
                               onStickerOnly: (value) =>
                                   setState(() => _stickerOnly = value),
@@ -308,7 +312,10 @@ class _ImagePreview extends StatelessWidget {
     required this.bytes,
     required this.theme,
     required this.data,
+    required this.watermark,
   });
+
+  final bool watermark;
 
   final GlobalKey boundary;
   final CreationDraft draft;
@@ -340,6 +347,7 @@ class _ImagePreview extends StatelessWidget {
             data: data,
             placement: draft.sticker,
             style: draft.style,
+            watermark: watermark,
           ),
         ),
       ),
@@ -355,7 +363,10 @@ class _StickerOnlyPreview extends StatelessWidget {
     required this.theme,
     required this.data,
     required this.style,
+    required this.watermark,
   });
+
+  final bool watermark;
 
   final GlobalKey boundary;
   final StickerTheme theme;
@@ -378,8 +389,10 @@ class _StickerOnlyPreview extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   StickerView(theme: theme, data: data, style: style),
-                  const SizedBox(height: 24),
-                  AppLogo(fontSize: 40, color: colour, fourColor: colour),
+                  if (watermark) ...[
+                    const SizedBox(height: 24),
+                    AppLogo(fontSize: 40, color: colour, fourColor: colour),
+                  ],
                 ],
               ),
             ),
@@ -411,8 +424,13 @@ class _Checkerboard extends CustomPainter {
 }
 
 class _Options extends StatelessWidget {
-  const _Options({required this.stickerOnly, required this.onStickerOnly});
+  const _Options({
+    required this.isPro,
+    required this.stickerOnly,
+    required this.onStickerOnly,
+  });
 
+  final bool isPro;
   final bool stickerOnly;
   final ValueChanged<bool> onStickerOnly;
 
@@ -444,22 +462,32 @@ class _Options extends StatelessWidget {
               subtitle: Text(l10n.shareStickerOnlySubtitle, style: muted),
             ),
             const Divider(),
-            ListTile(
-              title: Text(
-                l10n.shareRemoveWatermark,
-                style: theme.textTheme.titleMedium,
+            if (isPro)
+              ListTile(
+                title: Text(
+                  l10n.shareWatermarkRemoved,
+                  style: theme.textTheme.titleMedium,
+                ),
+                subtitle: Text(l10n.shareWithPro, style: muted),
+                trailing:
+                    Icon(AppIcons.check, color: theme.colorScheme.primary),
+              )
+            else
+              ListTile(
+                title: Text(
+                  l10n.shareRemoveWatermark,
+                  style: theme.textTheme.titleMedium,
+                ),
+                subtitle: Text(l10n.shareIncludedInPro, style: muted),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const _ProBadge(),
+                    Icon(AppIcons.right, color: theme.colorScheme.outline),
+                  ],
+                ),
+                onTap: () => context.push(AppRoutes.pro),
               ),
-              subtitle: Text(l10n.shareIncludedInPro, style: muted),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const _ProBadge(),
-                  Icon(AppIcons.right, color: theme.colorScheme.outline),
-                ],
-              ),
-              // Pro and its purchase come later.
-              onTap: () => showComingSoon(context),
-            ),
           ],
         ),
       ),

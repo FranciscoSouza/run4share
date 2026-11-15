@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/app/platform.dart';
 import 'package:run4share/features/creations/creations_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
@@ -22,11 +23,28 @@ void main() {
       expect(find.text('Popular templates'), findsOneWidget);
       expect(find.text('Bring in your workouts'), findsOneWidget);
       expect(find.text('Strava'), findsOneWidget);
-      expect(find.text('Apple Health'), findsOneWidget);
+      // Tests run as Android: Health Connect only.
+      expect(find.text('Apple Health'), findsNothing);
       expect(find.text('Health Connect'), findsOneWidget);
       expect(find.text('Add activity manually'), findsOneWidget);
       expect(find.text('Activities'), findsOneWidget);
       expect(find.text('My Creations'), findsOneWidget);
+    });
+
+    testWidgets('on iPhone: Apple Health, no Health Connect', (tester) async {
+      await tester.pumpApp(
+        overrides: [
+          ...baseOverrides(),
+          platformProvider.overrideWithValue(TargetPlatform.iOS),
+        ],
+      );
+      expect(find.text('Apple Health'), findsOneWidget);
+      expect(find.text('Health Connect'), findsNothing);
+
+      await tester.tap(find.byTooltip('Settings'));
+      await tester.pumpAndSettle();
+      expect(find.text('Apple Health'), findsOneWidget);
+      expect(find.text('Health Connect'), findsNothing);
     });
 
     testWidgets('My Creations tab shows the empty state and leads back', (
@@ -105,7 +123,7 @@ void main() {
     testWidgets('unfinished actions say they are coming', (tester) async {
       await tester.pumpApp();
 
-      // Apple Health's Connect (Strava's is the first).
+      // Health Connect's Connect (Strava's is the first).
       await tester.tap(find.text('Connect').at(1));
       await tester.pump();
 

@@ -5,11 +5,14 @@ import 'package:run4share/app/app_info.dart';
 import 'package:run4share/app/brand.dart';
 import 'package:run4share/app/links.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/app/platform.dart';
 import 'package:run4share/app/router.dart';
 import 'package:run4share/app/system.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/features/lab/lab.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/pro/pro.dart';
+import 'package:run4share/features/pro/pro_store.dart';
 import 'package:run4share/features/settings/language.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
@@ -31,6 +34,8 @@ class SettingsScreen extends ConsumerWidget {
     final units = ref.watch(unitsProvider);
     final strava = ref.watch(stravaConnectionProvider).value;
     final stravaDemo = ref.watch(stravaDemoProvider);
+    final isPro = ref.watch(isProProvider);
+    final pretendPro = ref.watch(pretendProProvider);
     void soon() => showComingSoon(context);
 
     return Scaffold(
@@ -70,18 +75,18 @@ class SettingsScreen extends ConsumerWidget {
                           onPressed: () => _disconnect(context, ref),
                         ),
                 ),
-                GroupedListTile(
-                  icon: AppIcons.heart,
-                  title: Brand.appleHealth,
-                  subtitle: l10n.settingsNotConnected,
-                  trailing: _connect(l10n, soon),
-                ),
-                GroupedListTile(
-                  icon: AppIcons.pulse,
-                  title: Brand.healthConnect,
-                  subtitle: l10n.settingsAndroidOnly,
-                  trailing: _connect(l10n, soon),
-                ),
+                if (healthSourceFor(ref.read(platformProvider))
+                    case final source?)
+                  GroupedListTile(
+                    icon: source == HealthSource.appleHealth
+                        ? AppIcons.heart
+                        : AppIcons.pulse,
+                    title: source == HealthSource.appleHealth
+                        ? Brand.appleHealth
+                        : Brand.healthConnect,
+                    subtitle: l10n.settingsNotConnected,
+                    trailing: _connect(l10n, soon),
+                  ),
               ],
             ),
             SectionLabel(l10n.settingsSectionPurchase),
@@ -90,13 +95,18 @@ class SettingsScreen extends ConsumerWidget {
                 GroupedListTile(
                   icon: AppIcons.star,
                   title: Brand.pro,
-                  subtitle: l10n.settingsProSubtitle,
-                  trailing: AppPill(label: l10n.actionUnlock, onPressed: soon),
+                  subtitle: isPro ? l10n.proThanks : l10n.settingsProSubtitle,
+                  trailing: isPro
+                      ? Icon(AppIcons.check, color: theme.colorScheme.primary)
+                      : AppPill(
+                          label: l10n.actionUnlock,
+                          onPressed: () => context.push(AppRoutes.pro),
+                        ),
                 ),
                 GroupedListTile(
                   icon: AppIcons.refresh,
                   title: l10n.settingsRestore,
-                  onTap: soon,
+                  onTap: () => _restore(context, ref),
                 ),
               ],
             ),
@@ -170,6 +180,20 @@ class SettingsScreen extends ConsumerWidget {
                           _setStravaDemo(ref, enabled: enabled),
                     ),
                   ),
+                  GroupedListTile(
+                    icon: AppIcons.star,
+                    title: l10n.labPretendPro,
+                    subtitle: l10n.labPretendProSubtitle,
+                    onTap: () => ref
+                        .read(pretendProProvider.notifier)
+                        .setEnabled(enabled: !pretendPro),
+                    trailing: Switch(
+                      value: pretendPro,
+                      onChanged: (enabled) => ref
+                          .read(pretendProProvider.notifier)
+                          .setEnabled(enabled: enabled),
+                    ),
+                  ),
                 ],
               ),
               Padding(
@@ -231,6 +255,15 @@ class SettingsScreen extends ConsumerWidget {
     if (choice != null) {
       await ref.read(languageProvider.notifier).select(choice.locale);
     }
+  }
+
+  Future<void> _restore(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final message = context.l10n.proRestoring;
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+    await ref.read(proStoreProvider).restore();
   }
 
   Future<void> _setStravaDemo(WidgetRef ref, {required bool enabled}) =>

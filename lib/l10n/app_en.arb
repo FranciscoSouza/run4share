@@ -47,8 +47,6 @@
   "settingsSectionPreferences": "Preferences",
   "settingsSectionAbout": "About",
   "settingsNotConnected": "Not connected",
-  "settingsAndroidOnly": "Android only",
-  "settingsIphoneOnly": "iPhone only",
   "settingsProSubtitle": "Pay once, no subscription",
   "settingsRestore": "Restore purchase",
   "settingsUnits": "Units",
@@ -87,7 +85,6 @@
   "connectReadsProfileDetail": "Only your name, to label the connection.",
   "connectNeverPosts": "Never posts for you",
   "connectNeverPostsDetail": "run4share cannot write to your Strava account.",
-  "connectContinue": "Continue to Strava",
   "connectFootnote": "You will sign in and authorise on strava.com.",
   "stravaConnectedAs": "Connected as {name}",
   "stravaConnected": "Connected",
@@ -320,5 +317,27 @@
   "inviteMessage": "I use run4share to turn my workouts into images worth sharing. Try it with me:",
   "inviteCopy": "Copy link",
   "inviteCopied": "Link copied",
-  "inviteShare": "Share invite link"
+  "inviteShare": "Share invite link",
+  "proTitle": "Unlock everything, once",
+  "proSubtitle": "One payment. No subscription.",
+  "proThanks": "Thanks for supporting run4share",
+  "proBenefitWatermark": "No run4share watermark",
+  "proBenefitThemes": "Every new theme as it arrives",
+  "proUnlockFor": "Unlock for {price}",
+  "proUnavailable": "Pro isn’t available yet",
+  "proPending": "Your purchase is being processed.",
+  "proFailed": "The purchase didn’t go through.",
+  "proRestoring": "Checking your purchases…",
+  "shareWatermarkRemoved": "Watermark removed",
+  "shareWithPro": "With your Pro",
+  "labPretendPro": "Pretend Pro",
+  "labPretendProSubtitle": "Act as if Pro was bought, without paying",
+  "actionDone": "Done",
+  "@proUnlockFor": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  }
 }

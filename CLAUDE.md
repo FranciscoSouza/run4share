@@ -157,8 +157,7 @@ Francisco moved on to phase 6 on 15 Nov 2026 without reporting problems.
   (reopens the editor if the activity and original photo still exist,
   else says which is missing) and Delete (Photos copies stay).
 
-**Phase 6 status (settings / languages):** code done, installed on
-Francisco's phone, waiting for his check. Not committed yet.
+**Phase 6 status (settings / languages):** committed (`phase-6-settings`).
 - Language: Android 13+ opens the system per-app language screen
   (`MainActivity` method channel `run4share/system`, `locales_config.xml`);
   iOS opens the app's Settings page (`CFBundleLocalizations`); Android 12
@@ -176,6 +175,31 @@ Francisco's phone, waiting for his check. Not committed yet.
   `docs/translations-review.csv`; `import` applies reviewers' fixes and
   refuses rows that drop a placeholder.
 - Pro and Restore purchase stay "coming" until phase 7.
+
+**Phase 7 status (hardening / release):** code done, installed on
+Francisco's phone, waiting for his check. Not committed yet. What's left
+needs his accounts: see `docs/release-checklist.md`.
+- Release signing: upload key `~/.run4share/run4share-upload.jks`,
+  `android/key.properties` (gitignored) read by `build.gradle.kts`;
+  falls back to the debug key when absent. Signed AAB verified.
+- Icon and splash: r4s tile rendered by `tool/icon/render_icons_test.dart`
+  into `assets/icon/`, then flutter_launcher_icons / flutter_native_splash
+  (config in pubspec.yaml). Adaptive + monochrome icons on Android.
+- Strava brand: official, unmodified assets in `assets/strava/` (Connect
+  with Strava button, Compatible with Strava, Powered by Strava under
+  lists with Strava data). Strava's guidelines make them optional ("if
+  you choose to"); used per Francisco's decision.
+- Pro: one-off product `run4share_pro` via in_app_purchase
+  (`lib/features/pro/`). Entitlement saved as preference `pro.unlocked`;
+  Restore asks the store again. Pro removes the watermark (editor,
+  share, sticker-only) and unlocks themes with `pro: true` (none of the
+  seven launch themes). Without a Play Console product the Pro screen
+  says Pro isn't available yet. Laboratory "Pretend Pro" for testing.
+- Errors: release builds show a neutral box instead of a broken widget;
+  uncaught errors are logged; no reporting service (privacy promise).
+- Workout sources show only the phone's own health source: Apple Health
+  on iPhone, Health Connect on Android (`lib/app/platform.dart`).
+- A test keeps `AppInfo.version` equal to pubspec's version.
 
 ## Decisions already taken (do not reopen without asking)
 
@@ -236,10 +260,20 @@ Answered 15 Nov 2026 for phase 6:
 - Privacy policy: Claude drafts, Francisco reviews and hosts.
 - Feedback goes to a GitHub issue; invite link is the Play Store URL.
 
+Answered 15 Nov 2026 for phase 7:
+- Pro = no watermark + themes added from now on; launch themes free.
+  Price: US$ 2.99 tier.
+- No Play Console account yet; Francisco will create it (checklist).
+- App icon: the design's r4s tile.
+- Claude generated the upload key; Francisco backs it up.
+- Official Strava brand assets; no crash-reporting service.
+- Health sources by platform (Francisco, 15 Nov): Apple Health only on
+  iOS, Health Connect only on Android.
+
 ## Open questions (ask Francisco, don't assume)
 
-Still open from design: free/Pro split and price, duplicate rule across
-sources, invite reward, Effort formula.
+Still open from design: duplicate rule across sources, invite reward,
+Effort formula.
 
 ## How Francisco works
 

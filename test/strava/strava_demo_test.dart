@@ -29,9 +29,9 @@ void main() {
     await tester.scrollUntilVisible(find.text('Strava demo data'), 200);
     expect(find.text('LABORATORY'), findsOneWidget);
 
-    await tester.ensureVisible(find.byType(Switch));
+    await tester.ensureVisible(find.byType(Switch).first);
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(Switch));
+    await tester.tap(find.byType(Switch).first);
     await tester.pumpAndSettle();
     expect(labStore.stravaDemo, isTrue);
 
@@ -39,7 +39,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Connect Strava'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue to Strava'));
+    await tester.tap(find.bySemanticsLabel('Connect with Strava'));
     await tester.pumpAndSettle();
 
     expect(find.text('Connected as Demo athlete'), findsOneWidget);
@@ -65,16 +65,16 @@ void main() {
 
     await tester.tap(find.text('Connect Strava'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Continue to Strava'));
+    await tester.tap(find.bySemanticsLabel('Connect with Strava'));
     await tester.pumpAndSettle();
     expect(store.session?.athleteName, 'Demo athlete');
 
     await tester.tap(find.byTooltip('Settings'));
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('Strava demo data'), 200);
-    await tester.ensureVisible(find.byType(Switch));
+    await tester.ensureVisible(find.byType(Switch).first);
     await tester.pumpAndSettle();
-    await tester.tap(find.byType(Switch));
+    await tester.tap(find.byType(Switch).first);
     await tester.pumpAndSettle();
 
     expect(store.session, isNull);

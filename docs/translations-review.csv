@@ -30,8 +30,6 @@ settingsSectionPurchase,Settings,,Purchase,Compra,Compra,Achat,Kauf
 settingsSectionPreferences,Settings,,Preferences,Preferências,Preferencias,Préférences,Präferenzen
 settingsSectionAbout,Settings,,About,Sobre,Acerca de,À propos,Über
 settingsNotConnected,Settings,,Not connected,Não conectado,No conectado,Non connecté,Nicht verbunden
-settingsAndroidOnly,Settings,,Android only,Só no Android,Solo Android,Android uniquement,Nur Android
-settingsIphoneOnly,Settings,,iPhone only,Só no iPhone,Solo iPhone,iPhone uniquement,Nur iPhone
 settingsProSubtitle,Settings,,"Pay once, no subscription","Pague uma vez, sem assinatura","Paga una vez, sin suscripción","Un seul paiement, sans abonnement","Einmal zahlen, kein Abo"
 settingsRestore,Settings,,Restore purchase,Restaurar compra,Restaurar compra,Restaurer l’achat,Kauf wiederherstellen
 settingsUnits,Settings,,Units,Unidades,Unidades,Unités,Einheiten
@@ -56,7 +54,6 @@ connectReadsProfile,Connect Strava screen,,Reads your public profile,Lê seu per
 connectReadsProfileDetail,Connect Strava screen,,"Only your name, to label the connection.","Só o seu nome, para identificar a conexão.","Solo tu nombre, para identificar la conexión.","Uniquement votre nom, pour nommer la connexion.","Nur deinen Namen, um die Verbindung zu benennen."
 connectNeverPosts,Connect Strava screen,,Never posts for you,Nunca publica por você,Nunca publica por ti,Ne publique jamais à votre place,Postet nie für dich
 connectNeverPostsDetail,Connect Strava screen,,run4share cannot write to your Strava account.,O run4share não pode escrever na sua conta do Strava.,run4share no puede escribir en tu cuenta de Strava.,run4share ne peut pas écrire sur votre compte Strava.,run4share kann nichts in dein Strava-Konto schreiben.
-connectContinue,Connect Strava screen,,Continue to Strava,Continuar no Strava,Continuar en Strava,Continuer vers Strava,Weiter zu Strava
 connectFootnote,Connect Strava screen,,You will sign in and authorise on strava.com.,Você vai entrar e autorizar em strava.com.,Iniciarás sesión y autorizarás en strava.com.,Vous vous connecterez et autoriserez l’accès sur strava.com.,Du meldest dich auf strava.com an und erteilst dort die Freigabe.
 stravaConnectedAs,Strava connection messages,Keep {name} as is.,Connected as {name},Conectado como {name},Conectado como {name},Connecté en tant que {name},Verbunden als {name}
 stravaConnected,Strava connection messages,,Connected,Conectado,Conectado,Connecté,Verbunden
@@ -200,3 +197,18 @@ inviteMessage,Invite a friend screen,,I use run4share to turn my workouts into i
 inviteCopy,Invite a friend screen,,Copy link,Copiar link,Copiar enlace,Copier le lien,Link kopieren
 inviteCopied,Invite a friend screen,,Link copied,Link copiado,Enlace copiado,Lien copié,Link kopiert
 inviteShare,Invite a friend screen,,Share invite link,Compartilhar convite,Compartir invitación,Partager l’invitation,Einladungslink teilen
+proTitle,,,"Unlock everything, once","Libere tudo, uma vez só","Desbloquéalo todo, una vez","Tout débloquer, une fois","Alles freischalten, einmalig"
+proSubtitle,,,One payment. No subscription.,Um pagamento. Sem assinatura.,Un solo pago. Sin suscripción.,Un seul paiement. Sans abonnement.,Eine Zahlung. Kein Abo.
+proThanks,,,Thanks for supporting run4share,Obrigado por apoiar o run4share,Gracias por apoyar run4share,Merci de soutenir run4share,"Danke, dass du run4share unterstützt"
+proBenefitWatermark,,,No run4share watermark,Sem marca d’água do run4share,Sin marca de agua de run4share,Sans filigrane run4share,Kein run4share-Wasserzeichen
+proBenefitThemes,,,Every new theme as it arrives,Todos os temas novos assim que chegarem,Cada tema nuevo en cuanto llegue,Chaque nouveau thème dès sa sortie,"Jedes neue Design, sobald es erscheint"
+proUnlockFor,,Keep {price} as is.,Unlock for {price},Desbloquear por {price},Desbloquear por {price},Débloquer pour {price},Freischalten für {price}
+proUnavailable,,,Pro isn’t available yet,O Pro ainda não está disponível,Pro aún no está disponible,Pro n’est pas encore disponible,Pro ist noch nicht verfügbar
+proPending,,,Your purchase is being processed.,Sua compra está sendo processada.,Tu compra se está procesando.,Votre achat est en cours de traitement.,Dein Kauf wird bearbeitet.
+proFailed,,,The purchase didn’t go through.,A compra não foi concluída.,La compra no se completó.,L’achat n’a pas abouti.,Der Kauf hat nicht geklappt.
+proRestoring,,,Checking your purchases…,Verificando suas compras…,Comprobando tus compras…,Vérification de vos achats…,Käufe werden geprüft…
+shareWatermarkRemoved,Share screen,,Watermark removed,Marca d’água removida,Marca de agua quitada,Filigrane retiré,Wasserzeichen entfernt
+shareWithPro,Share screen,,With your Pro,Com o seu Pro,Con tu Pro,Avec votre Pro,Mit deinem Pro
+labPretendPro,Settings: Laboratory (test builds only),,Pretend Pro,Simular Pro,Simular Pro,Simuler Pro,Pro simulieren
+labPretendProSubtitle,Settings: Laboratory (test builds only),,"Act as if Pro was bought, without paying","Agir como se o Pro tivesse sido comprado, sem pagar","Actuar como si se hubiera comprado Pro, sin pagar","Faire comme si Pro était acheté, sans payer","So tun, als wäre Pro gekauft, ohne zu zahlen"
+actionDone,Buttons used in several places,,Done,Concluir,Listo,Terminé,Fertig

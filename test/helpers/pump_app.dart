@@ -12,11 +12,13 @@ import 'package:run4share/app/theme/app_theme.dart';
 import 'package:run4share/data/creation_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/lab/lab.dart';
+import 'package:run4share/features/pro/pro_store.dart';
 import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/features/strava/strava_config.dart';
 import 'package:run4share/features/strava/strava_session_store.dart';
 import 'package:run4share/l10n/app_localizations.dart';
 
+import '../pro/fake_pro_store.dart';
 import '../share/fake_share_actions.dart';
 import 'fake_system_actions.dart';
 
@@ -37,6 +39,7 @@ List<Override> baseOverrides({
   Directory? folder,
   ShareActions? share,
   SystemActions? system,
+  ProStore? pro,
 }) =>
     [
       stravaSessionStoreProvider.overrideWithValue(
@@ -50,6 +53,7 @@ List<Override> baseOverrides({
       ),
       shareActionsProvider.overrideWithValue(share ?? FakeShareActions()),
       systemActionsProvider.overrideWithValue(system ?? FakeSystemActions()),
+      proStoreProvider.overrideWithValue(pro ?? FakeProStore()),
     ];
 
 /// A fresh in-memory database.

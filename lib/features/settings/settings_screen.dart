@@ -3,11 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:run4share/app/app_icons.dart';
 import 'package:run4share/app/app_info.dart';
 import 'package:run4share/app/brand.dart';
+import 'package:run4share/app/links.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/app/router.dart';
+import 'package:run4share/app/system.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/features/lab/lab.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/settings/language.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/features/strava/strava_models.dart';
@@ -115,8 +118,10 @@ class SettingsScreen extends ConsumerWidget {
                 GroupedListTile(
                   icon: AppIcons.globe,
                   title: l10n.settingsLanguage,
-                  subtitle: l10n.settingsLanguageSubtitle(l10n.languageName),
-                  onTap: soon,
+                  subtitle: ref.watch(languageProvider) == null
+                      ? l10n.settingsLanguageSubtitle(l10n.languageName)
+                      : l10n.languageName,
+                  onTap: () => _chooseLanguage(context, ref),
                 ),
                 GroupedListTile(
                   icon: AppIcons.image,
@@ -133,18 +138,20 @@ class SettingsScreen extends ConsumerWidget {
                   icon: AppIcons.sparkle,
                   title: l10n.settingsRate,
                   subtitle: l10n.settingsRateSubtitle,
-                  onTap: soon,
+                  onTap: ref.read(systemActionsProvider).openStoreListing,
                 ),
                 GroupedListTile(
                   icon: AppIcons.invite,
                   title: l10n.settingsInvite,
                   subtitle: l10n.settingsInviteSubtitle,
-                  onTap: soon,
+                  onTap: () => context.push(AppRoutes.invite),
                 ),
                 GroupedListTile(
                   icon: AppIcons.shield,
                   title: l10n.settingsPrivacy,
-                  onTap: soon,
+                  onTap: () => ref
+                      .read(systemActionsProvider)
+                      .openLink(AppLinks.privacyPolicy),
                 ),
               ],
             ),
@@ -189,6 +196,43 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  /// The phone's per-app language screen; on phones without one (Android
+  /// 12 and older) a list inside run4share.
+  Future<void> _chooseLanguage(BuildContext context, WidgetRef ref) async {
+    if (await ref.read(systemActionsProvider).openAppLanguage()) return;
+    if (!context.mounted) return;
+    final l10n = context.l10n;
+    final current = ref.read(languageProvider);
+    final choice = await showModalBottomSheet<_LanguageChoice>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: RadioGroup<Locale?>(
+          groupValue: current,
+          onChanged: (locale) =>
+              Navigator.pop(context, _LanguageChoice(locale)),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              RadioListTile<Locale?>(
+                value: null,
+                title: Text(l10n.languagePhone),
+              ),
+              for (final locale in AppLocalizations.supportedLocales)
+                RadioListTile<Locale?>(
+                  value: locale,
+                  title: Text(lookupAppLocalizations(locale).languageName),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (choice != null) {
+      await ref.read(languageProvider.notifier).select(choice.locale);
+    }
+  }
+
   Future<void> _setStravaDemo(WidgetRef ref, {required bool enabled}) =>
       ref.read(stravaDemoProvider.notifier).setEnabled(enabled: enabled);
 
@@ -206,4 +250,12 @@ class SettingsScreen extends ConsumerWidget {
         variant: AppPillVariant.tonal,
         onPressed: onPressed,
       );
+}
+
+/// Wraps the picked locale so "phone language" (null) differs from
+/// closing the sheet.
+class _LanguageChoice {
+  const _LanguageChoice(this.locale);
+
+  final Locale? locale;
 }

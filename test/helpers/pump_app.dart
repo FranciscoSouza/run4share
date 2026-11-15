@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/app.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/app/system.dart';
 import 'package:run4share/app/theme/app_theme.dart';
 import 'package:run4share/data/creation_repository.dart';
 import 'package:run4share/data/database.dart';
@@ -17,6 +18,7 @@ import 'package:run4share/features/strava/strava_session_store.dart';
 import 'package:run4share/l10n/app_localizations.dart';
 
 import '../share/fake_share_actions.dart';
+import 'fake_system_actions.dart';
 
 /// A 390 x 844 phone, the size the design is drawn at.
 const phoneSize = Size(390, 844);
@@ -34,6 +36,7 @@ List<Override> baseOverrides({
   AppDatabase? db,
   Directory? folder,
   ShareActions? share,
+  SystemActions? system,
 }) =>
     [
       stravaSessionStoreProvider.overrideWithValue(
@@ -46,6 +49,7 @@ List<Override> baseOverrides({
         () async => folder ?? Directory.systemTemp.createTempSync('creations'),
       ),
       shareActionsProvider.overrideWithValue(share ?? FakeShareActions()),
+      systemActionsProvider.overrideWithValue(system ?? FakeSystemActions()),
     ];
 
 /// A fresh in-memory database.
@@ -65,8 +69,10 @@ extension PumpApp on WidgetTester {
   }
 
   /// Pumps the whole app (router, theme, l10n) in [locale].
+  /// [locale] null follows the test device (English), like the app
+  /// following the phone.
   Future<void> pumpApp({
-    Locale locale = const Locale('en'),
+    Locale? locale,
     List<Override>? overrides,
   }) async {
     _usePhone();

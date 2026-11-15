@@ -8,6 +8,7 @@ import 'package:run4share/features/creations/creation_detail_screen.dart';
 import 'package:run4share/features/creations/creations_screen.dart';
 import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
+import 'package:run4share/features/invite/invite_screen.dart';
 import 'package:run4share/features/photos/photo_step_screen.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
 import 'package:run4share/features/share/saved_screen.dart';
@@ -31,6 +32,7 @@ abstract final class AppRoutes {
   static const share = '/create/share';
   static String saved(int creationId) => '/saved/$creationId';
   static String creation(int id) => '/creation/$id';
+  static const invite = '/invite';
   static String template(String id) => '/template/$id';
   static String templateActivity(String id) => '/template/$id/activity';
 }
@@ -85,6 +87,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.editor,
         parentNavigatorKey: _rootKey,
         builder: (context, state) => const EditorScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.invite,
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => const InviteScreen(),
       ),
       GoRoute(
         path: AppRoutes.share,

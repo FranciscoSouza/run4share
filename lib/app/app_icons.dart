@@ -17,6 +17,7 @@ abstract final class AppIcons {
   static const IconData layers = LucideIcons.layers;
   static const IconData share = LucideIcons.share;
   static const IconData download = LucideIcons.download;
+  static const IconData copy = LucideIcons.copy;
   static const IconData moreHorizontal = LucideIcons.ellipsis;
   static const IconData info = LucideIcons.info;
   static const IconData refresh = LucideIcons.refreshCw;

@@ -206,6 +206,23 @@ void main() {
     expect(find.text('Nothing here yet'), findsOneWidget);
   });
 
+  testWidgets('the third saved image asks for a rating', (tester) async {
+    await pump(tester);
+    await tester.runAsync(() => db.writePreference('rate.saves', '2'));
+    await openShare(tester);
+    await tester.tap(find.bySemanticsLabel('Save to Photos'));
+    await settle(tester, rounds: 30);
+
+    expect(find.text('Enjoying run4share?'), findsOneWidget);
+    await tester.tap(find.text('Not now'));
+    await settle(tester);
+    expect(find.text('Enjoying run4share?'), findsNothing);
+    expect(
+      await tester.runAsync(() => db.readPreference('rate.notNow')),
+      '1',
+    );
+  });
+
   testWidgets('Saved: Create another goes home', (tester) async {
     await pump(tester);
     await openShare(tester);

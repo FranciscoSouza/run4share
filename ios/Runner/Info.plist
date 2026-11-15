@@ -10,6 +10,14 @@
 	<string>run4share saves the images you make to your Photos.</string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 	<true/>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>pt-BR</string>
+		<string>es</string>
+		<string>fr</string>
+		<string>de</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>run4share</string>
 	<key>CFBundleExecutable</key>

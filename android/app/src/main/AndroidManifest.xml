@@ -12,6 +12,7 @@
         android:maxSdkVersion="28"/>
     <application
         android:label="run4share"
+        android:localeConfig="@xml/locales_config"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

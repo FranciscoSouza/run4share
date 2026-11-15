@@ -70,6 +70,8 @@ add photo_manager photo_manager
 add crop_your_image crop_your_image
 add image dev:image
 add sqlite3 dev:sqlite3
+add url_launcher url_launcher
+add in_app_review in_app_review
 add very_good_analysis dev:very_good_analysis
 
 # 4. Generate localisations and models, then check

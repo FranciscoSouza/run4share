@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/app/router.dart';
 import 'package:run4share/app/theme/app_theme.dart';
+import 'package:run4share/features/settings/language.dart';
 import 'package:run4share/l10n/app_localizations.dart';
 
 /// Root widget: light theme for browsing, language follows the device.
@@ -18,7 +19,7 @@ class App extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       themeMode: ThemeMode.light,
-      locale: locale,
+      locale: locale ?? ref.watch(languageProvider),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: ref.watch(routerProvider),

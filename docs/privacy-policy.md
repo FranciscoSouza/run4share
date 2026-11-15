@@ -1,0 +1,102 @@
+# run4share privacy policy
+
+> **Draft for review, not legal advice.** Written from what the app does
+> today (phase 6). Francisco must review it, ideally with someone who
+> knows the privacy law where the app is offered (for example the GDPR in
+> the EU and the LGPD in Brazil), fill in the contact details, and host
+> it before release. Update it whenever the app starts doing something
+> new with data.
+
+_Last updated: [DATE]_
+
+run4share turns your workouts into images you can share. This page
+explains what the app does with your information. In short: **your data
+stays on your phone.** run4share has no account, no analytics, no ads
+and no tracking.
+
+## What run4share stores, and where
+
+Everything below is stored only on your phone, inside the app.
+
+- **Activities.** Activities you add by hand, and activities copied from
+  Strava if you connect it: name, sport, date and time, distance,
+  duration, pace or speed, heart rate, calories and elevation.
+- **Your images (My Creations).** The images you save or share, and the
+  settings used to make them (which photo, how it was cropped, the
+  sticker theme, position and colours), so you can edit them again.
+- **Settings.** Units, language, which format and theme you used last,
+  and similar preferences.
+- **Strava sign-in.** If you connect Strava, the access tokens Strava
+  gives run4share, kept in your phone's secure storage (Keychain on
+  iPhone, encrypted storage on Android), plus your Strava name to label
+  the connection.
+
+run4share does not send any of this to its developers or anyone else.
+
+## Photos
+
+run4share asks for access to your photo library only so you can pick a
+photo for an image. It reads the photos you choose on your phone and
+never uploads them. When you save an image, run4share adds it to your
+Photos, in a "run4share" album. You can change photo access at any time
+in your phone's settings, including sharing only selected photos.
+
+## Strava
+
+Connecting Strava is optional. When you connect:
+
+- You sign in on Strava's own page and choose what to allow. run4share
+  asks to read your profile (only your name is used) and your activities,
+  including private ones, so you can make images of them. run4share can't
+  post to or change your Strava account.
+- To finish signing in, and to renew access from time to time, the app
+  sends a one-time code or a renewal token to a small run4share service
+  hosted on Cloudflare. That service adds run4share's Strava app
+  credentials, asks Strava for access tokens, and passes them straight
+  back to your phone. It does not store or log them.
+- The app then reads your activities directly from Strava and keeps
+  copies on your phone, as described above.
+
+When you disconnect Strava in Settings, run4share asks Strava to revoke
+its access and deletes every activity it copied from Strava from your
+phone. Activities you added by hand stay.
+
+Your use of Strava is covered by Strava's own privacy policy:
+https://www.strava.com/legal/privacy
+
+## Sharing
+
+When you share an image, run4share hands it to the app you pick
+(Instagram, messages, email...). What happens to it next is up to you
+and that app.
+
+## Ratings, feedback and invites
+
+- **Rate run4share** opens the App Store or Google Play.
+- **Send feedback** opens a new issue on run4share's public GitHub page.
+  Anything you write there is public.
+- **Invite a friend** shares a message with a link to the app through the
+  app you pick. run4share doesn't learn who you invited.
+
+## Children
+
+run4share is not directed at children under 13 (or the minimum age for
+digital services in your country).
+
+## Deleting your data
+
+- Delete an image: My Creations, open it, delete. Copies saved to Photos
+  stay in Photos until you delete them there.
+- Delete an activity you added: its menu on the Activities tab.
+- Delete everything Strava-related: Settings, Strava, Disconnect.
+- Delete everything: uninstall run4share. This removes all its data from
+  your phone. Images you saved to Photos stay in Photos.
+
+## Changes
+
+If this policy changes, the new version will be published here with a new
+date, and the app will point to it.
+
+## Contact
+
+[NAME OR COMPANY], [EMAIL ADDRESS]

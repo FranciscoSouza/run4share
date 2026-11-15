@@ -141,8 +141,8 @@ Francisco moved on to phase 5 on 15 Nov 2026 without reporting problems.
   for light text without a backing.
 - French "Time" is "Durée", as in the Editor · Français artboard.
 
-**Phase 5 status (share / My Creations):** code done, installed on
-Francisco's phone, waiting for his check. Not committed yet.
+**Phase 5 status (share / My Creations):** committed (`phase-5-share`);
+Francisco moved on to phase 6 on 15 Nov 2026 without reporting problems.
 - Share screen (`/create/share`): its preview is a RepaintBoundary
   exported at 1080 px wide (1080×1920 / ×1350 / ×1080) from a photo copy
   up to 3072 px. "Sticker only" exports the sticker alone on transparency
@@ -156,6 +156,26 @@ Francisco's phone, waiting for his check. Not committed yet.
 - My Creations: two staggered columns; detail with Share again, Edit
   (reopens the editor if the activity and original photo still exist,
   else says which is missing) and Delete (Photos copies stay).
+
+**Phase 6 status (settings / languages):** code done, installed on
+Francisco's phone, waiting for his check. Not committed yet.
+- Language: Android 13+ opens the system per-app language screen
+  (`MainActivity` method channel `run4share/system`, `locales_config.xml`);
+  iOS opens the app's Settings page (`CFBundleLocalizations`); Android 12
+  and older get an in-app list saved as preference `language`.
+- Rate: Settings opens the store listing (in_app_review). The rating sheet
+  shows on the Saved screen from the 3rd image saved to Photos, at most
+  every 90 days, never after Rate/feedback or a second "Not now".
+  "Send feedback instead" opens a new GitHub issue.
+- Invite: screen from the design; link is the Play Store URL
+  (`lib/app/links.dart`), copy confirms inline, share uses the sheet.
+- Privacy policy: draft in `docs/privacy-policy.md` (needs Francisco's
+  review, contact details and hosting); Settings links to it on GitHub's
+  main branch, so it only resolves once merged to main.
+- Translation review: `python3 tool/translations.py export` writes
+  `docs/translations-review.csv`; `import` applies reviewers' fixes and
+  refuses rows that drop a placeholder.
+- Pro and Restore purchase stay "coming" until phase 7.
 
 ## Decisions already taken (do not reopen without asking)
 
@@ -208,11 +228,18 @@ Answered 15 Nov 2026 for phase 5:
 - Share screen shows the Pro row as "coming soon".
 - Edit-again from My Creations: yes, reopens the editor.
 
+Answered 15 Nov 2026 for phase 6:
+- Language row opens the phone's per-app language setting.
+- Rating sheet after the 3rd saved image (rules above).
+- Pro screen and purchases move to phase 7, with Play Console setup.
+- Translations: review sheet for native speakers.
+- Privacy policy: Claude drafts, Francisco reviews and hosts.
+- Feedback goes to a GitHub issue; invite link is the Play Store URL.
+
 ## Open questions (ask Francisco, don't assume)
 
 Still open from design: free/Pro split and price, duplicate rule across
-sources, when the rate sheet
-appears, invite reward, native review of translations, Effort formula.
+sources, invite reward, Effort formula.
 
 ## How Francisco works
 

@@ -189,5 +189,16 @@
   "creationDeleteBody": "Ela sai de Minhas criações. As cópias salvas na galeria continuam lá.",
   "creationEditUnavailable": "Esta imagem não pode ser editada.",
   "creationActivityGone": "A atividade desta imagem não está mais no run4share.",
-  "creationPhotoGone": "A foto original não está mais neste celular."
+  "creationPhotoGone": "A foto original não está mais neste celular.",
+  "languagePhone": "Idioma do celular",
+  "rateTitle": "Curtindo o run4share?",
+  "rateBody": "Avaliar leva poucos segundos e ajuda outros corredores a encontrar o app.",
+  "rateFeedback": "Enviar um comentário",
+  "inviteTitle": "Chame um parceiro de treino",
+  "inviteBody": "Envie seu link e a pessoa já pode transformar as próprias corridas e pedaladas em imagens.",
+  "inviteYours": "Seu convite",
+  "inviteMessage": "Uso o run4share para transformar meus treinos em imagens para compartilhar. Experimente comigo:",
+  "inviteCopy": "Copiar link",
+  "inviteCopied": "Link copiado",
+  "inviteShare": "Compartilhar convite"
 }

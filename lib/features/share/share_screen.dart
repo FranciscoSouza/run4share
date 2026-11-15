@@ -23,6 +23,7 @@ import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
 import 'package:run4share/features/editor/story_canvas.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/rate/rate_prompt.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/l10n/l10n.dart';
@@ -131,6 +132,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
             exported.png,
             name: 'run4share-${exported.creationId}',
           );
+          await ref.read(ratePromptProvider).recordSave();
           if (mounted) {
             unawaited(context.push(AppRoutes.saved(exported.creationId)));
           }

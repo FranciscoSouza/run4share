@@ -1,0 +1,202 @@
+﻿key,where,notes,en,pt,es,fr,de
+appName,"Brand name, do not translate",Brand name. Do not translate.,run4share,run4share,run4share,run4share,run4share
+languageName,Settings: language,"Name of this language, written in this language.",English,Português,Español,Français,Deutsch
+navActivities,Bottom tab bar,,Activities,Atividades,Actividades,Activités,Aktivitäten
+navCreations,Bottom tab bar,,My Creations,Minhas criações,Mis creaciones,Mes créations,Meine Kreationen
+settingsTooltip,Settings,,Settings,Configurações,Ajustes,Réglages,Einstellungen
+comingSoon,Message for features not built yet,Snack bar for buttons that do nothing yet.,Coming in a later update,Disponível em uma próxima atualização,Llegará en una próxima actualización,Disponible dans une prochaine mise à jour,Kommt mit einem späteren Update
+actionConnect,Buttons used in several places,,Connect,Conectar,Conectar,Connecter,Verbinden
+actionDisconnect,Buttons used in several places,,Disconnect,Desconectar,Desconectar,Déconnecter,Trennen
+actionUnlock,Buttons used in several places,,Unlock,Desbloquear,Desbloquear,Débloquer,Freischalten
+homeConnectStrava,Activities tab (Home),,Connect Strava,Conectar Strava,Conectar Strava,Connecter Strava,Strava verbinden
+homePopularTemplates,Activities tab (Home),,Popular templates,Modelos populares,Plantillas populares,Modèles populaires,Beliebte Vorlagen
+homeBringWorkouts,Activities tab (Home),,Bring in your workouts,Traga seus treinos,Trae tus entrenamientos,Importez vos séances,Hol dir deine Workouts
+homeAddManually,Activities tab (Home),,Add activity manually,Adicionar atividade manualmente,Añadir actividad manualmente,Ajouter une activité manuellement,Aktivität manuell hinzufügen
+sourceStravaSubtitle,Home: Bring in your workouts,,"Runs, rides and more","Corridas, pedais e mais","Carreras, salidas en bici y más","Courses, sorties vélo et plus","Läufe, Radtouren und mehr"
+sourceOnIphone,Home: Bring in your workouts,,On iPhone,No iPhone,En iPhone,Sur iPhone,Auf dem iPhone
+sourceOnAndroid,Home: Bring in your workouts,,On Android,No Android,En Android,Sur Android,Auf Android
+statDistance,Activity cards and stickers: figure labels,,Distance,Distância,Distancia,Distance,Distanz
+statTime,Activity cards and stickers: figure labels,,Time,Tempo,Tiempo,Durée,Zeit
+statPace,Activity cards and stickers: figure labels,,Pace,Ritmo,Ritmo,Allure,Tempo
+statSpeed,Activity cards and stickers: figure labels,,Speed,Velocidade,Velocidad,Vitesse,Geschw.
+creationsTitle,My Creations tab,,My Creations,Minhas criações,Mis creaciones,Mes créations,Meine Kreationen
+creationsCount,My Creations tab,Keep {count} as is.,"{count, plural, =0{No images} =1{1 image} other{{count} images}}","{count, plural, =0{Nenhuma imagem} =1{1 imagem} other{{count} imagens}}","{count, plural, =0{Ninguna imagen} =1{1 imagen} other{{count} imágenes}}","{count, plural, =0{Aucune image} =1{1 image} other{{count} images}}","{count, plural, =0{Keine Bilder} =1{1 Bild} other{{count} Bilder}}"
+creationsEmptyTitle,My Creations tab,,Nothing here yet,Nada por aqui ainda,Aún no hay nada,Rien pour l’instant,Noch nichts hier
+creationsEmptyBody,My Creations tab,,Images you save or share will appear here.,As imagens que você salvar ou compartilhar vão aparecer aqui.,Las imágenes que guardes o compartas aparecerán aquí.,Les images que vous enregistrez ou partagez apparaîtront ici.,"Bilder, die du speicherst oder teilst, erscheinen hier."
+creationsEmptyAction,My Creations tab,,Create your first image,Criar sua primeira imagem,Crea tu primera imagen,Créer votre première image,Erstes Bild erstellen
+settingsTitle,Settings,,Settings,Configurações,Ajustes,Réglages,Einstellungen
+settingsSectionSources,Settings,,Workout sources,Fontes de treino,Fuentes de entrenamientos,Sources d’entraînement,Workout-Quellen
+settingsSectionPurchase,Settings,,Purchase,Compra,Compra,Achat,Kauf
+settingsSectionPreferences,Settings,,Preferences,Preferências,Preferencias,Préférences,Präferenzen
+settingsSectionAbout,Settings,,About,Sobre,Acerca de,À propos,Über
+settingsNotConnected,Settings,,Not connected,Não conectado,No conectado,Non connecté,Nicht verbunden
+settingsAndroidOnly,Settings,,Android only,Só no Android,Solo Android,Android uniquement,Nur Android
+settingsIphoneOnly,Settings,,iPhone only,Só no iPhone,Solo iPhone,iPhone uniquement,Nur iPhone
+settingsProSubtitle,Settings,,"Pay once, no subscription","Pague uma vez, sem assinatura","Paga una vez, sin suscripción","Un seul paiement, sans abonnement","Einmal zahlen, kein Abo"
+settingsRestore,Settings,,Restore purchase,Restaurar compra,Restaurar compra,Restaurer l’achat,Kauf wiederherstellen
+settingsUnits,Settings,,Units,Unidades,Unidades,Unités,Einheiten
+unitKm,Settings: units,,km,km,km,km,km
+unitMi,Settings: units,,mi,mi,mi,mi,mi
+settingsLanguage,Settings,,Language,Idioma,Idioma,Langue,Sprache
+settingsLanguageSubtitle,Settings,Keep {language} as is.,Follows your phone · {language},Segue o celular · {language},Sigue a tu teléfono · {language},Suit votre téléphone · {language},Folgt deinem Handy · {language}
+settingsPhotoAccess,Settings,,Photo access,Acesso às fotos,Acceso a fotos,Accès aux photos,Fotozugriff
+settingsPhotoAccessSubtitle,Settings,,Managed in phone settings,Gerenciado nos ajustes do celular,Se gestiona en los ajustes del teléfono,Géré dans les réglages du téléphone,In den Handy-Einstellungen verwaltet
+settingsRate,Settings,,Rate run4share,Avaliar o run4share,Valora run4share,Noter run4share,run4share bewerten
+settingsRateSubtitle,Settings,,On the App Store or Google Play,Na App Store ou no Google Play,En App Store o Google Play,Sur l’App Store ou Google Play,Im App Store oder bei Google Play
+settingsInvite,Settings,,Invite a friend,Convidar um amigo,Invita a un amigo,Inviter un ami,Freund einladen
+settingsInviteSubtitle,Settings,,Send your invite link,Envie seu link de convite,Envía tu enlace de invitación,Envoyez votre lien d’invitation,Sende deinen Einladungslink
+settingsPrivacy,Settings,,Privacy policy,Política de privacidade,Política de privacidad,Politique de confidentialité,Datenschutzerklärung
+settingsVersion,Settings,Keep {version} as is.,run4share {version},run4share {version},run4share {version},run4share {version},run4share {version}
+actionRetry,Buttons used in several places,,Try again,Tentar de novo,Reintentar,Réessayer,Erneut versuchen
+connectTitle,Connect Strava screen,,Connect your Strava,Conecte seu Strava,Conecta tu Strava,Connectez votre Strava,Verbinde dein Strava
+connectBody,Connect Strava screen,,Pull your latest workouts and turn them into images worth sharing.,Traga seus treinos mais recentes e transforme-os em imagens para compartilhar.,Trae tus últimos entrenamientos y conviértelos en imágenes para compartir.,Récupérez vos dernières séances et transformez-les en images à partager.,Hol dir deine neuesten Workouts und mach daraus Bilder zum Teilen.
+connectReadsActivities,Connect Strava screen,,Reads your activities,Lê suas atividades,Lee tus actividades,Lit vos activités,Liest deine Aktivitäten
+connectReadsActivitiesDetail,Connect Strava screen,,"Distance, time, pace, heart rate and calories.","Distância, tempo, ritmo, frequência cardíaca e calorias.","Distancia, tiempo, ritmo, frecuencia cardíaca y calorías.","Distance, temps, allure, fréquence cardiaque et calories.","Distanz, Zeit, Tempo, Herzfrequenz und Kalorien."
+connectReadsProfile,Connect Strava screen,,Reads your public profile,Lê seu perfil público,Lee tu perfil público,Lit votre profil public,Liest dein öffentliches Profil
+connectReadsProfileDetail,Connect Strava screen,,"Only your name, to label the connection.","Só o seu nome, para identificar a conexão.","Solo tu nombre, para identificar la conexión.","Uniquement votre nom, pour nommer la connexion.","Nur deinen Namen, um die Verbindung zu benennen."
+connectNeverPosts,Connect Strava screen,,Never posts for you,Nunca publica por você,Nunca publica por ti,Ne publique jamais à votre place,Postet nie für dich
+connectNeverPostsDetail,Connect Strava screen,,run4share cannot write to your Strava account.,O run4share não pode escrever na sua conta do Strava.,run4share no puede escribir en tu cuenta de Strava.,run4share ne peut pas écrire sur votre compte Strava.,run4share kann nichts in dein Strava-Konto schreiben.
+connectContinue,Connect Strava screen,,Continue to Strava,Continuar no Strava,Continuar en Strava,Continuer vers Strava,Weiter zu Strava
+connectFootnote,Connect Strava screen,,You will sign in and authorise on strava.com.,Você vai entrar e autorizar em strava.com.,Iniciarás sesión y autorizarás en strava.com.,Vous vous connecterez et autoriserez l’accès sur strava.com.,Du meldest dich auf strava.com an und erteilst dort die Freigabe.
+stravaConnectedAs,Strava connection messages,Keep {name} as is.,Connected as {name},Conectado como {name},Conectado como {name},Connecté en tant que {name},Verbunden als {name}
+stravaConnected,Strava connection messages,,Connected,Conectado,Conectado,Connecté,Verbunden
+stravaDisconnected,Strava connection messages,,Disconnected from Strava,Strava desconectado,Strava desconectado,Strava déconnecté,Strava getrennt
+stravaErrorDenied,Strava connection messages,,Strava access wasn’t granted.,O acesso ao Strava não foi autorizado.,No se concedió el acceso a Strava.,L’accès à Strava n’a pas été accordé.,Der Zugriff auf Strava wurde nicht erlaubt.
+stravaErrorScope,Strava connection messages,,run4share needs permission to read your activities. Allow it on Strava and try again.,O run4share precisa de permissão para ler suas atividades. Autorize no Strava e tente de novo.,run4share necesita permiso para leer tus actividades. Permítelo en Strava y vuelve a intentarlo.,run4share a besoin de lire vos activités. Autorisez-le sur Strava et réessayez.,"run4share braucht die Erlaubnis, deine Aktivitäten zu lesen. Erlaube sie bei Strava und versuche es erneut."
+stravaErrorNetwork,Strava connection messages,,Couldn’t reach Strava. Check your connection and try again.,Não foi possível falar com o Strava. Verifique sua conexão e tente de novo.,No se pudo contactar con Strava. Revisa tu conexión y vuelve a intentarlo.,Impossible de joindre Strava. Vérifiez votre connexion et réessayez.,Strava ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.
+stravaErrorNotConfigured,Strava connection messages,,Strava isn’t set up in this build.,O Strava não está configurado nesta versão.,Strava no está configurado en esta versión.,Strava n’est pas configuré dans cette version.,Strava ist in dieser Version nicht eingerichtet.
+homeYourActivities,Activities tab (Home),,Your activities,Suas atividades,Tus actividades,Vos activités,Deine Aktivitäten
+homeNoActivities,Activities tab (Home),,No activities on Strava yet.,Ainda não há atividades no Strava.,Aún no hay actividades en Strava.,Aucune activité sur Strava pour l’instant.,Noch keine Aktivitäten auf Strava.
+settingsSectionLab,Settings,,Laboratory,Laboratório,Laboratorio,Laboratoire,Labor
+labStravaDemo,Settings: Laboratory (test builds only),,Strava demo data,Dados de demonstração do Strava,Datos de demostración de Strava,Données de démo Strava,Strava-Demodaten
+labStravaDemoSubtitle,Settings: Laboratory (test builds only),,Sample activities instead of your Strava account,Atividades de exemplo no lugar da sua conta do Strava,Actividades de ejemplo en lugar de tu cuenta de Strava,Des activités d’exemple à la place de votre compte Strava,Beispielaktivitäten statt deines Strava-Kontos
+labFootnote,Settings: Laboratory (test builds only),,Experiments for testing. Not shown in store builds.,Experimentos para testes. Não aparece nas versões da loja.,Experimentos para pruebas. No aparece en las versiones de la tienda.,Expériences pour les tests. Absent des versions publiées.,Experimente zum Testen. Nicht in Store-Versionen sichtbar.
+statCalories,Activity cards and stickers: figure labels,,Calories,Calorias,Calorías,Calories,Kalorien
+statHeartRate,Activity cards and stickers: figure labels,,Avg HR,FC média,FC media,FC moy.,Ø HF
+sourceManual,Home: Bring in your workouts,,Manual,Manual,Manual,Manuel,Manuell
+homePulling,Activities tab (Home),,Pulling your latest activities…,Buscando suas atividades mais recentes…,Trayendo tus últimas actividades…,Récupération de vos dernières activités…,Deine neuesten Aktivitäten werden geladen…
+homeSyncing,Activities tab (Home),,Syncing…,Sincronizando…,Sincronizando…,Synchronisation…,Synchronisiere…
+homeSyncedJustNow,Activities tab (Home),,Synced just now,Sincronizado agora,Sincronizado ahora,Synchronisé à l’instant,Gerade synchronisiert
+homeSyncedMinutes,Activities tab (Home),Keep {minutes} as is.,Synced {minutes} min ago,Sincronizado há {minutes} min,Sincronizado hace {minutes} min,Synchronisé il y a {minutes} min,Vor {minutes} Min. synchronisiert
+homeSyncedHours,Activities tab (Home),Keep {hours} as is.,Synced {hours} h ago,Sincronizado há {hours} h,Sincronizado hace {hours} h,Synchronisé il y a {hours} h,Vor {hours} Std. synchronisiert
+homeSyncedOn,Activities tab (Home),Keep {date} as is.,Synced {date},Sincronizado em {date},Sincronizado el {date},Synchronisé le {date},Synchronisiert am {date}
+homeSyncFailed,Activities tab (Home),,Couldn’t sync,Não foi possível sincronizar,No se pudo sincronizar,Échec de la synchronisation,Synchronisierung fehlgeschlagen
+homeNoActivitiesYet,Activities tab (Home),,No activities yet. Add one by hand or connect Strava.,Nenhuma atividade ainda. Adicione uma manualmente ou conecte o Strava.,Aún no hay actividades. Añade una a mano o conecta Strava.,Aucune activité. Ajoutez-en une à la main ou connectez Strava.,Noch keine Aktivitäten. Füge eine manuell hinzu oder verbinde Strava.
+actionEdit,Buttons used in several places,,Edit,Editar,Editar,Modifier,Bearbeiten
+actionDelete,Buttons used in several places,,Delete,Excluir,Eliminar,Supprimer,Löschen
+actionCancel,Buttons used in several places,,Cancel,Cancelar,Cancelar,Annuler,Abbrechen
+activityMenu,Activity cards: menu and messages,,Activity options,Opções da atividade,Opciones de la actividad,Options de l’activité,Aktivitätsoptionen
+deleteActivityTitle,Delete activity dialog,,Delete this activity?,Excluir esta atividade?,¿Eliminar esta actividad?,Supprimer cette activité ?,Diese Aktivität löschen?
+deleteActivityBody,Delete activity dialog,,It will be removed from run4share. Images you already made stay in My Creations.,Ela será removida do run4share. As imagens que você já criou continuam em Minhas criações.,Se quitará de run4share. Las imágenes que ya creaste siguen en Mis creaciones.,Elle sera retirée de run4share. Les images déjà créées restent dans Mes créations.,Sie wird aus run4share entfernt. Bereits erstellte Bilder bleiben in Meine Kreationen.
+activityDeleted,Activity cards: menu and messages,,Activity deleted,Atividade excluída,Actividad eliminada,Activité supprimée,Aktivität gelöscht
+activitySaved,Activity cards: menu and messages,,Activity saved,Atividade salva,Actividad guardada,Activité enregistrée,Aktivität gespeichert
+formTitleNew,Add / edit activity form,,Add activity,Adicionar atividade,Añadir actividad,Ajouter une activité,Aktivität hinzufügen
+formTitleEdit,Add / edit activity form,,Edit activity,Editar atividade,Editar actividad,Modifier l’activité,Aktivität bearbeiten
+formType,Add / edit activity form,,Type,Tipo,Tipo,Type,Typ
+formName,Add / edit activity form,,Name,Nome,Nombre,Nom,Name
+formDate,Add / edit activity form,,Date,Data,Fecha,Date,Datum
+formDuration,Add / edit activity form,,Duration,Duração,Duración,Durée,Dauer
+formDistance,Add / edit activity form,Keep {unit} as is.,Distance ({unit}),Distância ({unit}),Distancia ({unit}),Distance ({unit}),Distanz ({unit})
+formOptional,Add / edit activity form,,optional,opcional,opcional,facultatif,optional
+formCalories,Add / edit activity form,,Calories,Calorias,Calorías,Calories,Kalorien
+formHeartRate,Add / edit activity form,,Avg heart rate,FC média,FC media,FC moyenne,Ø Herzfrequenz
+formFootnote,Add / edit activity form,,Pace is worked out from distance and duration. Empty fields are left off your stickers.,O ritmo é calculado a partir da distância e da duração. Campos vazios ficam fora dos seus stickers.,El ritmo se calcula a partir de la distancia y la duración. Los campos vacíos no aparecen en tus stickers.,L’allure est calculée à partir de la distance et de la durée. Les champs vides n’apparaissent pas sur vos stickers.,Das Tempo wird aus Distanz und Dauer berechnet. Leere Felder erscheinen nicht auf deinen Stickern.
+formSave,Add / edit activity form,,Save activity,Salvar atividade,Guardar actividad,Enregistrer l’activité,Aktivität speichern
+formDurationHint,Add / edit activity form,,0:33:14,0:33:14,0:33:14,0:33:14,0:33:14
+formDurationInvalid,Add / edit activity form,,Enter a time like 0:33:14,Digite um tempo como 0:33:14,Escribe un tiempo como 0:33:14,Saisissez une durée comme 0:33:14,Gib eine Zeit wie 0:33:14 ein
+formNumberInvalid,Add / edit activity form,,Enter a number,Digite um número,Escribe un número,Saisissez un nombre,Gib eine Zahl ein
+formHeartRateInvalid,Add / edit activity form,,Between 30 and 250,Entre 30 e 250,Entre 30 y 250,Entre 30 et 250,Zwischen 30 und 250
+typeRun,"Activity types (also on stickers, in capitals)",,Run,Corrida,Carrera,Course,Lauf
+typeRide,"Activity types (also on stickers, in capitals)",,Ride,Pedal,Bici,Vélo,Radfahrt
+typeHike,"Activity types (also on stickers, in capitals)",,Hike,Trilha,Senderismo,Randonnée,Wanderung
+typeWalk,"Activity types (also on stickers, in capitals)",,Walk,Caminhada,Caminata,Marche,Spaziergang
+typeWorkout,"Activity types (also on stickers, in capitals)",,Workout,Treino,Entreno,Entraînement,Workout
+photoAccessTitle,Choosing a photo,,Add a photo from your library,Adicione uma foto da sua galeria,Añade una foto de tu galería,Ajoutez une photo de votre galerie,Füge ein Foto aus deiner Mediathek hinzu
+photoAccessBody,Choosing a photo,,run4share needs access to your photos so you can pick the one that goes with this workout. Your photos stay on your phone.,O run4share precisa de acesso às suas fotos para você escolher a que combina com este treino. Suas fotos ficam no seu celular.,run4share necesita acceso a tus fotos para que elijas la que va con este entrenamiento. Tus fotos se quedan en tu teléfono.,run4share a besoin d’accéder à vos photos pour que vous choisissiez celle qui va avec cette séance. Vos photos restent sur votre téléphone.,"run4share braucht Zugriff auf deine Fotos, damit du das passende zu diesem Workout auswählen kannst. Deine Fotos bleiben auf deinem Handy."
+actionContinue,Buttons used in several places,,Continue,Continuar,Continuar,Continuer,Weiter
+actionNotNow,Buttons used in several places,,Not now,Agora não,Ahora no,Plus tard,Nicht jetzt
+photoAccessOffTitle,Choosing a photo,,Photo access is off,O acesso às fotos está desligado,El acceso a fotos está desactivado,L’accès aux photos est désactivé,Fotozugriff ist aus
+photoAccessOffBody,Choosing a photo,,Turn on photo access for run4share in your phone settings to choose a photo.,Ative o acesso às fotos para o run4share nos ajustes do celular para escolher uma foto.,Activa el acceso a fotos para run4share en los ajustes del teléfono para elegir una foto.,Activez l’accès aux photos pour run4share dans les réglages du téléphone pour choisir une photo.,"Erlaube run4share in den Handy-Einstellungen den Fotozugriff, um ein Foto auszuwählen."
+actionOpenSettings,Buttons used in several places,,Open Settings,Abrir ajustes,Abrir ajustes,Ouvrir les réglages,Einstellungen öffnen
+actionBackToActivities,Buttons used in several places,,Back to activities,Voltar às atividades,Volver a actividades,Retour aux activités,Zurück zu Aktivitäten
+photosRecents,Choosing a photo: grid,,Recents,Recentes,Recientes,Récents,Neueste
+photosChooseOne,Choosing a photo: grid,,choose one photo,escolha uma foto,elige una foto,choisissez une photo,wähle ein Foto
+photosEmpty,Choosing a photo: grid,,No photos here yet.,Ainda não há fotos aqui.,Aún no hay fotos aquí.,Pas encore de photos ici.,Hier gibt es noch keine Fotos.
+photosLimited,Choosing a photo: grid,,run4share can see only the photos you picked.,O run4share só vê as fotos que você escolheu.,run4share solo ve las fotos que elegiste.,run4share ne voit que les photos que vous avez choisies.,"run4share sieht nur die Fotos, die du ausgewählt hast."
+actionManage,Buttons used in several places,,Manage,Gerenciar,Gestionar,Gérer,Verwalten
+photoNumber,Choosing a photo,Keep {number} as is.,Photo {number},Foto {number},Foto {number},Photo {number},Foto {number}
+cropTitle,Format and crop screen,,Format,Formato,Formato,Format,Format
+actionNext,Buttons used in several places,,Next,Avançar,Siguiente,Suivant,Weiter
+cropHint,Format and crop screen,,Drag and pinch the photo to adjust the crop,Arraste e faça pinça na foto para ajustar o corte,Arrastra y pellizca la foto para ajustar el recorte,Faites glisser et pincez la photo pour ajuster le cadrage,"Ziehe und zoome das Foto, um den Ausschnitt anzupassen"
+formatStory,Format and crop: format names,,Story,Story,Historia,Story,Story
+formatFeed,Format and crop: format names,,Feed,Feed,Feed,Fil,Feed
+formatSquare,Format and crop: format names,,Square,Quadrado,Cuadrado,Carré,Quadrat
+photoLoadFailed,Choosing a photo,,Couldn’t open this photo.,Não foi possível abrir esta foto.,No se pudo abrir esta foto.,Impossible d’ouvrir cette photo.,Dieses Foto konnte nicht geöffnet werden.
+actionShare,Buttons used in several places,,Share,Compartilhar,Compartir,Partager,Teilen
+editorTheme,Editor,,Theme,Tema,Tema,Thème,Design
+editorThemeCount,Editor,Keep {count} as is.,{count} themes · more added over time,{count} temas · mais chegando com o tempo,{count} temas · más con el tiempo,{count} thèmes · d’autres à venir,{count} Designs · weitere folgen
+editorRotate,Editor,,Rotate sticker,Girar sticker,Girar sticker,Faire pivoter,Sticker drehen
+editorResize,Editor,,Resize sticker,Redimensionar sticker,Cambiar tamaño,Redimensionner,Größe ändern
+editorRemove,Editor,,Remove sticker,Remover sticker,Quitar sticker,Retirer le sticker,Sticker entfernen
+editorHideThemes,Editor,,Hide themes,Esconder temas,Ocultar temas,Masquer les thèmes,Designs ausblenden
+editorAddSticker,Editor,,Pick a theme to add the sticker back,Escolha um tema para trazer o sticker de volta,Elige un tema para volver a añadir el sticker,Choisissez un thème pour remettre le sticker,"Wähle ein Design, um den Sticker zurückzuholen"
+themeNeedsDistance,Editor: why a theme can't be used,,No distance in this activity,Esta atividade não tem distância,Esta actividad no tiene distancia,Pas de distance dans cette activité,Diese Aktivität hat keine Distanz
+themeNeedsHeartRate,Editor: why a theme can't be used,,No heart rate in this activity,Esta atividade não tem frequência cardíaca,Esta actividad no tiene frecuencia cardíaca,Pas de fréquence cardiaque dans cette activité,Diese Aktivität hat keine Herzfrequenz
+themeNeedsCalories,Editor: why a theme can't be used,,No calories in this activity,Esta atividade não tem calorias,Esta actividad no tiene calorías,Pas de calories dans cette activité,Diese Aktivität hat keine Kalorien
+templateCantUse,Popular templates flow,Keep {reason} as is.,"{reason}, so this template can’t use it","{reason}, então este modelo não pode usá-la","{reason}, así que esta plantilla no puede usarla","{reason}, ce modèle ne peut donc pas l’utiliser","{reason}, daher kann diese Vorlage sie nicht nutzen"
+templateSample,Popular templates flow,"Keep {format}, {metrics} as is.",Sample data · {format} · shows {metrics},Dados de exemplo · {format} · mostra {metrics},Datos de ejemplo · {format} · muestra {metrics},Données d’exemple · {format} · affiche {metrics},Beispieldaten · {format} · zeigt {metrics}
+metricDistance,Template preview: what a template shows (lower case),,distance,distância,distancia,distance,Distanz
+metricTime,Template preview: what a template shows (lower case),,time,tempo,tiempo,temps,Zeit
+metricPace,Template preview: what a template shows (lower case),,pace,ritmo,ritmo,allure,Tempo
+metricHeartRate,Template preview: what a template shows (lower case),,heart rate,frequência cardíaca,frecuencia cardíaca,fréquence cardiaque,Herzfrequenz
+metricCalories,Template preview: what a template shows (lower case),,calories,calorias,calorías,calories,Kalorien
+templateStep1,Popular templates flow,,Choose one of your activities,Escolha uma das suas atividades,Elige una de tus actividades,Choisissez une de vos activités,Wähle eine deiner Aktivitäten
+templateStep2,Popular templates flow,,Choose a photo,Escolha uma foto,Elige una foto,Choisissez une photo,Wähle ein Foto
+templateStep3,Popular templates flow,,Adjust the sticker and share,Ajuste o sticker e compartilhe,Ajusta el sticker y comparte,Ajustez le sticker et partagez,Passe den Sticker an und teile
+templateUse,Popular templates flow,,Use this template,Usar este modelo,Usar esta plantilla,Utiliser ce modèle,Vorlage verwenden
+templateStepOf,Popular templates flow,"Keep {step}, {total} as is.",Step {step} of {total},Passo {step} de {total},Paso {step} de {total},Étape {step} sur {total},Schritt {step} von {total}
+templateChooseActivity,Popular templates flow,,Choose an activity,Escolha uma atividade,Elige una actividad,Choisissez une activité,Wähle eine Aktivität
+editorTextColour,Editor,,Text colour,Cor do texto,Color del texto,Couleur du texte,Textfarbe
+editorBackground,Editor,,Sticker background,Fundo do sticker,Fondo del sticker,Fond du sticker,Sticker-Hintergrund
+colourWhite,Editor: text colours,,White,Branco,Blanco,Blanc,Weiß
+colourBlack,Editor: text colours,,Black,Preto,Negro,Noir,Schwarz
+colourAmber,Editor: text colours,,Amber,Âmbar,Ámbar,Ambre,Bernstein
+colourRed,Editor: text colours,,Red,Vermelho,Rojo,Rouge,Rot
+colourBlue,Editor: text colours,,Blue,Azul,Azul,Bleu,Blau
+colourGreen,Editor: text colours,,Green,Verde,Verde,Vert,Grün
+backgroundTransparent,Editor: sticker background,,Transparent,Transparente,Transparente,Transparent,Transparent
+backgroundWhite,Editor: sticker background,Keep {percent} as is.,White {percent}%,Branco {percent}%,Blanco {percent} %,Blanc {percent} %,Weiß {percent} %
+backgroundBlack,Editor: sticker background,Keep {percent} as is.,Black {percent}%,Preto {percent}%,Negro {percent} %,Noir {percent} %,Schwarz {percent} %
+shareSave,Share screen,,Save to Photos,Salvar na galeria,Guardar en Fotos,Enregistrer dans Photos,In Fotos sichern
+shareInstagram,Share screen,,Instagram Stories,Stories do Instagram,Historias de Instagram,Stories Instagram,Instagram Stories
+shareMore,Share screen,,More,Mais,Más,Plus,Mehr
+shareStickerOnly,Share screen,,Sticker only,Só o sticker,Solo el sticker,Sticker seul,Nur Sticker
+shareStickerOnlySubtitle,Share screen,,"Transparent background, no photo","Fundo transparente, sem foto","Fondo transparente, sin foto","Fond transparent, sans photo","Transparenter Hintergrund, kein Foto"
+shareRemoveWatermark,Share screen,,Remove watermark,Remover marca d’água,Quitar marca de agua,Retirer le filigrane,Wasserzeichen entfernen
+shareIncludedInPro,Share screen,,Included in Pro,Incluído no Pro,Incluido en Pro,Inclus dans Pro,In Pro enthalten
+shareKept,Share screen,,Also kept in My Creations,Também guardado em Minhas criações,También guardada en Mis creaciones,Aussi gardée dans Mes créations,Auch in Meine Kreationen gespeichert
+shareSaveNoAccess,Share screen,,run4share needs permission to save to Photos.,O run4share precisa de permissão para salvar na galeria.,run4share necesita permiso para guardar en Fotos.,run4share a besoin d’une autorisation pour enregistrer dans Photos.,"run4share braucht die Erlaubnis, in Fotos zu sichern."
+shareSaveFailed,Share screen,,Couldn’t save to Photos.,Não foi possível salvar na galeria.,No se pudo guardar en Fotos.,Impossible d’enregistrer dans Photos.,Sichern in Fotos fehlgeschlagen.
+savedTitle,Saved to Photos screen,,Saved to Photos,Salvo na galeria,Guardada en Fotos,Enregistrée dans Photos,In Fotos gesichert
+savedBody,Saved to Photos screen,,Also kept in My Creations.,Também guardado em Minhas criações.,También guardada en Mis creaciones.,Aussi gardée dans Mes créations.,Auch in Meine Kreationen gespeichert.
+savedCreateAnother,Saved to Photos screen,,Create another,Criar outra,Crear otra,En créer une autre,Noch eins erstellen
+savedViewCreations,Saved to Photos screen,,View My Creations,Ver Minhas criações,Ver Mis creaciones,Voir Mes créations,Meine Kreationen ansehen
+creationsToday,My Creations tab,,Today,Hoje,Hoy,Aujourd’hui,Heute
+creationsYesterday,My Creations tab,,Yesterday,Ontem,Ayer,Hier,Gestern
+creationShareAgain,My Creations: image detail,,Share again,Compartilhar de novo,Compartir de nuevo,Partager à nouveau,Erneut teilen
+creationDeleteTitle,My Creations: image detail,,Delete this image?,Excluir esta imagem?,¿Eliminar esta imagen?,Supprimer cette image ?,Dieses Bild löschen?
+creationDeleteBody,My Creations: image detail,,It’s removed from My Creations. Copies saved to Photos stay there.,Ela sai de Minhas criações. As cópias salvas na galeria continuam lá.,Se quita de Mis creaciones. Las copias guardadas en Fotos siguen allí.,Elle est retirée de Mes créations. Les copies enregistrées dans Photos y restent.,Es wird aus Meine Kreationen entfernt. In Fotos gesicherte Kopien bleiben dort.
+creationEditUnavailable,My Creations: image detail,,This image can’t be edited.,Esta imagem não pode ser editada.,Esta imagen no se puede editar.,Cette image ne peut pas être modifiée.,Dieses Bild kann nicht bearbeitet werden.
+creationActivityGone,My Creations: image detail,,The activity behind this image is no longer in run4share.,A atividade desta imagem não está mais no run4share.,La actividad de esta imagen ya no está en run4share.,L’activité de cette image n’est plus dans run4share.,Die Aktivität zu diesem Bild ist nicht mehr in run4share.
+creationPhotoGone,My Creations: image detail,,The original photo is no longer on this phone.,A foto original não está mais neste celular.,La foto original ya no está en este teléfono.,La photo d’origine n’est plus sur ce téléphone.,Das Originalfoto ist nicht mehr auf diesem Handy.
+languagePhone,Settings: language,,Phone language,Idioma do celular,Idioma del teléfono,Langue du téléphone,Handysprache
+rateTitle,Rating sheet,,Enjoying run4share?,Curtindo o run4share?,¿Te gusta run4share?,Vous aimez run4share ?,Gefällt dir run4share?
+rateBody,Rating sheet,,A rating takes a few seconds and helps other runners find the app.,Avaliar leva poucos segundos e ajuda outros corredores a encontrar o app.,Valorar lleva unos segundos y ayuda a otros corredores a encontrar la app.,Noter l’app prend quelques secondes et aide d’autres coureurs à la trouver.,"Eine Bewertung dauert nur Sekunden und hilft anderen Läufern, die App zu finden."
+rateFeedback,Rating sheet,,Send feedback instead,Enviar um comentário,Enviar comentarios,Envoyer un avis plutôt,Lieber Feedback senden
+inviteTitle,Invite a friend screen,,Bring a training partner,Chame um parceiro de treino,Trae a un compañero de entrenamiento,Invitez un partenaire d’entraînement,Hol dir einen Trainingspartner
+inviteBody,Invite a friend screen,,Send your link and they can start turning their own runs and rides into images.,Envie seu link e a pessoa já pode transformar as próprias corridas e pedaladas em imagens.,Envía tu enlace y podrá convertir sus propias carreras y salidas en bici en imágenes.,Envoyez votre lien : il pourra transformer ses propres courses et sorties vélo en images.,"Schick deinen Link, dann kann er oder sie eigene Läufe und Radtouren in Bilder verwandeln."
+inviteYours,Invite a friend screen,,Your invite,Seu convite,Tu invitación,Votre invitation,Deine Einladung
+inviteMessage,Invite a friend screen,,I use run4share to turn my workouts into images worth sharing. Try it with me:,Uso o run4share para transformar meus treinos em imagens para compartilhar. Experimente comigo:,Uso run4share para convertir mis entrenamientos en imágenes para compartir. Pruébalo conmigo:,J’utilise run4share pour transformer mes séances en images à partager. Essaie avec moi :,"Ich nutze run4share, um meine Workouts in teilenswerte Bilder zu verwandeln. Probier es mit mir:"
+inviteCopy,Invite a friend screen,,Copy link,Copiar link,Copiar enlace,Copier le lien,Link kopieren
+inviteCopied,Invite a friend screen,,Link copied,Link copiado,Enlace copiado,Lien copié,Link kopiert
+inviteShare,Invite a friend screen,,Share invite link,Compartilhar convite,Compartir invitación,Partager l’invitation,Einladungslink teilen

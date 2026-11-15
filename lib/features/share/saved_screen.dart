@@ -8,26 +8,47 @@ import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/data/creation_repository.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/creations/creation_image.dart';
+import 'package:run4share/features/rate/rate_prompt.dart';
+import 'package:run4share/features/rate/rate_sheet.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/buttons.dart';
 
-/// After Save to Photos: the image, and where to go next.
-class SavedScreen extends ConsumerWidget {
+/// After Save to Photos: the image, where to go next, and now and then
+/// the "Enjoying run4share?" sheet.
+class SavedScreen extends ConsumerStatefulWidget {
   const SavedScreen({required this.creationId, super.key});
 
   final int creationId;
 
-  void _finish(BuildContext context, WidgetRef ref, String route) {
+  @override
+  ConsumerState<SavedScreen> createState() => _SavedScreenState();
+}
+
+class _SavedScreenState extends ConsumerState<SavedScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      if (await ref.read(ratePromptProvider).shouldAsk() && mounted) {
+        // Let the screen settle first.
+        await Future<void>.delayed(const Duration(milliseconds: 600));
+        if (mounted) await showRateSheet(context, ref);
+      }
+    });
+  }
+
+  void _finish(String route) {
     ref.read(creationDraftProvider.notifier).clear();
     ref.read(templateChoiceProvider.notifier).choose(null);
     context.go(route);
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final creation = ref.watch(creationByIdProvider(creationId)).value;
+    final creation = ref.watch(creationByIdProvider(widget.creationId)).value;
 
     return Scaffold(
       body: SafeArea(
@@ -119,14 +140,13 @@ class SavedScreen extends ConsumerWidget {
                 children: [
                   AppButton(
                     label: l10n.savedCreateAnother,
-                    onPressed: () =>
-                        _finish(context, ref, AppRoutes.activities),
+                    onPressed: () => _finish(AppRoutes.activities),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppButton(
                     label: l10n.savedViewCreations,
                     variant: AppButtonVariant.secondary,
-                    onPressed: () => _finish(context, ref, AppRoutes.creations),
+                    onPressed: () => _finish(AppRoutes.creations),
                   ),
                 ],
               ),

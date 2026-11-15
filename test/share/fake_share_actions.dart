@@ -17,4 +17,9 @@ class FakeShareActions implements ShareActions {
 
   @override
   Future<void> shareFile(String path) async => shared.add(path);
+
+  final texts = <String>[];
+
+  @override
+  Future<void> shareText(String text) async => texts.add(text);
 }

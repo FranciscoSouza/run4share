@@ -29,6 +29,9 @@ abstract interface class ShareActions {
 
   /// Opens the system share sheet with the file at [path].
   Future<void> shareFile(String path);
+
+  /// Opens the system share sheet with [text] (the invite).
+  Future<void> shareText(String text);
 }
 
 class DeviceShareActions implements ShareActions {
@@ -50,6 +53,11 @@ class DeviceShareActions implements ShareActions {
         e,
       );
     }
+  }
+
+  @override
+  Future<void> shareText(String text) async {
+    await SharePlus.instance.share(ShareParams(text: text));
   }
 
   @override

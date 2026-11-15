@@ -309,5 +309,16 @@
   "creationDeleteBody": "It’s removed from My Creations. Copies saved to Photos stay there.",
   "creationEditUnavailable": "This image can’t be edited.",
   "creationActivityGone": "The activity behind this image is no longer in run4share.",
-  "creationPhotoGone": "The original photo is no longer on this phone."
+  "creationPhotoGone": "The original photo is no longer on this phone.",
+  "languagePhone": "Phone language",
+  "rateTitle": "Enjoying run4share?",
+  "rateBody": "A rating takes a few seconds and helps other runners find the app.",
+  "rateFeedback": "Send feedback instead",
+  "inviteTitle": "Bring a training partner",
+  "inviteBody": "Send your link and they can start turning their own runs and rides into images.",
+  "inviteYours": "Your invite",
+  "inviteMessage": "I use run4share to turn my workouts into images worth sharing. Try it with me:",
+  "inviteCopy": "Copy link",
+  "inviteCopied": "Link copied",
+  "inviteShare": "Share invite link"
 }

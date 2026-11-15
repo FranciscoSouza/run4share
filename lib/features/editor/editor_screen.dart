@@ -18,6 +18,7 @@ import 'package:run4share/features/create/cropped_photo.dart';
 import 'package:run4share/features/editor/sticker_data.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/story_canvas.dart';
+import 'package:run4share/features/editor/style_panels.dart';
 import 'package:run4share/features/editor/theme_messages.dart';
 import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/settings/units.dart';
@@ -36,8 +37,14 @@ class EditorScreen extends ConsumerStatefulWidget {
 
 class _EditorScreenState extends ConsumerState<EditorScreen> {
   Future<Uint8List?>? _photo;
-  bool _themesOpen = true;
+  _Panel? _panel = _Panel.themes;
   bool _selected = false;
+
+  StickerTool? get _tool => switch (_panel) {
+        _Panel.textColour => StickerTool.textColour,
+        _Panel.background => StickerTool.background,
+        _ => null,
+      };
   bool _detailsRequested = false;
 
   @override
@@ -164,22 +171,46 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   theme: themeById(draft.themeId),
                                   data: data,
                                   placement: draft.sticker,
+                                  style: draft.style,
                                   editable: true,
                                   selected: _selected,
+                                  activeTool: _tool,
                                   handleLabels: HandleLabels(
                                     rotate: l10n.editorRotate,
                                     resize: l10n.editorResize,
                                     remove: l10n.editorRemove,
+                                    textColour: l10n.editorTextColour,
+                                    background: l10n.editorBackground,
                                   ),
                                   onSelect: (selected) => setState(() {
                                     _selected = selected;
-                                    if (selected) _themesOpen = false;
+                                    // Selecting hides the carousel; leaving
+                                    // the sticker closes its style panels.
+                                    if (selected && _panel == _Panel.themes) {
+                                      _panel = null;
+                                    }
+                                    if (!selected && _tool != null) {
+                                      _panel = null;
+                                    }
                                   }),
+                                  onTextColour: () => setState(
+                                    () => _panel = _panel == _Panel.textColour
+                                        ? null
+                                        : _Panel.textColour,
+                                  ),
+                                  onBackground: () => setState(
+                                    () => _panel = _panel == _Panel.background
+                                        ? null
+                                        : _Panel.background,
+                                  ),
                                   onPlacement: ref
                                       .read(creationDraftProvider.notifier)
                                       .place,
                                   onRemove: () {
-                                    setState(() => _selected = false);
+                                    setState(() {
+                                      _selected = false;
+                                      _panel = null;
+                                    });
                                     ref
                                         .read(creationDraftProvider.notifier)
                                         .removeSticker();
@@ -189,21 +220,37 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                             ),
                           ),
                           _BottomPanel(
-                            child: _themesOpen
-                                ? _ThemeCarousel(
-                                    draft: draft,
-                                    data: data,
-                                    bytes: bytes,
-                                    onChoose: (t) => _chooseTheme(t, data),
-                                    onClose: () =>
-                                        setState(() => _themesOpen = false),
-                                  )
-                                : _Toolbar(
-                                    onThemes: () => setState(() {
-                                      _themesOpen = true;
-                                      _selected = false;
-                                    }),
-                                  ),
+                            child: switch (_panel) {
+                              _Panel.themes => _ThemeCarousel(
+                                  draft: draft,
+                                  data: data,
+                                  bytes: bytes,
+                                  onChoose: (t) => _chooseTheme(t, data),
+                                  onClose: () => setState(() => _panel = null),
+                                ),
+                              _Panel.textColour => TextColourPanel(
+                                  selected: draft.style.colour ??
+                                      themeById(draft.themeId)?.colour ??
+                                      StickerColour.white,
+                                  onChoose: ref
+                                      .read(creationDraftProvider.notifier)
+                                      .setColour,
+                                  onClose: () => setState(() => _panel = null),
+                                ),
+                              _Panel.background => BackgroundPanel(
+                                  value: draft.style.background,
+                                  onChanged: ref
+                                      .read(creationDraftProvider.notifier)
+                                      .setBackground,
+                                  onClose: () => setState(() => _panel = null),
+                                ),
+                              null => _Toolbar(
+                                  onThemes: () => setState(() {
+                                    _panel = _Panel.themes;
+                                    _selected = false;
+                                  }),
+                                ),
+                            },
                           ),
                           if (draft.sticker == null)
                             Container(
@@ -226,6 +273,9 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     );
   }
 }
+
+/// What the bottom of the editor shows; null is the toolbar.
+enum _Panel { themes, textColour, background }
 
 class _BottomPanel extends StatelessWidget {
   const _BottomPanel({required this.child});
@@ -414,6 +464,7 @@ class _ThemeCarousel extends StatelessWidget {
                                       center: t.position,
                                       scale: 1.25,
                                     ),
+                                    style: draft.style,
                                     watermark: false,
                                   ),
                                 ),

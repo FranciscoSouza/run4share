@@ -156,5 +156,16 @@
   "templateStep3": "Passe den Sticker an und teile",
   "templateUse": "Vorlage verwenden",
   "templateStepOf": "Schritt {step} von {total}",
-  "templateChooseActivity": "Wähle eine Aktivität"
+  "templateChooseActivity": "Wähle eine Aktivität",
+  "editorTextColour": "Textfarbe",
+  "editorBackground": "Sticker-Hintergrund",
+  "colourWhite": "Weiß",
+  "colourBlack": "Schwarz",
+  "colourAmber": "Bernstein",
+  "colourRed": "Rot",
+  "colourBlue": "Blau",
+  "colourGreen": "Grün",
+  "backgroundTransparent": "Transparent",
+  "backgroundWhite": "Weiß {percent} %",
+  "backgroundBlack": "Schwarz {percent} %"
 }

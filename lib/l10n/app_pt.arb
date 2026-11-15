@@ -156,5 +156,16 @@
   "templateStep3": "Ajuste o sticker e compartilhe",
   "templateUse": "Usar este modelo",
   "templateStepOf": "Passo {step} de {total}",
-  "templateChooseActivity": "Escolha uma atividade"
+  "templateChooseActivity": "Escolha uma atividade",
+  "editorTextColour": "Cor do texto",
+  "editorBackground": "Fundo do sticker",
+  "colourWhite": "Branco",
+  "colourBlack": "Preto",
+  "colourAmber": "Âmbar",
+  "colourRed": "Vermelho",
+  "colourBlue": "Azul",
+  "colourGreen": "Verde",
+  "backgroundTransparent": "Transparente",
+  "backgroundWhite": "Branco {percent}%",
+  "backgroundBlack": "Preto {percent}%"
 }

@@ -12,6 +12,8 @@ abstract final class AppIcons {
   static const IconData plus = LucideIcons.plus;
   static const IconData check = LucideIcons.check;
   static const IconData resize = LucideIcons.moveDiagonal2;
+  static const IconData textColour = LucideIcons.aLargeSmall;
+  static const IconData contrast = LucideIcons.contrast;
   static const IconData layers = LucideIcons.layers;
   static const IconData share = LucideIcons.share;
   static const IconData info = LucideIcons.info;

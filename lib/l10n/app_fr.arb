@@ -17,7 +17,7 @@
   "sourceOnIphone": "Sur iPhone",
   "sourceOnAndroid": "Sur Android",
   "statDistance": "Distance",
-  "statTime": "Temps",
+  "statTime": "Durée",
   "statPace": "Allure",
   "statSpeed": "Vitesse",
   "creationsTitle": "Mes créations",
@@ -156,5 +156,16 @@
   "templateStep3": "Ajustez le sticker et partagez",
   "templateUse": "Utiliser ce modèle",
   "templateStepOf": "Étape {step} sur {total}",
-  "templateChooseActivity": "Choisissez une activité"
+  "templateChooseActivity": "Choisissez une activité",
+  "editorTextColour": "Couleur du texte",
+  "editorBackground": "Fond du sticker",
+  "colourWhite": "Blanc",
+  "colourBlack": "Noir",
+  "colourAmber": "Ambre",
+  "colourRed": "Rouge",
+  "colourBlue": "Bleu",
+  "colourGreen": "Vert",
+  "backgroundTransparent": "Transparent",
+  "backgroundWhite": "Blanc {percent} %",
+  "backgroundBlack": "Noir {percent} %"
 }

@@ -36,12 +36,16 @@ class StoryCanvas extends StatefulWidget {
     this.theme,
     this.data,
     this.placement,
+    this.style = const StickerStyle(),
     this.watermark = true,
     this.editable = false,
     this.selected = false,
     this.onSelect,
     this.onPlacement,
     this.onRemove,
+    this.onTextColour,
+    this.onBackground,
+    this.activeTool,
     this.handleLabels = const HandleLabels(),
     super.key,
   });
@@ -53,6 +57,7 @@ class StoryCanvas extends StatefulWidget {
 
   /// Null hides the sticker.
   final StickerPlacement? placement;
+  final StickerStyle style;
   final bool watermark;
 
   /// Gestures and handles (the editor); off for thumbnails and export.
@@ -61,11 +66,23 @@ class StoryCanvas extends StatefulWidget {
   final ValueChanged<bool>? onSelect;
   final ValueChanged<StickerPlacement>? onPlacement;
   final VoidCallback? onRemove;
+
+  /// The "A" handle: open the text colour panel.
+  final VoidCallback? onTextColour;
+
+  /// The contrast handle: open the sticker background panel.
+  final VoidCallback? onBackground;
+
+  /// Which of those two panels is open, to highlight its handle.
+  final StickerTool? activeTool;
   final HandleLabels handleLabels;
 
   @override
   State<StoryCanvas> createState() => _StoryCanvasState();
 }
+
+/// The sticker's style tools, opened from its handles.
+enum StickerTool { textColour, background }
 
 /// Accessibility labels for the sticker handles.
 @immutable
@@ -74,11 +91,15 @@ class HandleLabels {
     this.rotate = 'Rotate',
     this.resize = 'Resize',
     this.remove = 'Remove',
+    this.textColour = 'Text colour',
+    this.background = 'Background',
   });
 
   final String rotate;
   final String resize;
   final String remove;
+  final String textColour;
+  final String background;
 }
 
 class _StoryCanvasState extends State<StoryCanvas> {
@@ -186,7 +207,11 @@ class _StoryCanvasState extends State<StoryCanvas> {
               onSize: (s) {
                 if (s != _stickerSize) setState(() => _stickerSize = s);
               },
-              child: StickerView(theme: theme, data: data),
+              child: StickerView(
+                theme: theme,
+                data: data,
+                style: widget.style,
+              ),
             );
             if (widget.editable) {
               sticker = GestureDetector(
@@ -264,6 +289,8 @@ class _StoryCanvasState extends State<StoryCanvas> {
               center + rotateVector(Offset(x, y), placement.rotation);
           final topRight = at(half.dx + pad, -half.dy - pad);
           final bottomRight = at(half.dx + pad, half.dy + pad);
+          final topLeft = at(-half.dx - pad, -half.dy - pad);
+          final bottomLeft = at(-half.dx - pad, half.dy + pad);
           final top = at(0, -half.dy - pad - 44);
 
           return Stack(
@@ -304,6 +331,20 @@ class _StoryCanvasState extends State<StoryCanvas> {
                 onTap: widget.onRemove,
               ),
               _Handle(
+                at: topLeft,
+                icon: AppIcons.textColour,
+                label: widget.handleLabels.textColour,
+                active: widget.activeTool == StickerTool.textColour,
+                onTap: widget.onTextColour,
+              ),
+              _Handle(
+                at: bottomLeft,
+                icon: AppIcons.contrast,
+                label: widget.handleLabels.background,
+                active: widget.activeTool == StickerTool.background,
+                onTap: widget.onBackground,
+              ),
+              _Handle(
                 at: bottomRight,
                 icon: AppIcons.resize,
                 label: widget.handleLabels.resize,
@@ -323,12 +364,16 @@ class _Handle extends StatelessWidget {
     required this.at,
     required this.icon,
     required this.label,
+    this.active = false,
     this.onTap,
     this.onPanStart,
     this.onPanUpdate,
   });
 
   static const size = 40.0;
+
+  /// Its tool's panel is open: blue, like the design.
+  final bool active;
 
   final Offset at;
   final IconData icon;
@@ -344,6 +389,7 @@ class _Handle extends StatelessWidget {
       top: at.dy - size / 2,
       child: Semantics(
         button: true,
+        selected: active,
         label: label,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -353,12 +399,18 @@ class _Handle extends StatelessWidget {
           child: Container(
             width: size,
             height: size,
-            decoration: const BoxDecoration(
-              color: AppColors.neutral100,
+            decoration: BoxDecoration(
+              color: active ? AppColors.primary50 : AppColors.neutral100,
               shape: BoxShape.circle,
-              boxShadow: [BoxShadow(color: Color(0x40000000), blurRadius: 6)],
+              boxShadow: const [
+                BoxShadow(color: Color(0x40000000), blurRadius: 6),
+              ],
             ),
-            child: Icon(icon, size: 20, color: AppColors.neutral0),
+            child: Icon(
+              icon,
+              size: 20,
+              color: active ? AppColors.neutral100 : AppColors.neutral0,
+            ),
           ),
         ),
       ),

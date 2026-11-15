@@ -105,8 +105,8 @@ moved on to phase 4a on 15 Nov 2026 without reporting problems.
 - iOS photo-permission text is English only for now (needs InfoPlist
   .strings per language later).
 
-**Phase 4a status (editor core):** code done, installed on Francisco's
-phone, waiting for his check. Not committed yet.
+**Phase 4a status (editor core):** committed (`phase-4a-editor`);
+Francisco moved on to phase 4b on 15 Nov 2026 without reporting problems.
 - Themes are data (`lib/features/editor/sticker_theme.dart`): id, name,
   layout (inline, stack, hero, poster, ring, weekday), metric list and
   start position. One renderer (`sticker_view.dart`) draws them all in
@@ -128,6 +128,18 @@ phone, waiting for his check. Not committed yet.
   from the cut-off "Race P…" in the design.
 - Last theme and format used are offered first. Share says "coming"
   until phase 5.
+
+**Phase 4b status (sticker controls):** committed (`phase-4b-controls`),
+deployed to Francisco's phone, waiting for his check.
+- Selected sticker's "A" handle opens Text colour (White, Black, Amber,
+  Red, Blue, Green); the contrast handle opens Sticker background, one
+  slider from white through transparent (snaps within 0.06) to black.
+- `StickerStyle` (colour, background) lives in the draft and is kept when
+  the theme changes. Null colour means the theme's own (Poster: amber).
+  Poster fills its boxes with the colour and picks black or white text;
+  Heart Ring colours the ring and gets a round backing. Text shadow only
+  for light text without a backing.
+- French "Time" is "Durée", as in the Editor · Français artboard.
 
 ## Decisions already taken (do not reopen without asking)
 

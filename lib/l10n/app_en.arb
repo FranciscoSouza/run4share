@@ -262,5 +262,30 @@
         "type": "int"
       }
     }
+  },
+  "editorTextColour": "Text colour",
+  "editorBackground": "Sticker background",
+  "colourWhite": "White",
+  "colourBlack": "Black",
+  "colourAmber": "Amber",
+  "colourRed": "Red",
+  "colourBlue": "Blue",
+  "colourGreen": "Green",
+  "backgroundTransparent": "Transparent",
+  "backgroundWhite": "White {percent}%",
+  "backgroundBlack": "Black {percent}%",
+  "@backgroundWhite": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "@backgroundBlack": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
   }
 }

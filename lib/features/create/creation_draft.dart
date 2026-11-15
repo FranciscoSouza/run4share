@@ -37,6 +37,7 @@ class CreationDraft {
     required this.crop,
     required this.themeId,
     this.sticker,
+    this.style = const StickerStyle(),
   });
 
   final int activityId;
@@ -52,10 +53,14 @@ class CreationDraft {
   /// Where the sticker sits; null when the user removed it.
   final StickerPlacement? sticker;
 
+  /// Text colour and background; kept when the theme changes.
+  final StickerStyle style;
+
   CreationDraft copyWith({
     String? themeId,
     StickerPlacement? sticker,
     bool removeSticker = false,
+    StickerStyle? style,
   }) =>
       CreationDraft(
         activityId: activityId,
@@ -64,7 +69,55 @@ class CreationDraft {
         crop: crop,
         themeId: themeId ?? this.themeId,
         sticker: removeSticker ? null : sticker ?? this.sticker,
+        style: style ?? this.style,
       );
+}
+
+/// The six text colours of the design's swatch row.
+enum StickerColour {
+  white(Color(0xFFFFFFFF)),
+  black(Color(0xFF0D0C0A)),
+  amber(Color(0xFFFFB74D)),
+  red(Color(0xFFFF3B30)),
+  blue(Color(0xFF2E92CE)),
+  green(Color(0xFF2EAD5B));
+
+  const StickerColour(this.color);
+
+  final Color color;
+
+  /// Light colours get dark text when used as a fill (Poster boxes).
+  bool get isLight => color.computeLuminance() > 0.4;
+}
+
+/// How the sticker is coloured.
+@immutable
+class StickerStyle {
+  const StickerStyle({this.colour, this.background = 0});
+
+  /// Null: the theme's own colour (white, or amber for Poster).
+  final StickerColour? colour;
+
+  /// -1 solid white, 0 none, 1 solid black; in between, that much opacity.
+  final double background;
+
+  /// Background values this close to 0 snap to none.
+  static const snap = 0.06;
+
+  StickerStyle copyWith({StickerColour? colour, double? background}) =>
+      StickerStyle(
+        colour: colour ?? this.colour,
+        background: background ?? this.background,
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is StickerStyle &&
+      other.colour == colour &&
+      other.background == background;
+
+  @override
+  int get hashCode => Object.hash(colour, background);
 }
 
 /// The sticker's centre (fractions of the canvas), size and turn.
@@ -161,6 +214,21 @@ class CreationDraftNotifier extends Notifier<CreationDraft?> {
   void place(StickerPlacement placement) {
     final draft = state;
     if (draft != null) state = draft.copyWith(sticker: placement);
+  }
+
+  void setColour(StickerColour colour) {
+    final draft = state;
+    if (draft != null) {
+      state = draft.copyWith(style: draft.style.copyWith(colour: colour));
+    }
+  }
+
+  void setBackground(double value) {
+    final draft = state;
+    if (draft == null) return;
+    final clamped = value.clamp(-1.0, 1.0);
+    final snapped = clamped.abs() < StickerStyle.snap ? 0.0 : clamped;
+    state = draft.copyWith(style: draft.style.copyWith(background: snapped));
   }
 
   void removeSticker() {

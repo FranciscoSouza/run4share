@@ -37,6 +37,7 @@ class StickerTheme {
     required this.layout,
     required this.metrics,
     required this.position,
+    this.colour = StickerColour.white,
   });
 
   final String id;
@@ -48,6 +49,9 @@ class StickerTheme {
 
   /// Where the sticker's centre starts, as fractions of the canvas.
   final Offset position;
+
+  /// The theme's own colour, used until the user picks another.
+  final StickerColour colour;
 }
 
 /// The catalogue, in carousel order.
@@ -79,6 +83,7 @@ const stickerThemes = <StickerTheme>[
     layout: StickerLayout.poster,
     metrics: [Metric.distance, Metric.time, Metric.rate],
     position: Offset(0.62, 0.5),
+    colour: StickerColour.amber,
   ),
   StickerTheme(
     id: 'heart-ring',

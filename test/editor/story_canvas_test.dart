@@ -55,6 +55,11 @@ void main() {
                 theme: theme,
                 data: data,
                 placement: StickerPlacement(center: theme.position),
+                // The widest case: a backing panel around the sticker.
+                style: const StickerStyle(
+                  colour: StickerColour.black,
+                  background: -0.8,
+                ),
               ),
             ),
           ),

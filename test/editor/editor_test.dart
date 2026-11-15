@@ -10,6 +10,7 @@ import 'package:run4share/data/database.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
+import 'package:run4share/features/editor/style_panels.dart';
 import 'package:run4share/features/photos/photo_library.dart';
 
 import '../helpers/pump_app.dart';
@@ -120,6 +121,51 @@ void main() {
     await tapTheme(tester, 'Inline Top');
     expect(draft().sticker, isNotNull);
     expect(draft().themeId, 'inline-top');
+  });
+
+  testWidgets('text colour and background from the sticker handles', (
+    tester,
+  ) async {
+    await openEditor(tester);
+    await tester.tap(find.byType(StickerView).first);
+    await settle(tester);
+
+    await tester.tap(find.bySemanticsLabel('Text colour'));
+    await settle(tester);
+    expect(find.text('Text colour'), findsOneWidget);
+    expect(find.text('White'), findsOneWidget, reason: 'current colour');
+
+    await tester.tap(find.bySemanticsLabel('Amber'));
+    await settle(tester);
+    expect(draft().style.colour, StickerColour.amber);
+    expect(find.text('Amber'), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel('Sticker background'));
+    await settle(tester);
+    expect(find.text('Transparent'), findsWidgets);
+
+    final slider = find.byType(BackgroundSlider);
+    final box = tester.getRect(slider);
+    await tester.tapAt(Offset(box.right - 4, box.center.dy));
+    await settle(tester);
+    expect(draft().style.background, 1);
+    expect(find.text('Black 100%'), findsOneWidget);
+
+    await tester.tapAt(box.center);
+    await settle(tester);
+    expect(draft().style.background, 0, reason: 'snaps to transparent');
+
+    await tester.tapAt(Offset(box.left + box.width * 0.2, box.center.dy));
+    await settle(tester);
+    expect(draft().style.background, lessThan(0));
+    expect(find.textContaining('White '), findsOneWidget);
+
+    // Tapping the photo closes the style panel.
+    await tester.tapAt(
+      tester.getTopLeft(find.byType(StickerView).first) - const Offset(0, 30),
+    );
+    await settle(tester);
+    expect(find.byType(BackgroundSlider), findsNothing);
   });
 
   testWidgets('Share is not ready yet', (tester) async {

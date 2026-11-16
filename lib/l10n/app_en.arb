@@ -516,8 +516,8 @@
   "templatesTitle": "Templates",
   "templateExtraMissing": "{thing} isn't in this activity, so it was left out.",
   "stickerRoute": "Route",
-  "editorProStickersTitle": "Pro stickers on this image",
-  "editorProStickersBody": "Charts, routes and labels are Pro. Unlock Pro to share this image, or remove those stickers to share it free.",
+  "editorProStickersTitle": "Pro on this image",
+  "editorProStickersBody": "Charts, routes, labels and photo effects are Pro. Unlock Pro to share this image, or remove them to share it free.",
   "editorProStickersSeePro": "See Pro",
   "@homeTemplateOf": {
     "placeholders": {
@@ -535,5 +535,12 @@
         "type": "String"
       }
     }
-  }
+  },
+  "editorPhoto": "Photo",
+  "effectNone": "None",
+  "effectBlackWhite": "Black & white",
+  "effectHighContrast": "High contrast",
+  "shareCopy": "Copy",
+  "shareCopied": "Sticker copied. Paste it into your story.",
+  "shareCopyFailed": "Couldn't copy the sticker."
 }

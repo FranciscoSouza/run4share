@@ -107,7 +107,9 @@ void useTemplate(
   return (kept, missing);
 }
 
-/// Whether the draft has something only Pro may export: a Pro theme or
-/// any extra sticker (all extras are Pro stickers).
+/// Whether the draft has something only Pro may export: a Pro theme, any
+/// extra sticker (all extras are Pro stickers) or a photo effect.
 bool draftNeedsPro(CreationDraft draft) =>
-    (themeById(draft.themeId)?.pro ?? false) || draft.extras.isNotEmpty;
+    (themeById(draft.themeId)?.pro ?? false) ||
+    draft.extras.isNotEmpty ||
+    draft.effect != PhotoEffect.none;

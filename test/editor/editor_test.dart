@@ -390,7 +390,7 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Share'));
     await settle(tester);
-    expect(find.text('Pro stickers on this image'), findsOneWidget);
+    expect(find.text('Pro on this image'), findsOneWidget);
     expect(find.byType(ShareScreen), findsNothing);
 
     await tester.tap(find.text('Cancel'));
@@ -408,7 +408,51 @@ void main() {
     await openEditor(tester);
     await tester.tap(find.text('Share'));
     await settle(tester);
-    expect(find.text('Pro stickers on this image'), findsNothing);
+    expect(find.text('Pro on this image'), findsNothing);
+    expect(find.byType(ShareScreen), findsOneWidget);
+  });
+
+  testWidgets('Photo tool: effects on the photo, Pro to share', (
+    tester,
+  ) async {
+    await openEditor(tester);
+    await tester.tap(find.byTooltip('Hide themes'));
+    await settle(tester);
+    await tester.tap(find.text('Photo'));
+    await settle(tester);
+    expect(find.bySemanticsLabel('None'), findsOneWidget);
+    expect(find.text('PRO'), findsWidgets, reason: 'effects marked Pro');
+
+    await tester.tap(find.bySemanticsLabel('Black & white'));
+    await settle(tester);
+    expect(draft().effect, PhotoEffect.blackWhite);
+    // Applied to the photo on the canvas (plus the panel's previews).
+    expect(find.byType(ColorFiltered), findsWidgets);
+
+    await tester.tap(find.text('Share'));
+    await settle(tester);
+    expect(find.text('Pro on this image'), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await settle(tester);
+
+    // Back to None: shares freely again.
+    await tester.tap(find.bySemanticsLabel('None'));
+    await settle(tester);
+    expect(draft().effect, PhotoEffect.none);
+    await tester.tap(find.text('Share'));
+    await settle(tester);
+    expect(find.byType(ShareScreen), findsOneWidget);
+  });
+
+  testWidgets('with Pro an effect shares straight on', (tester) async {
+    await openEditor(tester, pro: true);
+    container.read(creationDraftProvider.notifier).setEffect(
+          PhotoEffect.highContrast,
+        );
+    await settle(tester);
+    await tester.tap(find.text('Share'));
+    await settle(tester);
+    expect(find.text('Pro on this image'), findsNothing);
     expect(find.byType(ShareScreen), findsOneWidget);
   });
 }

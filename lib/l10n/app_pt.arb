@@ -301,7 +301,14 @@
   "templatesTitle": "Modelos",
   "templateExtraMissing": "{thing} não está nesta atividade, então ficou de fora.",
   "stickerRoute": "Percurso",
-  "editorProStickersTitle": "Stickers Pro nesta imagem",
-  "editorProStickersBody": "Gráficos, percursos e etiquetas são Pro. Desbloqueie o Pro para compartilhar esta imagem, ou remova esses stickers para compartilhar de graça.",
-  "editorProStickersSeePro": "Ver o Pro"
+  "editorProStickersTitle": "Pro nesta imagem",
+  "editorProStickersBody": "Gráficos, percursos, etiquetas e efeitos de foto são Pro. Desbloqueie o Pro para compartilhar esta imagem, ou remova-os para compartilhar de graça.",
+  "editorProStickersSeePro": "Ver o Pro",
+  "editorPhoto": "Foto",
+  "effectNone": "Nenhum",
+  "effectBlackWhite": "Preto e branco",
+  "effectHighContrast": "Alto contraste",
+  "shareCopy": "Copiar",
+  "shareCopied": "Sticker copiado. Cole no seu story.",
+  "shareCopyFailed": "Não foi possível copiar o sticker."
 }

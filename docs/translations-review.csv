@@ -300,6 +300,13 @@ homeTemplateOf,Activities tab (Home),"Keep {index}, {total} as is.",Template {in
 templatesTitle,Popular templates flow,,Templates,Modelos,Plantillas,Modèles,Vorlagen
 templateExtraMissing,Popular templates flow,Keep {thing} as is.,"{thing} isn't in this activity, so it was left out.","{thing} não está nesta atividade, então ficou de fora.","{thing} no está en esta actividad, así que se quitó.","{thing} n’est pas dans cette activité, donc il a été retiré.",{thing} ist in dieser Aktivität nicht vorhanden und wurde weggelassen.
 stickerRoute,,,Route,Percurso,Ruta,Tracé,Strecke
-editorProStickersTitle,Editor,,Pro stickers on this image,Stickers Pro nesta imagem,Stickers Pro en esta imagen,Stickers Pro sur cette image,Pro-Sticker auf diesem Bild
-editorProStickersBody,Editor,,"Charts, routes and labels are Pro. Unlock Pro to share this image, or remove those stickers to share it free.","Gráficos, percursos e etiquetas são Pro. Desbloqueie o Pro para compartilhar esta imagem, ou remova esses stickers para compartilhar de graça.","Los gráficos, rutas y etiquetas son Pro. Desbloquea Pro para compartir esta imagen, o quita esos stickers para compartirla gratis.","Les graphiques, tracés et étiquettes sont Pro. Débloque Pro pour partager cette image, ou retire ces stickers pour la partager gratuitement.","Diagramme, Strecken und Labels sind Pro. Schalte Pro frei, um dieses Bild zu teilen, oder entferne diese Sticker, um es kostenlos zu teilen."
+editorProStickersTitle,Editor,,Pro on this image,Pro nesta imagem,Pro en esta imagen,Pro sur cette image,Pro auf diesem Bild
+editorProStickersBody,Editor,,"Charts, routes, labels and photo effects are Pro. Unlock Pro to share this image, or remove them to share it free.","Gráficos, percursos, etiquetas e efeitos de foto são Pro. Desbloqueie o Pro para compartilhar esta imagem, ou remova-os para compartilhar de graça.","Los gráficos, rutas, etiquetas y efectos de foto son Pro. Desbloquea Pro para compartir esta imagen, o quítalos para compartirla gratis.","Les graphiques, tracés, étiquettes et effets photo sont Pro. Débloque Pro pour partager cette image, ou retire-les pour la partager gratuitement.","Diagramme, Strecken, Labels und Fotoeffekte sind Pro. Schalte Pro frei, um dieses Bild zu teilen, oder entferne sie, um es kostenlos zu teilen."
 editorProStickersSeePro,Editor,,See Pro,Ver o Pro,Ver Pro,Voir Pro,Pro ansehen
+editorPhoto,Editor,,Photo,Foto,Foto,Photo,Foto
+effectNone,,,None,Nenhum,Ninguno,Aucun,Keiner
+effectBlackWhite,,,Black & white,Preto e branco,Blanco y negro,Noir et blanc,Schwarz-Weiß
+effectHighContrast,,,High contrast,Alto contraste,Alto contraste,Contraste élevé,Hoher Kontrast
+shareCopy,Share screen,,Copy,Copiar,Copiar,Copier,Kopieren
+shareCopied,Share screen,,Sticker copied. Paste it into your story.,Sticker copiado. Cole no seu story.,Sticker copiado. Pégalo en tu historia.,Sticker copié. Colle-le dans ta story.,Sticker kopiert. Füge ihn in deine Story ein.
+shareCopyFailed,Share screen,,Couldn't copy the sticker.,Não foi possível copiar o sticker.,No se pudo copiar el sticker.,Impossible de copier le sticker.,Sticker konnte nicht kopiert werden.

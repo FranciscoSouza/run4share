@@ -39,6 +39,7 @@ class CreationDraft {
     this.sticker,
     this.style = const StickerStyle(),
     this.extras = const [],
+    this.effect = PhotoEffect.none,
   });
 
   final int activityId;
@@ -61,6 +62,9 @@ class CreationDraft {
   /// theme sticker in this order.
   final List<ExtraSticker> extras;
 
+  /// A look applied to the photo only (Pro to export).
+  final PhotoEffect effect;
+
   /// Settings as JSON, stored with each creation so it can be edited again.
   Map<String, Object?> toJson() => {
         'activityId': activityId,
@@ -79,6 +83,7 @@ class CreationDraft {
         },
         'style': {'colour': style.colour?.name, 'background': style.background},
         'extras': [for (final extra in extras) extra.toJson()],
+        'effect': effect.name,
       };
 
   /// Null if [json] isn't a draft this version understands.
@@ -118,6 +123,9 @@ class CreationDraft {
                 case final extra?)
               extra,
         ],
+        // Creations saved before effects existed have none.
+        effect:
+            PhotoEffect.values.asNameMap()[json['effect']] ?? PhotoEffect.none,
       );
     } on Object {
       return null;
@@ -130,6 +138,7 @@ class CreationDraft {
     bool removeSticker = false,
     StickerStyle? style,
     List<ExtraSticker>? extras,
+    PhotoEffect? effect,
   }) =>
       CreationDraft(
         activityId: activityId,
@@ -140,8 +149,12 @@ class CreationDraft {
         sticker: removeSticker ? null : sticker ?? this.sticker,
         style: style ?? this.style,
         extras: extras ?? this.extras,
+        effect: effect ?? this.effect,
       );
 }
+
+/// Looks for the background photo (phase 17).
+enum PhotoEffect { none, blackWhite, highContrast }
 
 enum ExtraKind {
   /// Record, Long run, Race day, Sub-X.
@@ -388,6 +401,11 @@ class CreationDraftNotifier extends Notifier<CreationDraft?> {
     if (draft != null) {
       state = draft.copyWith(style: draft.style.copyWith(colour: colour));
     }
+  }
+
+  void setEffect(PhotoEffect effect) {
+    final draft = state;
+    if (draft != null) state = draft.copyWith(effect: effect);
   }
 
   void setBackground(double value) {

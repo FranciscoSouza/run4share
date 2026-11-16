@@ -40,7 +40,7 @@ const exportWidth = 1080;
 /// crop of most of the frame.
 const exportPhotoMaxSide = 3072;
 
-enum _Action { save, instagram, more }
+enum _Action { save, instagram, more, copy }
 
 /// Last step: preview, sticker-only and watermark options, then save to
 /// Photos or share. Every export is kept in My Creations.
@@ -146,6 +146,17 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
           messenger
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(content: Text(l10n.shareKept)));
+        case _Action.copy:
+          final copied = await actions.copyImage(exported.png);
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(
+                  copied ? l10n.shareCopied : l10n.shareCopyFailed,
+                ),
+              ),
+            );
       }
     } on SaveException catch (e) {
       messenger
@@ -259,42 +270,65 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  _ActionButton(
-                                    icon: AppIcons.download,
-                                    label: l10n.shareSave,
-                                    primary: true,
-                                    busy: _busy == _Action.save,
-                                    onTap: ready
-                                        ? () => _run(
-                                              _Action.save,
-                                              draft,
-                                              activity!.name,
-                                            )
-                                        : null,
+                                  Expanded(
+                                    child: _ActionButton(
+                                      icon: AppIcons.download,
+                                      label: l10n.shareSave,
+                                      primary: true,
+                                      busy: _busy == _Action.save,
+                                      onTap: ready
+                                          ? () => _run(
+                                                _Action.save,
+                                                draft,
+                                                activity!.name,
+                                              )
+                                          : null,
+                                    ),
                                   ),
-                                  _ActionButton(
-                                    icon: AppIcons.story,
-                                    label: l10n.shareInstagram,
-                                    busy: _busy == _Action.instagram,
-                                    onTap: ready
-                                        ? () => _run(
-                                              _Action.instagram,
-                                              draft,
-                                              activity!.name,
-                                            )
-                                        : null,
+                                  Expanded(
+                                    child: _ActionButton(
+                                      icon: AppIcons.story,
+                                      label: l10n.shareInstagram,
+                                      busy: _busy == _Action.instagram,
+                                      onTap: ready
+                                          ? () => _run(
+                                                _Action.instagram,
+                                                draft,
+                                                activity!.name,
+                                              )
+                                          : null,
+                                    ),
                                   ),
-                                  _ActionButton(
-                                    icon: AppIcons.moreHorizontal,
-                                    label: l10n.shareMore,
-                                    busy: _busy == _Action.more,
-                                    onTap: ready
-                                        ? () => _run(
-                                              _Action.more,
-                                              draft,
-                                              activity!.name,
-                                            )
-                                        : null,
+                                  // The sticker alone can be pasted straight
+                                  // into a story.
+                                  if (_stickerOnly)
+                                    Expanded(
+                                      child: _ActionButton(
+                                        icon: AppIcons.copy,
+                                        label: l10n.shareCopy,
+                                        busy: _busy == _Action.copy,
+                                        onTap: ready
+                                            ? () => _run(
+                                                  _Action.copy,
+                                                  draft,
+                                                  activity!.name,
+                                                )
+                                            : null,
+                                      ),
+                                    ),
+                                  Expanded(
+                                    child: _ActionButton(
+                                      icon: AppIcons.moreHorizontal,
+                                      label: l10n.shareMore,
+                                      busy: _busy == _Action.more,
+                                      onTap: ready
+                                          ? () => _run(
+                                                _Action.more,
+                                                draft,
+                                                activity!.name,
+                                              )
+                                          : null,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -358,6 +392,7 @@ class _ImagePreview extends StatelessWidget {
             data: data,
             placement: draft.sticker,
             style: draft.style,
+            effect: draft.effect,
             extras: extraItems(draft, facts),
             watermark: watermark,
           ),
@@ -543,7 +578,7 @@ class _ActionButton extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: SizedBox(
-          width: 108,
+          width: double.infinity,
           child: Column(
             children: [
               Container(

@@ -25,7 +25,7 @@ or share to Instagram.
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
-charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes → 16 Home templates.
+charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes → 16 Home templates → 17 photo effects + copy sticker.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -409,6 +409,27 @@ Francisco ran it on his phone.
   Share gate in `editor_test.dart`. Home content now starts below the
   carousel: tests use `tester.showOnHome(...)` / `homeToTop()`.
 - `tool/preview/home_preview_test.dart` renders Home and See all.
+
+**Phase 17 status (photo effects + copy sticker):** code done on
+`phase-17-effects-clipboard`, the onboarding spec's two remaining ideas
+(Francisco, 16 Nov 2026). Committed after it ran on his phone; the
+paste into Instagram/TikTok wasn't reported.
+- Effects (`PhotoEffect` none / blackWhite / highContrast in the draft
+  and its JSON; old creations read as none): colour matrices in
+  `lib/features/editor/photo_effect.dart`, applied by `StoryCanvas` to
+  the background only, so editor, thumbnails and export match. Editor
+  toolbar gains a fourth tool, Photo (`PhotoEffectsPanel`: the photo in
+  each effect); the four tools now share the width.
+- Pro: anyone can try an effect; Share asks for Pro while one is on
+  (`draftNeedsPro`; dialog now "Pro on this image").
+- Copy sticker: Share screen, sticker-only mode, a Copy button
+  (`ShareActions.copyImage`). Flutter's clipboard is text only, so the
+  PNG goes to cache/clipboard/ and the `run4share/system` channel puts
+  it on the clipboard: Android via a FileProvider (`${applicationId}.clipboard`,
+  cache/clipboard/ only) and `ClipData.newUri`; iOS via
+  `UIPasteboard` (AppDelegate now registers the channel). Copying is an
+  export, so it's kept in My Creations like Save/Share.
+- The Share buttons now share the row width (four didn't fit).
 
 ## Decisions already taken (do not reopen without asking)
 

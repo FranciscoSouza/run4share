@@ -1,7 +1,11 @@
-import 'dart:typed_data';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gal/gal.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum SaveFailure {
@@ -32,6 +36,10 @@ abstract interface class ShareActions {
 
   /// Opens the system share sheet with [text] (the invite).
   Future<void> shareText(String text);
+
+  /// Puts [png] on the clipboard as an image, to paste into a story.
+  /// False when the phone wouldn't take it.
+  Future<bool> copyImage(Uint8List png);
 }
 
 class DeviceShareActions implements ShareActions {
@@ -65,6 +73,31 @@ class DeviceShareActions implements ShareActions {
     await SharePlus.instance.share(
       ShareParams(files: [XFile(path, mimeType: 'image/png')]),
     );
+  }
+
+  static const _system = MethodChannel('run4share/system');
+
+  /// Flutter's clipboard is text only: the PNG goes through the app's
+  /// cache (Android hands the clipboard a content URI to it; iOS reads the
+  /// bytes into the pasteboard).
+  @override
+  Future<bool> copyImage(Uint8List png) async {
+    try {
+      final dir = Directory(
+        '${(await getTemporaryDirectory()).path}/clipboard',
+      )..createSync(recursive: true);
+      // One file, replaced each time: the clipboard holds one image.
+      final file = File('${dir.path}/run4share-sticker.png');
+      await file.writeAsBytes(png, flush: true);
+      return await _system.invokeMethod<bool>(
+            'copyImage',
+            {'path': file.path},
+          ) ??
+          false;
+    } on Object catch (error) {
+      debugPrint('Copy failed: $error');
+      return false;
+    }
   }
 }
 

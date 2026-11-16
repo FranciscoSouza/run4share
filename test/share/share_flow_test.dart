@@ -134,6 +134,37 @@ void main() {
     expect(saved.single.height, lessThan(saved.single.width));
   });
 
+  testWidgets('sticker only can be copied, to paste into a story', (
+    tester,
+  ) async {
+    await pump(tester);
+    await openShare(tester);
+    expect(find.text('Copy'), findsNothing, reason: 'full image: no copy');
+
+    await tester.tap(find.text('Sticker only'));
+    await settle(tester);
+    await tester.tap(find.text('Copy'));
+    await settle(tester, rounds: 20);
+    expect(share.copied, hasLength(1));
+    expect(
+      find.text('Sticker copied. Paste it into your story.'),
+      findsOneWidget,
+    );
+    // Copying is an export like the others: kept in My Creations, once.
+    expect((await creations(tester)).single.stickerOnly, isTrue);
+  });
+
+  testWidgets('copy refused by the phone: says so', (tester) async {
+    await pump(tester);
+    share.copyWorks = false;
+    await openShare(tester);
+    await tester.tap(find.text('Sticker only'));
+    await settle(tester);
+    await tester.tap(find.text('Copy'));
+    await settle(tester, rounds: 20);
+    expect(find.text("Couldn't copy the sticker."), findsOneWidget);
+  });
+
   testWidgets('no permission for Photos: says so, stays on Share', (
     tester,
   ) async {

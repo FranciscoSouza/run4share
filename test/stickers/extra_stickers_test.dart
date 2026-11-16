@@ -92,6 +92,15 @@ final everySticker = <(ExtraKind, String)>[
 void main() {
   setUpAll(initializeDateFormatting);
 
+  test('the photo effect is kept with the creation', () {
+    final withEffect = _draft.copyWith(effect: PhotoEffect.highContrast);
+    final back = CreationDraft.fromJson(withEffect.toJson())!;
+    expect(back.effect, PhotoEffect.highContrast);
+    // Creations saved before effects existed open with none.
+    final old = _draft.toJson()..remove('effect');
+    expect(CreationDraft.fromJson(old)!.effect, PhotoEffect.none);
+  });
+
   group('draft extras', () {
     late ProviderContainer container;
     CreationDraftNotifier drafts() =>

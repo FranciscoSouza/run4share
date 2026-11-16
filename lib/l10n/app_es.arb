@@ -301,7 +301,14 @@
   "templatesTitle": "Plantillas",
   "templateExtraMissing": "{thing} no está en esta actividad, así que se quitó.",
   "stickerRoute": "Ruta",
-  "editorProStickersTitle": "Stickers Pro en esta imagen",
-  "editorProStickersBody": "Los gráficos, rutas y etiquetas son Pro. Desbloquea Pro para compartir esta imagen, o quita esos stickers para compartirla gratis.",
-  "editorProStickersSeePro": "Ver Pro"
+  "editorProStickersTitle": "Pro en esta imagen",
+  "editorProStickersBody": "Los gráficos, rutas, etiquetas y efectos de foto son Pro. Desbloquea Pro para compartir esta imagen, o quítalos para compartirla gratis.",
+  "editorProStickersSeePro": "Ver Pro",
+  "editorPhoto": "Foto",
+  "effectNone": "Ninguno",
+  "effectBlackWhite": "Blanco y negro",
+  "effectHighContrast": "Alto contraste",
+  "shareCopy": "Copiar",
+  "shareCopied": "Sticker copiado. Pégalo en tu historia.",
+  "shareCopyFailed": "No se pudo copiar el sticker."
 }

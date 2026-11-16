@@ -5,6 +5,7 @@ import 'package:run4share/app/app_icons.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/app/theme/app_colors.dart';
 import 'package:run4share/features/create/creation_draft.dart';
+import 'package:run4share/features/editor/photo_effect.dart';
 import 'package:run4share/features/editor/sticker_data.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
@@ -81,6 +82,7 @@ class StoryCanvas extends StatefulWidget {
     this.placement,
     this.style = const StickerStyle(),
     this.extras = const [],
+    this.effect = PhotoEffect.none,
     this.watermark = true,
     this.editable = false,
     this.selected,
@@ -95,6 +97,9 @@ class StoryCanvas extends StatefulWidget {
 
   final ShareFormat format;
   final Widget background;
+
+  /// Applied to [background] only; stickers keep their colours.
+  final PhotoEffect effect;
   final StickerTheme? theme;
   final StickerData? data;
 
@@ -361,9 +366,12 @@ class _StoryCanvasState extends State<StoryCanvas> {
                       ? GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: () => widget.onSelect?.call(null),
-                          child: widget.background,
+                          child: withPhotoEffect(
+                            widget.effect,
+                            widget.background,
+                          ),
                         )
-                      : widget.background,
+                      : withPhotoEffect(widget.effect, widget.background),
                 ),
                 for (final item in items) _positioned(item, size, k),
                 if (widget.watermark)

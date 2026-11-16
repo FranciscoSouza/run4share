@@ -16,6 +16,7 @@ import 'package:run4share/features/activities/strava_sync.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/create/crop_screen.dart';
 import 'package:run4share/features/create/cropped_photo.dart';
+import 'package:run4share/features/editor/photo_effects_panel.dart';
 import 'package:run4share/features/editor/sticker_data.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/story_canvas.dart';
@@ -99,7 +100,8 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
         if (id != null &&
             (_panel == _Panel.themes ||
                 _panel == _Panel.stickers ||
-                _panel == _Panel.data)) {
+                _panel == _Panel.data ||
+                _panel == _Panel.photo)) {
           _panel = null;
         }
         if (id == null && _tool != null) _panel = null;
@@ -255,6 +257,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   data: data,
                                   placement: draft.sticker,
                                   style: draft.style,
+                                  effect: draft.effect,
                                   extras: facts == null
                                       ? const []
                                       : extraItems(draft, facts),
@@ -339,6 +342,16 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   onAdd: _addExtra,
                                   onClose: () => setState(() => _panel = null),
                                 ),
+                              _Panel.photo => PhotoEffectsPanel(
+                                  bytes: bytes,
+                                  crop: draft.crop,
+                                  selected: draft.effect,
+                                  isPro: ref.watch(isProProvider),
+                                  onChoose: ref
+                                      .read(creationDraftProvider.notifier)
+                                      .setEffect,
+                                  onClose: () => setState(() => _panel = null),
+                                ),
                               _Panel.textColour => TextColourPanel(
                                   selected: _selectedColour(draft),
                                   onChoose: (colour) {
@@ -374,6 +387,10 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                     _panel = _Panel.data;
                                     _selected = null;
                                   }),
+                                  onPhoto: () => setState(() {
+                                    _panel = _Panel.photo;
+                                    _selected = null;
+                                  }),
                                 ),
                             },
                           ),
@@ -400,7 +417,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
 }
 
 /// What the bottom of the editor shows; null is the toolbar.
-enum _Panel { themes, stickers, data, textColour, background }
+enum _Panel { themes, stickers, data, photo, textColour, background }
 
 class _BottomPanel extends StatelessWidget {
   const _BottomPanel({required this.child});
@@ -431,39 +448,54 @@ class _Toolbar extends StatelessWidget {
     required this.onThemes,
     required this.onStickers,
     required this.onData,
+    required this.onPhoto,
   });
 
   final bool isPro;
   final VoidCallback onThemes;
   final VoidCallback onStickers;
   final VoidCallback onData;
+  final VoidCallback onPhoto;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+      // Four tools share the width, so none overflows on a small phone.
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Tool(
-            icon: AppIcons.layers,
-            label: l10n.editorTheme,
-            onTap: onThemes,
+          Expanded(
+            child: _Tool(
+              icon: AppIcons.layers,
+              label: l10n.editorTheme,
+              onTap: onThemes,
+            ),
           ),
-          const SizedBox(width: AppSpacing.xl),
-          _Tool(
-            icon: AppIcons.sticker,
-            label: l10n.editorStickers,
-            pro: !isPro,
-            onTap: onStickers,
+          Expanded(
+            child: _Tool(
+              icon: AppIcons.sticker,
+              label: l10n.editorStickers,
+              pro: !isPro,
+              onTap: onStickers,
+            ),
           ),
-          const SizedBox(width: AppSpacing.xl),
-          _Tool(
-            icon: AppIcons.chart,
-            label: l10n.stickersYourData,
-            pro: !isPro,
-            onTap: onData,
+          Expanded(
+            child: _Tool(
+              icon: AppIcons.chart,
+              label: l10n.stickersYourData,
+              pro: !isPro,
+              onTap: onData,
+            ),
+          ),
+          Expanded(
+            child: _Tool(
+              icon: AppIcons.image,
+              label: l10n.editorPhoto,
+              pro: !isPro,
+              onTap: onPhoto,
+            ),
           ),
         ],
       ),
@@ -537,6 +569,9 @@ class _Tool extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -673,6 +708,7 @@ class _ThemeCarousel extends StatelessWidget {
                                           scale: 1.25,
                                         ),
                                         style: draft.style,
+                                        effect: draft.effect,
                                         watermark: false,
                                       ),
                                     ),

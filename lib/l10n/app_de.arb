@@ -301,7 +301,14 @@
   "templatesTitle": "Vorlagen",
   "templateExtraMissing": "{thing} ist in dieser Aktivität nicht vorhanden und wurde weggelassen.",
   "stickerRoute": "Strecke",
-  "editorProStickersTitle": "Pro-Sticker auf diesem Bild",
-  "editorProStickersBody": "Diagramme, Strecken und Labels sind Pro. Schalte Pro frei, um dieses Bild zu teilen, oder entferne diese Sticker, um es kostenlos zu teilen.",
-  "editorProStickersSeePro": "Pro ansehen"
+  "editorProStickersTitle": "Pro auf diesem Bild",
+  "editorProStickersBody": "Diagramme, Strecken, Labels und Fotoeffekte sind Pro. Schalte Pro frei, um dieses Bild zu teilen, oder entferne sie, um es kostenlos zu teilen.",
+  "editorProStickersSeePro": "Pro ansehen",
+  "editorPhoto": "Foto",
+  "effectNone": "Keiner",
+  "effectBlackWhite": "Schwarz-Weiß",
+  "effectHighContrast": "Hoher Kontrast",
+  "shareCopy": "Kopieren",
+  "shareCopied": "Sticker kopiert. Füge ihn in deine Story ein.",
+  "shareCopyFailed": "Sticker konnte nicht kopiert werden."
 }

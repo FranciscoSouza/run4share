@@ -301,7 +301,14 @@
   "templatesTitle": "Modèles",
   "templateExtraMissing": "{thing} n’est pas dans cette activité, donc il a été retiré.",
   "stickerRoute": "Tracé",
-  "editorProStickersTitle": "Stickers Pro sur cette image",
-  "editorProStickersBody": "Les graphiques, tracés et étiquettes sont Pro. Débloque Pro pour partager cette image, ou retire ces stickers pour la partager gratuitement.",
-  "editorProStickersSeePro": "Voir Pro"
+  "editorProStickersTitle": "Pro sur cette image",
+  "editorProStickersBody": "Les graphiques, tracés, étiquettes et effets photo sont Pro. Débloque Pro pour partager cette image, ou retire-les pour la partager gratuitement.",
+  "editorProStickersSeePro": "Voir Pro",
+  "editorPhoto": "Photo",
+  "effectNone": "Aucun",
+  "effectBlackWhite": "Noir et blanc",
+  "effectHighContrast": "Contraste élevé",
+  "shareCopy": "Copier",
+  "shareCopied": "Sticker copié. Colle-le dans ta story.",
+  "shareCopyFailed": "Impossible de copier le sticker."
 }

@@ -98,10 +98,13 @@ class ActivityRepository {
 
   /// Inserts new Health Connect workouts and updates known ones, with
   /// their route, elevation and splits worked out from the route.
-  Future<void> upsertHub(List<HubWorkout> workouts) async {
+  Future<void> upsertHub(
+    List<HubWorkout> workouts, {
+    ActivitySource source = ActivitySource.healthConnect,
+  }) async {
     for (final w in workouts) {
       final values = ActivitiesCompanion(
-        source: const Value(ActivitySource.healthConnect),
+        source: Value(source),
         sourceId: Value(w.id),
         name: Value(_hubName(w)),
         sportType: Value(w.sportType),
@@ -130,9 +133,7 @@ class ActivityRepository {
           );
       final stored = await (_db.select(_table)
             ..where(
-              (a) =>
-                  a.source.equalsValue(ActivitySource.healthConnect) &
-                  a.sourceId.equals(w.id),
+              (a) => a.source.equalsValue(source) & a.sourceId.equals(w.id),
             ))
           .getSingleOrNull();
       final rowId = stored?.id ?? id;
@@ -314,7 +315,13 @@ String _hubName(HubWorkout w) {
   return '$part ${w.sportType}';
 }
 
-/// Shows a workout once when it reached both Strava and Health Connect
+/// The phone's health hubs: Health Connect (Android), Apple Health (iOS).
+const Set<ActivitySource> _hubSources = {
+  ActivitySource.healthConnect,
+  ActivitySource.appleHealth,
+};
+
+/// Shows a workout once when it reached both Strava and a health hub
 /// (a watch syncing to both): the Health Connect copy is left out when a
 /// Strava activity of the same sport starts within 2 minutes and covers
 /// a distance within 5% (decided 16 Nov 2026). Nothing is deleted: the
@@ -339,6 +346,6 @@ List<Activity> hideDuplicates(List<Activity> all) {
       });
   return [
     for (final a in all)
-      if (a.source != ActivitySource.healthConnect || !duplicate(a)) a,
+      if (!_hubSources.contains(a.source) || !duplicate(a)) a,
   ];
 }

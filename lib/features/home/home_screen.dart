@@ -22,7 +22,6 @@ import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/features/templates/template_canvas.dart';
 import 'package:run4share/l10n/l10n.dart';
-import 'package:run4share/shared/coming_soon.dart';
 import 'package:run4share/shared/widgets/app_header.dart';
 import 'package:run4share/shared/widgets/buttons.dart';
 import 'package:run4share/shared/widgets/grouped_list.dart';
@@ -117,6 +116,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         else if (connected || hasActivities) ...[
           _ActivitiesHeader(sync: sync, connected: connected),
           const SizedBox(height: AppSpacing.sm),
+          // Apple Health hides a refusal as "no data": say where to look.
+          if (hub.connected &&
+              hub.empty &&
+              ref.read(platformProvider) == TargetPlatform.iOS)
+            _Message(text: l10n.hubEmptyApple),
           if (!hasActivities)
             _Message(
               text: sync.syncing
@@ -167,7 +171,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     bool addManually = false,
   }) {
     final l10n = context.l10n;
-    void soon() => showComingSoon(context);
     return [
       _Heading(
         l10n.homeBringWorkouts,
@@ -202,8 +205,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 subtitle: source == HealthSource.appleHealth
                     ? l10n.sourceOnIphone
                     : l10n.sourceOnAndroid,
-                trailing: source == HealthSource.healthConnect &&
-                        ref.watch(healthConnectProvider).connected
+                trailing: ref.watch(healthConnectProvider).connected
                     ? Icon(
                         AppIcons.check,
                         color: Theme.of(context).colorScheme.primary,
@@ -211,9 +213,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     : AppPill(
                         label: l10n.actionConnect,
                         variant: AppPillVariant.outlined,
-                        onPressed: source == HealthSource.healthConnect
-                            ? () => connectHealthConnect(context, ref)
-                            : soon,
+                        onPressed: () => connectHealthConnect(context, ref),
                       ),
               ),
           ],

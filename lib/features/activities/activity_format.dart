@@ -88,6 +88,7 @@ class ActivityFormat {
         ActivitySource.strava => Brand.strava,
         ActivitySource.manual => l10n.sourceManual,
         ActivitySource.healthConnect => Brand.healthConnect,
+        ActivitySource.appleHealth => Brand.appleHealth,
       };
 
   IconData icon(SportKind kind) => switch (kind) {

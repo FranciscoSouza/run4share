@@ -20,7 +20,6 @@ import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 import 'package:run4share/l10n/l10n.dart';
-import 'package:run4share/shared/coming_soon.dart';
 import 'package:run4share/shared/widgets/grouped_list.dart';
 import 'package:run4share/shared/widgets/pills.dart';
 import 'package:run4share/shared/widgets/segmented_toggle.dart';
@@ -39,7 +38,6 @@ class SettingsScreen extends ConsumerWidget {
     final isPro = ref.watch(isProProvider);
     final hubConnected = ref.watch(healthConnectProvider).connected;
     final pretendPro = ref.watch(pretendProProvider);
-    void soon() => showComingSoon(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -87,22 +85,20 @@ class SettingsScreen extends ConsumerWidget {
                     title: source == HealthSource.appleHealth
                         ? Brand.appleHealth
                         : Brand.healthConnect,
-                    subtitle:
-                        source == HealthSource.healthConnect && hubConnected
-                            ? l10n.stravaConnected
-                            : l10n.settingsNotConnected,
-                    trailing: switch (source) {
-                      HealthSource.healthConnect when hubConnected => AppPill(
-                          label: l10n.actionDisconnect,
-                          variant: AppPillVariant.destructive,
-                          onPressed: () => _disconnectHub(context, ref),
-                        ),
-                      HealthSource.healthConnect => _connect(
-                          l10n,
-                          () => connectHealthConnect(context, ref),
-                        ),
-                      HealthSource.appleHealth => _connect(l10n, soon),
-                    },
+                    // Health Connect on Android, Apple Health on iPhone.
+                    subtitle: hubConnected
+                        ? l10n.stravaConnected
+                        : l10n.settingsNotConnected,
+                    trailing: hubConnected
+                        ? AppPill(
+                            label: l10n.actionDisconnect,
+                            variant: AppPillVariant.destructive,
+                            onPressed: () => _disconnectHub(context, ref),
+                          )
+                        : _connect(
+                            l10n,
+                            () => connectHealthConnect(context, ref),
+                          ),
                   ),
               ],
             ),
@@ -276,7 +272,7 @@ class SettingsScreen extends ConsumerWidget {
 
   Future<void> _disconnectHub(BuildContext context, WidgetRef ref) async {
     final messenger = ScaffoldMessenger.of(context);
-    final message = context.l10n.hubDisconnected;
+    final message = context.l10n.hubDisconnected(hubName(ref));
     await ref.read(healthConnectProvider.notifier).disconnect();
     messenger
       ..hideCurrentSnackBar()

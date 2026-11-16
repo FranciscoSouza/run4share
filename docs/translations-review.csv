@@ -4,7 +4,6 @@ languageName,Settings: language,"Name of this language, written in this language
 navActivities,Bottom tab bar,,Activities,Atividades,Actividades,Activités,Aktivitäten
 navCreations,Bottom tab bar,,My Creations,Minhas criações,Mis creaciones,Mes créations,Meine Kreationen
 settingsTooltip,Settings,,Settings,Configurações,Ajustes,Réglages,Einstellungen
-comingSoon,Message for features not built yet,Snack bar for buttons that do nothing yet.,Coming in a later update,Disponível em uma próxima atualização,Llegará en una próxima actualización,Disponible dans une prochaine mise à jour,Kommt mit einem späteren Update
 actionConnect,Buttons used in several places,,Connect,Conectar,Conectar,Connecter,Verbinden
 actionDisconnect,Buttons used in several places,,Disconnect,Desconectar,Desconectar,Déconnecter,Trennen
 actionUnlock,Buttons used in several places,,Unlock,Desbloquear,Desbloquear,Débloquer,Freischalten
@@ -260,9 +259,10 @@ chartSplits,,,Splits,Parciais,Parciales,Temps intermédiaires,Splits
 chartBest,,"Keep {pace}, {unit} as is.",Best {pace} {unit},Melhor {pace} {unit},Mejor {pace} {unit},Meilleur {pace} {unit},Beste {pace} {unit}
 formShoe,Add / edit activity form,,Shoe,Tênis,Zapatillas,Chaussures,Schuh
 formShoeDistance,Add / edit activity form,Keep {unit} as is.,Shoe total ({unit}),Total do tênis ({unit}),Total de las zapatillas ({unit}),Total des chaussures ({unit}),Schuh gesamt ({unit})
-hubConnected,,,Connected to Health Connect,Conectado ao Health Connect,Conectado a Health Connect,Connecté à Health Connect,Mit Health Connect verbunden
-hubDisconnected,,,Disconnected from Health Connect,Health Connect desconectado,Health Connect desconectado,Health Connect déconnecté,Health Connect getrennt
+hubConnected,,Keep {source} as is.,Connected to {source},Conectado ao {source},Conectado a {source},Connecté à {source},Mit {source} verbunden
+hubDisconnected,,Keep {source} as is.,Disconnected from {source},{source} desconectado,{source} desconectado,{source} déconnecté,{source} getrennt
 hubInstall,,,Install,Instalar,Instalar,Installer,Installieren
 hubNotInstalled,,,Health Connect isn’t installed on this phone.,O Health Connect não está instalado neste celular.,Health Connect no está instalado en este teléfono.,Health Connect n’est pas installé sur ce téléphone.,Health Connect ist auf diesem Handy nicht installiert.
 hubUpdate,,,Health Connect needs an update.,O Health Connect precisa ser atualizado.,Health Connect necesita una actualización.,Health Connect doit être mis à jour.,Health Connect muss aktualisiert werden.
-hubDenied,,,run4share needs permission to read your workouts in Health Connect.,O run4share precisa de permissão para ler seus treinos no Health Connect.,run4share necesita permiso para leer tus entrenamientos en Health Connect.,run4share a besoin d’une autorisation pour lire vos séances dans Health Connect.,"run4share braucht die Erlaubnis, deine Workouts in Health Connect zu lesen."
+hubDenied,,Keep {source} as is.,run4share needs permission to read your workouts in {source}.,O run4share precisa de permissão para ler seus treinos no {source}.,run4share necesita permiso para leer tus entrenamientos en {source}.,run4share a besoin d’une autorisation pour lire vos séances dans {source}.,"run4share braucht die Erlaubnis, deine Workouts in {source} zu lesen."
+hubEmptyApple,,,No workouts found. Check run4share’s access in the Health app: Profile › Apps › run4share.,Nenhum treino encontrado. Confira o acesso do run4share no app Saúde: Perfil › Apps › run4share.,No se encontraron entrenamientos. Revisa el acceso de run4share en la app Salud: Perfil › Apps › run4share.,Aucune séance trouvée. Vérifiez l’accès de run4share dans l’app Santé : Profil › Apps › run4share.,Keine Workouts gefunden. Prüfe den Zugriff von run4share in der Health-App: Profil › Apps › run4share.

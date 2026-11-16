@@ -119,21 +119,5 @@ void main() {
 
       expect(container.read(unitsProvider), Units.mi);
     });
-
-    testWidgets('unfinished actions say they are coming', (tester) async {
-      // Apple Health (iPhone) isn't built yet.
-      await tester.pumpApp(
-        overrides: [
-          ...baseOverrides(),
-          platformProvider.overrideWithValue(TargetPlatform.iOS),
-        ],
-      );
-
-      // Apple Health's Connect (Strava's is the first).
-      await tester.tap(find.text('Connect').at(1));
-      await tester.pump();
-
-      expect(find.text('Coming in a later update'), findsOneWidget);
-    });
   });
 }

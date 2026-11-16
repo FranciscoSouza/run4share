@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/clock.dart';
+import 'package:run4share/app/platform.dart';
 import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/health/health_connect_sync.dart';
@@ -185,6 +187,29 @@ void main() {
         (await repo().watchAll().first).map((a) => a.name),
         ['Treadmill'],
       );
+    });
+
+    test('on iPhone the workouts are Apple Health ones', () async {
+      container = ProviderContainer.test(
+        overrides: [
+          ...baseOverrides(db: db, hub: hub),
+          clockProvider.overrideWithValue(() => now),
+          platformProvider.overrideWithValue(TargetPlatform.iOS),
+        ],
+      );
+      await sync().connect();
+      final run = (await repo().watchAll().first).single;
+      expect(run.source, ActivitySource.appleHealth);
+      expect(state().empty, isFalse);
+
+      await sync().disconnect();
+      expect(await repo().count(ActivitySource.appleHealth), 0);
+    });
+
+    test('nothing found: flagged, for the iPhone hint', () async {
+      hub.all = const [];
+      await sync().connect();
+      expect(state().empty, isTrue);
     });
 
     test('a Strava copy hides the Health Connect one', () async {

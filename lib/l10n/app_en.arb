@@ -11,10 +11,6 @@
   "navActivities": "Activities",
   "navCreations": "My Creations",
   "settingsTooltip": "Settings",
-  "comingSoon": "Coming in a later update",
-  "@comingSoon": {
-    "description": "Snack bar for buttons that do nothing yet."
-  },
   "actionConnect": "Connect",
   "actionDisconnect": "Disconnect",
   "actionUnlock": "Unlock",
@@ -413,10 +409,32 @@
       }
     }
   },
-  "hubConnected": "Connected to Health Connect",
-  "hubDisconnected": "Disconnected from Health Connect",
+  "hubConnected": "Connected to {source}",
+  "hubDisconnected": "Disconnected from {source}",
   "hubInstall": "Install",
   "hubNotInstalled": "Health Connect isn’t installed on this phone.",
   "hubUpdate": "Health Connect needs an update.",
-  "hubDenied": "run4share needs permission to read your workouts in Health Connect."
+  "hubDenied": "run4share needs permission to read your workouts in {source}.",
+  "hubEmptyApple": "No workouts found. Check run4share’s access in the Health app: Profile › Apps › run4share.",
+  "@hubConnected": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "@hubDisconnected": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "@hubDenied": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  }
 }

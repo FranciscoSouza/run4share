@@ -24,7 +24,8 @@ or share to Instagram.
 4a editor core → 4b sticker controls → 5 share/My Creations →
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
-9 Health Connect source.
+9 Health Connect source → 10 Apple Health + iOS → 11 real activity
+charts (planned).
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -245,8 +246,7 @@ Label rules (Francisco, 15 Nov 2026):
   (stored as gear `manual:<name>`).
 - Demo data has routes, splits, elevation, a shoe and a bike.
 
-**Phase 9 status (Health Connect):** code done, installed on
-Francisco's phone 16 Nov 2026, waiting for his check. Not committed yet.
+**Phase 9 status (Health Connect):** committed (`phase-9-health-connect`).
 - `health` plugin 13 (Health Connect now; Apple Health later with the
   same code). Read-only: workouts, distance, calories, heart rate,
   routes, history. `MainActivity` is a `FlutterFragmentActivity`; Health
@@ -263,6 +263,39 @@ Francisco's phone 16 Nov 2026, waiting for his check. Not committed yet.
   listed when a Strava activity of the same sport starts within 2 min
   and its distance is within 5%; it is not deleted and shows again if
   Strava is disconnected (`hideDuplicates`).
+
+**Phase 10 status (Apple Health + iOS):** code done, runs on the iPhone
+16 Pro simulator (no paid Apple Developer membership yet, so no device
+build). Not committed yet.
+- Same `health` plugin and `HealthConnectSync` (now "the phone's health
+  hub"); on iOS workouts are stored as source `appleHealth`. iOS can't
+  report a read refusal or revoke access: `hasAccess` is assumed, history
+  is always available, disconnect only removes local copies, and an
+  empty result shows a hint (Health app › Profile › Apps › run4share).
+- iOS project: HealthKit entitlement (`Runner/Runner.entitlements`),
+  deployment target 15.0, NSHealthShare/Update texts, and
+  `InfoPlist.strings` in en, pt-BR, es, fr, de for photo and health texts
+  (closes "English only" from phase 3). Project edited with the
+  `xcodeproj` gem, not by hand.
+- No "coming soon" actions remain; the helper and string were removed.
+- Device signing (Team ID, HealthKit capability on the App ID) waits for
+  Francisco's Apple Developer membership.
+
+**Next after phase 10: real activity charts** (task from Francisco, 16 Nov
+2026; Stage 1 investigation reported, no code yet). Decisions:
+- New Pro extra stickers: heart rate (over time), pace (over time,
+  min/km or min/mi, inverted axis, gaps at pauses via the `moving`
+  stream, implausible velocities dropped, never interpolated across
+  pauses), and the existing elevation (over distance) gaining m/ft.
+- Data path: one Strava streams request (time, distance, altitude,
+  heartrate, velocity_smooth, moving) → typed series model with the
+  maths (no API or maths in widgets) → cached per activity (schema 5,
+  downsampled ~200 points by bucket averaging) → painters.
+- Same model fed from Health Connect (heart-rate samples, timestamped
+  route). Charts not offered when their stream is missing; no synthetic
+  readings except Laboratory demo mode (test builds only).
+- `editor_screen.dart` should need no changes (it already triggers
+  `fetchDetails` and passes `stickerFactsProvider`).
 
 ## Decisions already taken (do not reopen without asking)
 

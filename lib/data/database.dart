@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'database.g.dart';
 
 /// Where an activity came from.
-enum ActivitySource { strava, manual, healthConnect }
+enum ActivitySource { strava, manual, healthConnect, appleHealth }
 
 /// Every activity the app knows, from any source.
 @DataClassName('Activity')

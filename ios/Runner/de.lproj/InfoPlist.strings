@@ -1,0 +1,5 @@
+/* iOS permission texts, one file per language (Info.plist has English). */
+"NSPhotoLibraryUsageDescription" = "run4share braucht deine Fotos, damit du das passende zu deinem Workout auswählen kannst. Deine Fotos bleiben auf deinem iPhone.";
+"NSPhotoLibraryAddUsageDescription" = "run4share sichert die Bilder, die du erstellst, in Fotos.";
+"NSHealthShareUsageDescription" = "run4share liest deine Workouts (Distanz, Zeit, Herzfrequenz, Kalorien und Strecke), um daraus Bilder zu machen. Nichts verlässt dein iPhone.";
+"NSHealthUpdateUsageDescription" = "run4share schreibt nie in die Health-App.";

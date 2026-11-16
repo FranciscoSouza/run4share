@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:run4share/app/brand.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/data/database.dart';
 import 'package:run4share/features/health/health_connect_sync.dart';
 import 'package:run4share/features/health/health_hub.dart';
 import 'package:run4share/l10n/l10n.dart';
@@ -10,6 +12,7 @@ import 'package:run4share/l10n/l10n.dart';
 /// (not installed or outdated: with an Install action).
 Future<void> connectHealthConnect(BuildContext context, WidgetRef ref) async {
   final l10n = context.l10n;
+  final name = hubName(ref);
   final messenger = ScaffoldMessenger.of(context);
   void say(String text, {SnackBarAction? action}) => messenger
     ..hideCurrentSnackBar()
@@ -20,7 +23,7 @@ Future<void> connectHealthConnect(BuildContext context, WidgetRef ref) async {
   );
   try {
     await ref.read(healthConnectProvider.notifier).connect();
-    say(l10n.hubConnected);
+    say(l10n.hubConnected(name));
   } on HubException catch (e) {
     switch (e.failure) {
       case HubFailure.notInstalled:
@@ -28,7 +31,14 @@ Future<void> connectHealthConnect(BuildContext context, WidgetRef ref) async {
       case HubFailure.updateRequired:
         say(l10n.hubUpdate, action: install);
       case HubFailure.denied:
-        say(l10n.hubDenied);
+        say(l10n.hubDenied(name));
     }
   }
 }
+
+/// "Apple Health" or "Health Connect", for this phone.
+String hubName(WidgetRef ref) =>
+    ref.read(healthConnectProvider.notifier).source ==
+            ActivitySource.appleHealth
+        ? Brand.appleHealth
+        : Brand.healthConnect;

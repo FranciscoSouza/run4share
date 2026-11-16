@@ -81,8 +81,11 @@ so it only works after this.
   Non-Consumable, product ID `run4share_pro`, same price tier.
 - `flutter build ipa --dart-define-from-file=config/strava.json`, upload
   with Xcode or Transporter, test through TestFlight.
-- Photo permission texts are English only for now (Info.plist); add
-  per-language InfoPlist.strings before release.
+- Apple Developer Program membership (paid) is needed for HealthKit on a
+  device: set the Team in Xcode; the HealthKit capability is already in
+  `Runner/Runner.entitlements`. App Store Connect asks about health data
+  use in App Privacy; answer from the privacy policy.
+- Permission texts are translated (`ios/Runner/*.lproj/InfoPlist.strings`).
 
 ## 7. Every release
 

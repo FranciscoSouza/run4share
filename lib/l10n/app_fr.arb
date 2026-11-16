@@ -5,7 +5,6 @@
   "navActivities": "Activités",
   "navCreations": "Mes créations",
   "settingsTooltip": "Réglages",
-  "comingSoon": "Disponible dans une prochaine mise à jour",
   "actionConnect": "Connecter",
   "actionDisconnect": "Déconnecter",
   "actionUnlock": "Débloquer",
@@ -261,10 +260,11 @@
   "chartBest": "Meilleur {pace} {unit}",
   "formShoe": "Chaussures",
   "formShoeDistance": "Total des chaussures ({unit})",
-  "hubConnected": "Connecté à Health Connect",
-  "hubDisconnected": "Health Connect déconnecté",
+  "hubConnected": "Connecté à {source}",
+  "hubDisconnected": "{source} déconnecté",
   "hubInstall": "Installer",
   "hubNotInstalled": "Health Connect n’est pas installé sur ce téléphone.",
   "hubUpdate": "Health Connect doit être mis à jour.",
-  "hubDenied": "run4share a besoin d’une autorisation pour lire vos séances dans Health Connect."
+  "hubDenied": "run4share a besoin d’une autorisation pour lire vos séances dans {source}.",
+  "hubEmptyApple": "Aucune séance trouvée. Vérifiez l’accès de run4share dans l’app Santé : Profil › Apps › run4share."
 }

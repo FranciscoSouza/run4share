@@ -5,7 +5,6 @@
   "navActivities": "Actividades",
   "navCreations": "Mis creaciones",
   "settingsTooltip": "Ajustes",
-  "comingSoon": "Llegará en una próxima actualización",
   "actionConnect": "Conectar",
   "actionDisconnect": "Desconectar",
   "actionUnlock": "Desbloquear",
@@ -261,10 +260,11 @@
   "chartBest": "Mejor {pace} {unit}",
   "formShoe": "Zapatillas",
   "formShoeDistance": "Total de las zapatillas ({unit})",
-  "hubConnected": "Conectado a Health Connect",
-  "hubDisconnected": "Health Connect desconectado",
+  "hubConnected": "Conectado a {source}",
+  "hubDisconnected": "{source} desconectado",
   "hubInstall": "Instalar",
   "hubNotInstalled": "Health Connect no está instalado en este teléfono.",
   "hubUpdate": "Health Connect necesita una actualización.",
-  "hubDenied": "run4share necesita permiso para leer tus entrenamientos en Health Connect."
+  "hubDenied": "run4share necesita permiso para leer tus entrenamientos en {source}.",
+  "hubEmptyApple": "No se encontraron entrenamientos. Revisa el acceso de run4share en la app Salud: Perfil › Apps › run4share."
 }

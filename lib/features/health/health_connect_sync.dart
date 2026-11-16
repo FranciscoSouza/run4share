@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:run4share/app/clock.dart';
+import 'package:run4share/app/platform.dart';
 import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/health/health_hub.dart';
@@ -25,6 +26,7 @@ class HubState {
     this.syncing = false,
     this.failed = false,
     this.lastSyncedAt,
+    this.empty = false,
   });
 
   final bool connected;
@@ -32,21 +34,27 @@ class HubState {
   final bool failed;
   final DateTime? lastSyncedAt;
 
+  /// Synced, and still nothing from the hub.
+  final bool empty;
+
   HubState copyWith({
     bool? connected,
     bool? syncing,
     bool? failed,
     DateTime? lastSyncedAt,
+    bool? empty,
   }) =>
       HubState(
         connected: connected ?? this.connected,
         syncing: syncing ?? this.syncing,
         failed: failed ?? this.failed,
         lastSyncedAt: lastSyncedAt ?? this.lastSyncedAt,
+        empty: empty ?? this.empty,
       );
 }
 
-/// Health Connect: connecting, copying workouts into the local database,
+/// The phone's health hub (Health Connect on Android, Apple Health on
+/// iPhone): connecting, copying workouts into the local database,
 /// disconnecting.
 final healthConnectProvider = NotifierProvider<HealthConnectSync, HubState>(
   HealthConnectSync.new,
@@ -72,6 +80,11 @@ class HealthConnectSync extends Notifier<HubState> {
   static const _lastSyncedKey = 'healthConnect.lastSyncedAt';
 
   HealthHub get _hub => ref.read(healthHubProvider);
+
+  /// Where this platform's workouts come from.
+  ActivitySource get source => ref.read(platformProvider) == TargetPlatform.iOS
+      ? ActivitySource.appleHealth
+      : ActivitySource.healthConnect;
   AppDatabase get _db => ref.read(appDatabaseProvider);
   DateTime _now() => ref.read(clockProvider)();
 
@@ -130,9 +143,15 @@ class HealthConnectSync extends Notifier<HubState> {
               await _hub.hasHistory() ? historyWindow : recentWindow,
             );
       final workouts = await _hub.workouts(from, now);
-      await ref.read(activityRepositoryProvider).upsertHub(workouts);
+      final repo = ref.read(activityRepositoryProvider);
+      await repo.upsertHub(workouts, source: source);
       await _db.writePreference(_lastSyncedKey, now.toIso8601String());
-      state = state.copyWith(syncing: false, lastSyncedAt: now);
+      state = state.copyWith(
+        syncing: false,
+        lastSyncedAt: now,
+        // Apple Health hides a refusal as "no data": worth a hint.
+        empty: await repo.count(source) == 0,
+      );
     } on Object catch (error, stack) {
       debugPrint('Health Connect sync failed: $error\n$stack');
       state = state.copyWith(syncing: false, failed: true);
@@ -145,9 +164,7 @@ class HealthConnectSync extends Notifier<HubState> {
 
   Future<void> _forget({required bool revoke}) async {
     if (revoke) await _hub.revoke();
-    await ref
-        .read(activityRepositoryProvider)
-        .deleteSource(ActivitySource.healthConnect);
+    await ref.read(activityRepositoryProvider).deleteSource(source);
     await _db.writePreference(_connectedKey, null);
     await _db.writePreference(_lastSyncedKey, null);
     state = const HubState();

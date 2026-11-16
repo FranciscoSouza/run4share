@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:health/health.dart';
@@ -102,8 +104,13 @@ class DeviceHealthHub implements HealthHub {
 
   Future<void> _ready() => _configured ??= _health.configure();
 
+  /// Apple Health: always there on iPhone, all history readable, and it
+  /// never says whether reading was refused.
+  bool get _ios => Platform.isIOS;
+
   @override
   Future<HubStatus> status() async {
+    if (_ios) return HubStatus.available;
     await _ready();
     return switch (await _health.getHealthConnectSdkStatus()) {
       HealthConnectSdkStatus.sdkAvailable => HubStatus.available,
@@ -127,6 +134,7 @@ class DeviceHealthHub implements HealthHub {
       permissions: _read,
     );
     if (granted &&
+        !_ios &&
         await _health.isHealthDataHistoryAvailable() &&
         !await _health.isHealthDataHistoryAuthorized()) {
       await _health.requestHealthDataHistoryAuthorization();
@@ -136,6 +144,8 @@ class DeviceHealthHub implements HealthHub {
 
   @override
   Future<bool> hasAccess() async {
+    // iOS can't tell: a refusal just reads as no workouts.
+    if (_ios) return true;
     await _ready();
     return await _health.hasPermissions(
           [HealthDataType.WORKOUT],
@@ -146,6 +156,7 @@ class DeviceHealthHub implements HealthHub {
 
   @override
   Future<bool> hasHistory() async {
+    if (_ios) return true;
     await _ready();
     return await _health.isHealthDataHistoryAuthorized();
   }
@@ -227,6 +238,9 @@ class DeviceHealthHub implements HealthHub {
 
   @override
   Future<void> revoke() async {
+    // Apps can't revoke their own Apple Health access; the user can, in
+    // the Health app. Disconnecting still removes the local copies.
+    if (_ios) return;
     await _ready();
     try {
       await _health.revokePermissions();

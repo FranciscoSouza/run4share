@@ -5,7 +5,6 @@
   "navActivities": "Aktivitäten",
   "navCreations": "Meine Kreationen",
   "settingsTooltip": "Einstellungen",
-  "comingSoon": "Kommt mit einem späteren Update",
   "actionConnect": "Verbinden",
   "actionDisconnect": "Trennen",
   "actionUnlock": "Freischalten",
@@ -261,10 +260,11 @@
   "chartBest": "Beste {pace} {unit}",
   "formShoe": "Schuh",
   "formShoeDistance": "Schuh gesamt ({unit})",
-  "hubConnected": "Mit Health Connect verbunden",
-  "hubDisconnected": "Health Connect getrennt",
+  "hubConnected": "Mit {source} verbunden",
+  "hubDisconnected": "{source} getrennt",
   "hubInstall": "Installieren",
   "hubNotInstalled": "Health Connect ist auf diesem Handy nicht installiert.",
   "hubUpdate": "Health Connect muss aktualisiert werden.",
-  "hubDenied": "run4share braucht die Erlaubnis, deine Workouts in Health Connect zu lesen."
+  "hubDenied": "run4share braucht die Erlaubnis, deine Workouts in {source} zu lesen.",
+  "hubEmptyApple": "Keine Workouts gefunden. Prüfe den Zugriff von run4share in der Health-App: Profil › Apps › run4share."
 }

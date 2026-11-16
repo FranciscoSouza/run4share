@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:run4share/app/platform.dart';
 import 'package:run4share/features/health/health_hub.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
 
@@ -62,5 +64,22 @@ void main() {
     await settle(tester);
     expect(find.text('Disconnected from Health Connect'), findsOneWidget);
     expect(hub.revokes, 1);
+  });
+
+  testWidgets('iPhone: Apple Health connects; an empty result hints why', (
+    tester,
+  ) async {
+    final hub = FakeHealthHub();
+    await tester.pumpApp(
+      overrides: [
+        ...baseOverrides(hub: hub),
+        platformProvider.overrideWithValue(TargetPlatform.iOS),
+      ],
+    );
+    await tester.tap(find.text('Connect').at(1));
+    await settle(tester, rounds: 20);
+
+    expect(find.text('Connected to Apple Health'), findsOneWidget);
+    expect(find.textContaining('Profile › Apps › run4share'), findsOneWidget);
   });
 }

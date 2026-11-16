@@ -1,0 +1,5 @@
+/* iOS permission texts, one file per language (Info.plist has English). */
+"NSPhotoLibraryUsageDescription" = "run4share a besoin de vos photos pour que vous choisissiez celle qui va avec votre séance. Vos photos restent sur votre iPhone.";
+"NSPhotoLibraryAddUsageDescription" = "run4share enregistre dans Photos les images que vous créez.";
+"NSHealthShareUsageDescription" = "run4share lit vos séances (distance, temps, fréquence cardiaque, calories et tracé) pour en faire des images. Rien ne quitte votre iPhone.";
+"NSHealthUpdateUsageDescription" = "run4share n’écrit jamais dans l’app Santé.";

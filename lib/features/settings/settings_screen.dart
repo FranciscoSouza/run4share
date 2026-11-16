@@ -9,6 +9,8 @@ import 'package:run4share/app/platform.dart';
 import 'package:run4share/app/router.dart';
 import 'package:run4share/app/system.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
+import 'package:run4share/features/health/connect_health.dart';
+import 'package:run4share/features/health/health_connect_sync.dart';
 import 'package:run4share/features/lab/lab.dart';
 import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/pro/pro.dart';
@@ -35,6 +37,7 @@ class SettingsScreen extends ConsumerWidget {
     final strava = ref.watch(stravaConnectionProvider).value;
     final stravaDemo = ref.watch(stravaDemoProvider);
     final isPro = ref.watch(isProProvider);
+    final hubConnected = ref.watch(healthConnectProvider).connected;
     final pretendPro = ref.watch(pretendProProvider);
     void soon() => showComingSoon(context);
 
@@ -84,8 +87,22 @@ class SettingsScreen extends ConsumerWidget {
                     title: source == HealthSource.appleHealth
                         ? Brand.appleHealth
                         : Brand.healthConnect,
-                    subtitle: l10n.settingsNotConnected,
-                    trailing: _connect(l10n, soon),
+                    subtitle:
+                        source == HealthSource.healthConnect && hubConnected
+                            ? l10n.stravaConnected
+                            : l10n.settingsNotConnected,
+                    trailing: switch (source) {
+                      HealthSource.healthConnect when hubConnected => AppPill(
+                          label: l10n.actionDisconnect,
+                          variant: AppPillVariant.destructive,
+                          onPressed: () => _disconnectHub(context, ref),
+                        ),
+                      HealthSource.healthConnect => _connect(
+                          l10n,
+                          () => connectHealthConnect(context, ref),
+                        ),
+                      HealthSource.appleHealth => _connect(l10n, soon),
+                    },
                   ),
               ],
             ),
@@ -255,6 +272,15 @@ class SettingsScreen extends ConsumerWidget {
     if (choice != null) {
       await ref.read(languageProvider.notifier).select(choice.locale);
     }
+  }
+
+  Future<void> _disconnectHub(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final message = context.l10n.hubDisconnected;
+    await ref.read(healthConnectProvider.notifier).disconnect();
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _restore(BuildContext context, WidgetRef ref) async {

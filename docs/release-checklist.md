@@ -66,6 +66,11 @@ so it only works after this.
      to be exchanged and is not stored. Review Google's definitions of
      "collected" and "ephemeral processing" before answering.
    - Target audience: 13+. Content rating questionnaire.
+   - **Health Connect**: App content > Health apps, and the Health
+     Connect permissions declaration. Declare each read permission with
+     why it's needed (workouts, distance, calories, heart rate, routes,
+     past data, all to make images of the user's own workouts). Google
+     reviews this; the privacy policy must describe it (it does).
 7. Promote internal testing > closed testing > production when ready.
 
 ## 6. iOS (on the Mac)

@@ -23,7 +23,8 @@ or share to Instagram.
 0 foundations → 1 Strava → 2 home/activities → 3 photo/crop →
 4a editor core → 4b sticker controls → 5 share/My Creations →
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
-time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts).
+time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
+9 Health Connect source.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -230,8 +231,7 @@ Label rules (Francisco, 15 Nov 2026):
   activities type a shoe name and km.
 
 **Phase 8b status (Pro data stickers):** committed
-(`phase-8b-data-stickers`), installed on Francisco's phone 16 Nov 2026,
-waiting for his check.
+(`phase-8b-data-stickers`); Francisco moved on to phase 9.
 - New extra-sticker kinds: shoe (name + lifetime distance), route (neon,
   glow, dotted; drawn from the polyline, no map), elevation profile with
   total climb, and splits bars (fastest highlighted, best pace).
@@ -244,6 +244,25 @@ waiting for his check.
   `elevation_json`; new `gear` table. Manual activities can type a shoe
   (stored as gear `manual:<name>`).
 - Demo data has routes, splits, elevation, a shoe and a bike.
+
+**Phase 9 status (Health Connect):** code done, installed on
+Francisco's phone 16 Nov 2026, waiting for his check. Not committed yet.
+- `health` plugin 13 (Health Connect now; Apple Health later with the
+  same code). Read-only: workouts, distance, calories, heart rate,
+  routes, history. `MainActivity` is a `FlutterFragmentActivity`; Health
+  Connect's privacy link opens the policy. minSdk 26.
+- `lib/features/health/`: `HealthHub` interface (fake in tests),
+  `HealthConnectSync` (connect, sync every 15 min / on refresh,
+  disconnect revokes and deletes its workouts, revoked access detected).
+  First sync reads 365 days with past-data access, else 30; later syncs
+  re-read from 2 days before the last sync.
+- Workouts are activities with source `healthConnect`, named like Strava
+  ("Morning Run"); route, elevation and splits are computed from the
+  route's timestamped points, so data stickers work for them too.
+- Duplicates (Francisco, 16 Nov 2026): a Health Connect workout is not
+  listed when a Strava activity of the same sport starts within 2 min
+  and its distance is within 5%; it is not deleted and shows again if
+  Strava is disconnected (`hideDuplicates`).
 
 ## Decisions already taken (do not reopen without asking)
 
@@ -316,8 +335,7 @@ Answered 15 Nov 2026 for phase 7:
 
 ## Open questions (ask Francisco, don't assume)
 
-Still open from design: duplicate rule across sources, invite reward,
-Effort formula.
+Still open from design: invite reward, Effort formula.
 
 ## How Francisco works
 

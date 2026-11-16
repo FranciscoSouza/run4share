@@ -260,5 +260,11 @@
   "chartSplits": "Splits",
   "chartBest": "Beste {pace} {unit}",
   "formShoe": "Schuh",
-  "formShoeDistance": "Schuh gesamt ({unit})"
+  "formShoeDistance": "Schuh gesamt ({unit})",
+  "hubConnected": "Mit Health Connect verbunden",
+  "hubDisconnected": "Health Connect getrennt",
+  "hubInstall": "Installieren",
+  "hubNotInstalled": "Health Connect ist auf diesem Handy nicht installiert.",
+  "hubUpdate": "Health Connect muss aktualisiert werden.",
+  "hubDenied": "run4share braucht die Erlaubnis, deine Workouts in Health Connect zu lesen."
 }

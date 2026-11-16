@@ -4,11 +4,28 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import io.flutter.embedding.android.FlutterActivity
+import android.os.Bundle
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-class MainActivity : FlutterActivity() {
+// FlutterFragmentActivity: the health plugin asks Health Connect for
+// permissions with registerForActivityResult.
+class MainActivity : FlutterFragmentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // Health Connect opens us to show why we ask for its data: send the
+        // user to the privacy policy instead of starting the app.
+        if (intent?.action == "androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" ||
+            intent?.action == "android.intent.action.VIEW_PERMISSION_USAGE"
+        ) {
+            super.onCreate(savedInstanceState)
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY)))
+            finish()
+            return
+        }
+        super.onCreate(savedInstanceState)
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
@@ -34,5 +51,9 @@ class MainActivity : FlutterActivity() {
 
     companion object {
         private const val CHANNEL = "run4share/system"
+
+        // Keep in step with AppLinks.privacyPolicy (lib/app/links.dart).
+        private const val PRIVACY_POLICY =
+            "https://github.com/FranciscoSouza/run4share/blob/main/docs/privacy-policy.md"
     }
 }

@@ -260,5 +260,11 @@
   "chartSplits": "Parciais",
   "chartBest": "Melhor {pace} {unit}",
   "formShoe": "Tênis",
-  "formShoeDistance": "Total do tênis ({unit})"
+  "formShoeDistance": "Total do tênis ({unit})",
+  "hubConnected": "Conectado ao Health Connect",
+  "hubDisconnected": "Health Connect desconectado",
+  "hubInstall": "Instalar",
+  "hubNotInstalled": "O Health Connect não está instalado neste celular.",
+  "hubUpdate": "O Health Connect precisa ser atualizado.",
+  "hubDenied": "O run4share precisa de permissão para ler seus treinos no Health Connect."
 }

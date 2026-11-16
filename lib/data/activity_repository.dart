@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
 import 'package:run4share/data/database.dart';
+import 'package:run4share/features/activities/activity_format.dart';
+import 'package:run4share/features/health/health_hub.dart';
+import 'package:run4share/features/health/route_metrics.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
 /// Reads and writes activities, whatever their source.
@@ -14,8 +18,12 @@ class ActivityRepository {
 
   $ActivitiesTable get _table => _db.activities;
 
-  /// All activities, newest first; emits again on every change.
-  Stream<List<Activity>> watchAll() => (_db.select(_table)
+  /// All activities, newest first, without Health Connect copies of
+  /// Strava activities; emits again on every change.
+  Stream<List<Activity>> watchAll() => watchEverything().map(hideDuplicates);
+
+  /// Every stored activity, duplicates included.
+  Stream<List<Activity>> watchEverything() => (_db.select(_table)
         ..orderBy([
           (a) => OrderingTerm.desc(a.startLocal),
           (a) => OrderingTerm.desc(a.id),
@@ -87,6 +95,58 @@ class ActivityRepository {
       (_db.update(_table)..where((a) => a.id.equals(id))).write(
         ActivitiesCompanion(calories: Value(calories)),
       );
+
+  /// Inserts new Health Connect workouts and updates known ones, with
+  /// their route, elevation and splits worked out from the route.
+  Future<void> upsertHub(List<HubWorkout> workouts) async {
+    for (final w in workouts) {
+      final values = ActivitiesCompanion(
+        source: const Value(ActivitySource.healthConnect),
+        sourceId: Value(w.id),
+        name: Value(_hubName(w)),
+        sportType: Value(w.sportType),
+        startLocal: Value(w.startLocal),
+        startUtc: Value(w.startUtc),
+        distance: Value(
+          (w.distance ?? 0) > 0 ? w.distance : null,
+        ),
+        movingTime: Value(w.movingTime),
+        elapsedTime: Value(w.movingTime),
+        averageSpeed: Value(
+          (w.distance ?? 0) > 0 && w.movingTime > 0
+              ? w.distance! / w.movingTime
+              : null,
+        ),
+        calories: Value(w.calories),
+        averageHeartrate: Value(w.averageHeartrate),
+        polyline: Value(w.route.length > 1 ? routePolyline(w.route) : null),
+      );
+      final id = await _db.into(_table).insert(
+            values,
+            onConflict: DoUpdate(
+              (old) => values,
+              target: [_table.source, _table.sourceId],
+            ),
+          );
+      final stored = await (_db.select(_table)
+            ..where(
+              (a) =>
+                  a.source.equalsValue(ActivitySource.healthConnect) &
+                  a.sourceId.equals(w.id),
+            ))
+          .getSingleOrNull();
+      final rowId = stored?.id ?? id;
+      if (w.route.length > 1) {
+        final profile = elevationProfile(w.route);
+        if (profile.length > 1) await setElevation(rowId, profile);
+        await setSplits(
+          rowId,
+          metric: routeSplits(w.route, 1000),
+          standard: routeSplits(w.route, 1609.344),
+        );
+      }
+    }
+  }
 
   Future<Activity?> byId(int id) =>
       (_db.select(_table)..where((a) => a.id.equals(id))).getSingleOrNull();
@@ -239,3 +299,46 @@ final StreamProviderFamily<Activity?, int> activityByIdProvider =
     StreamProvider.family<Activity?, int>(
   (ref, id) => ref.watch(activityRepositoryProvider).watchById(id),
 );
+
+/// Health Connect has no activity names: "Morning Run" and the like, as
+/// Strava names them.
+String _hubName(HubWorkout w) {
+  final hour = w.startLocal.hour;
+  final part = switch (hour) {
+    >= 5 && < 12 => 'Morning',
+    >= 12 && < 14 => 'Lunch',
+    >= 14 && < 18 => 'Afternoon',
+    >= 18 && < 22 => 'Evening',
+    _ => 'Night',
+  };
+  return '$part ${w.sportType}';
+}
+
+/// Shows a workout once when it reached both Strava and Health Connect
+/// (a watch syncing to both): the Health Connect copy is left out when a
+/// Strava activity of the same sport starts within 2 minutes and covers
+/// a distance within 5% (decided 16 Nov 2026). Nothing is deleted: the
+/// copy is back if Strava is disconnected.
+List<Activity> hideDuplicates(List<Activity> all) {
+  final strava = [
+    for (final a in all)
+      if (a.source == ActivitySource.strava) a,
+  ];
+  if (strava.isEmpty) return all;
+  bool duplicate(Activity hub) => strava.any((s) {
+        if (sportKindOf(s.sportType) != sportKindOf(hub.sportType)) {
+          return false;
+        }
+        if (s.startLocal.difference(hub.startLocal).inSeconds.abs() > 120) {
+          return false;
+        }
+        final a = s.distance ?? 0;
+        final b = hub.distance ?? 0;
+        if (a <= 0 || b <= 0) return a <= 0 && b <= 0;
+        return (a - b).abs() / math.max(a, b) <= 0.05;
+      });
+  return [
+    for (final a in all)
+      if (a.source != ActivitySource.healthConnect || !duplicate(a)) a,
+  ];
+}

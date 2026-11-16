@@ -121,9 +121,15 @@ void main() {
     });
 
     testWidgets('unfinished actions say they are coming', (tester) async {
-      await tester.pumpApp();
+      // Apple Health (iPhone) isn't built yet.
+      await tester.pumpApp(
+        overrides: [
+          ...baseOverrides(),
+          platformProvider.overrideWithValue(TargetPlatform.iOS),
+        ],
+      );
 
-      // Health Connect's Connect (Strava's is the first).
+      // Apple Health's Connect (Strava's is the first).
       await tester.tap(find.text('Connect').at(1));
       await tester.pump();
 

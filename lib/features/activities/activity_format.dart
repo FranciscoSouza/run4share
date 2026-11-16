@@ -87,6 +87,7 @@ class ActivityFormat {
   String sourceName(ActivitySource source) => switch (source) {
         ActivitySource.strava => Brand.strava,
         ActivitySource.manual => l10n.sourceManual,
+        ActivitySource.healthConnect => Brand.healthConnect,
       };
 
   IconData icon(SportKind kind) => switch (kind) {

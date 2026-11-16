@@ -64,6 +64,19 @@ phone. Activities you added by hand stay.
 Your use of Strava is covered by Strava's own privacy policy:
 https://www.strava.com/legal/privacy
 
+## Health Connect (Android)
+
+Connecting Health Connect is optional. run4share asks to **read** your
+workouts and, for them, distance, calories, heart rate and route, and to
+read data older than 30 days. It never writes to Health Connect. The data
+is read on your phone and kept in run4share's own storage, like Strava
+activities; it is never sent anywhere. When you disconnect in Settings,
+run4share removes those workouts and gives the permissions back. You can
+also change the permissions any time in Health Connect.
+
+run4share's use of data from Health Connect follows the Health Connect
+Permissions policy, including its Limited Use requirements.
+
 ## Sharing
 
 When you share an image, run4share hands it to the app you pick
@@ -89,6 +102,8 @@ digital services in your country).
   stay in Photos until you delete them there.
 - Delete an activity you added: its menu on the Activities tab.
 - Delete everything Strava-related: Settings, Strava, Disconnect.
+- Delete everything from Health Connect: Settings, Health Connect,
+  Disconnect.
 - Delete everything: uninstall run4share. This removes all its data from
   your phone. Images you saved to Photos stay in Photos.
 

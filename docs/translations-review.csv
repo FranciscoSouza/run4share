@@ -260,3 +260,9 @@ chartSplits,,,Splits,Parciais,Parciales,Temps intermédiaires,Splits
 chartBest,,"Keep {pace}, {unit} as is.",Best {pace} {unit},Melhor {pace} {unit},Mejor {pace} {unit},Meilleur {pace} {unit},Beste {pace} {unit}
 formShoe,Add / edit activity form,,Shoe,Tênis,Zapatillas,Chaussures,Schuh
 formShoeDistance,Add / edit activity form,Keep {unit} as is.,Shoe total ({unit}),Total do tênis ({unit}),Total de las zapatillas ({unit}),Total des chaussures ({unit}),Schuh gesamt ({unit})
+hubConnected,,,Connected to Health Connect,Conectado ao Health Connect,Conectado a Health Connect,Connecté à Health Connect,Mit Health Connect verbunden
+hubDisconnected,,,Disconnected from Health Connect,Health Connect desconectado,Health Connect desconectado,Health Connect déconnecté,Health Connect getrennt
+hubInstall,,,Install,Instalar,Instalar,Installer,Installieren
+hubNotInstalled,,,Health Connect isn’t installed on this phone.,O Health Connect não está instalado neste celular.,Health Connect no está instalado en este teléfono.,Health Connect n’est pas installé sur ce téléphone.,Health Connect ist auf diesem Handy nicht installiert.
+hubUpdate,,,Health Connect needs an update.,O Health Connect precisa ser atualizado.,Health Connect necesita una actualización.,Health Connect doit être mis à jour.,Health Connect muss aktualisiert werden.
+hubDenied,,,run4share needs permission to read your workouts in Health Connect.,O run4share precisa de permissão para ler seus treinos no Health Connect.,run4share necesita permiso para leer tus entrenamientos en Health Connect.,run4share a besoin d’une autorisation pour lire vos séances dans Health Connect.,"run4share braucht die Erlaubnis, deine Workouts in Health Connect zu lesen."

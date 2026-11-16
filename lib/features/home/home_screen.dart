@@ -16,6 +16,8 @@ import 'package:run4share/features/activities/activity_format.dart';
 import 'package:run4share/features/activities/strava_sync.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
+import 'package:run4share/features/health/connect_health.dart';
+import 'package:run4share/features/health/health_connect_sync.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/features/templates/template_canvas.dart';
@@ -46,6 +48,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         unawaited(ref.read(stravaSyncProvider.notifier).syncIfStale());
+        unawaited(ref.read(healthConnectProvider.notifier).syncIfStale());
       }
     });
   }
@@ -71,9 +74,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final textTheme = Theme.of(context).textTheme;
     final connection = ref.watch(stravaConnectionProvider);
     final checking = connection.isLoading && !connection.hasValue;
-    final connected = connection.value != null;
+    final stravaConnected = connection.value != null;
+    final hub = ref.watch(healthConnectProvider);
+    // Any source to sync from: Strava or Health Connect.
+    final connected = stravaConnected || hub.connected;
     final activities = ref.watch(activitiesProvider).value;
-    final sync = ref.watch(stravaSyncProvider);
+    final stravaSync = ref.watch(stravaSyncProvider);
+    // One status line for both sources.
+    final sync = SyncState(
+      syncing: stravaSync.syncing || hub.syncing,
+      loadingOlder: stravaSync.loadingOlder,
+      failed: stravaSync.failed || hub.failed,
+      lastSyncedAt: [
+        if (stravaSync.lastSyncedAt case final t?) t,
+        if (hub.lastSyncedAt case final t?) t,
+      ].fold<DateTime?>(null, (a, b) => a == null || b.isAfter(a) ? b : a),
+    );
     final hasActivities = activities?.isNotEmpty ?? false;
     void connect() => context.push(AppRoutes.connectStrava);
 
@@ -82,7 +98,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
       children: [
         AppHeader(
-          trailing: checking || connected
+          trailing: checking || stravaConnected
               ? null
               : AppPill(
                   label: l10n.homeConnectStrava,
@@ -114,12 +130,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               _ActivityTile(activity: activity),
           if (activities.any((a) => a.source == ActivitySource.strava))
             const _PoweredByStrava(),
-          if (connected && sync.loadingOlder)
+          if (stravaConnected && sync.loadingOlder)
             const Padding(
               padding: EdgeInsets.all(AppSpacing.lg),
               child: Center(child: CircularProgressIndicator()),
             ),
-          if (!connected) ...[
+          if (!stravaConnected || !hub.connected) ...[
             const SizedBox(height: AppSpacing.lg),
             ..._sources(context, connect: connect),
           ],
@@ -131,10 +147,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return SafeArea(
       bottom: false,
       child: NotificationListener<ScrollNotification>(
-        onNotification: connected ? _onScroll : null,
+        onNotification: stravaConnected ? _onScroll : null,
         child: connected
             ? RefreshIndicator.noSpinner(
-                onRefresh: () => ref.read(stravaSyncProvider.notifier).sync(),
+                onRefresh: () => Future.wait([
+                  ref.read(stravaSyncProvider.notifier).sync(),
+                  ref.read(healthConnectProvider.notifier).sync(),
+                ]),
                 child: list,
               )
             : list,
@@ -159,16 +178,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
         child: GroupedListCard(
           children: [
-            GroupedListTile(
-              icon: AppIcons.link,
-              title: Brand.strava,
-              subtitle: l10n.sourceStravaSubtitle,
-              trailing: AppPill(
-                label: l10n.actionConnect,
-                variant: AppPillVariant.dark,
-                onPressed: connect,
+            if (ref.watch(stravaConnectionProvider).value == null)
+              GroupedListTile(
+                icon: AppIcons.link,
+                title: Brand.strava,
+                subtitle: l10n.sourceStravaSubtitle,
+                trailing: AppPill(
+                  label: l10n.actionConnect,
+                  variant: AppPillVariant.dark,
+                  onPressed: connect,
+                ),
               ),
-            ),
             // Only the phone's own health source (Apple Health on
             // iPhone, Health Connect on Android).
             if (healthSourceFor(ref.read(platformProvider)) case final source?)
@@ -182,11 +202,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 subtitle: source == HealthSource.appleHealth
                     ? l10n.sourceOnIphone
                     : l10n.sourceOnAndroid,
-                trailing: AppPill(
-                  label: l10n.actionConnect,
-                  variant: AppPillVariant.outlined,
-                  onPressed: soon,
-                ),
+                trailing: source == HealthSource.healthConnect &&
+                        ref.watch(healthConnectProvider).connected
+                    ? Icon(
+                        AppIcons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : AppPill(
+                        label: l10n.actionConnect,
+                        variant: AppPillVariant.outlined,
+                        onPressed: source == HealthSource.healthConnect
+                            ? () => connectHealthConnect(context, ref)
+                            : soon,
+                      ),
               ),
           ],
         ),

@@ -412,5 +412,11 @@
         "type": "String"
       }
     }
-  }
+  },
+  "hubConnected": "Connected to Health Connect",
+  "hubDisconnected": "Disconnected from Health Connect",
+  "hubInstall": "Install",
+  "hubNotInstalled": "Health Connect isn’t installed on this phone.",
+  "hubUpdate": "Health Connect needs an update.",
+  "hubDenied": "run4share needs permission to read your workouts in Health Connect."
 }

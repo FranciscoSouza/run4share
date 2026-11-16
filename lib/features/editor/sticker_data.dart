@@ -21,6 +21,8 @@ class StickerData {
     required this.stats,
     required this.sport,
     required this.weekday,
+    this.name = '',
+    this.date = '',
   });
 
   /// Only the metrics this activity has.
@@ -31,6 +33,12 @@ class StickerData {
 
   /// "THURSDAY" in the user's language.
   final String weekday;
+
+  /// The activity's own name, "Lunch Run".
+  final String name;
+
+  /// When it started, "12 NOV 2026 · 12:31" in the user's language.
+  final String date;
 
   bool has(Metric metric) => stats.containsKey(metric);
 
@@ -107,6 +115,10 @@ StickerData stickerDataFor(Activity activity, ActivityFormat format) {
       'EEEE',
       l10n.localeName,
     ).format(activity.startLocal).toUpperCase(),
+    name: activity.name,
+    date: '${DateFormat.yMMMd(l10n.localeName).format(activity.startLocal)}'
+            ' · ${DateFormat.Hm(l10n.localeName).format(activity.startLocal)}'
+        .toUpperCase(),
   );
 }
 

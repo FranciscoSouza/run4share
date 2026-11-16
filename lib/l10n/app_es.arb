@@ -270,5 +270,6 @@
   "chartHeartRate": "Frecuencia cardiaca",
   "chartPace": "Ritmo",
   "chartMax": "Máx. {value}",
-  "chartAverage": "Media {value}"
+  "chartAverage": "Media {value}",
+  "receiptTotal": "Total"
 }

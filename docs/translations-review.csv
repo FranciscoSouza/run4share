@@ -270,3 +270,4 @@ chartHeartRate,,,Heart rate,Frequência cardíaca,Frecuencia cardiaca,Fréquence
 chartPace,,,Pace,Ritmo,Ritmo,Allure,Pace
 chartMax,,Keep {value} as is.,Max {value},Máx. {value},Máx. {value},Max {value},Max. {value}
 chartAverage,,Keep {value} as is.,Avg {value},Média {value},Media {value},Moy. {value},Ø {value}
+receiptTotal,,,Total,Total,Total,Total,Gesamt

@@ -270,5 +270,6 @@
   "chartHeartRate": "Fréquence cardiaque",
   "chartPace": "Allure",
   "chartMax": "Max {value}",
-  "chartAverage": "Moy. {value}"
+  "chartAverage": "Moy. {value}",
+  "receiptTotal": "Total"
 }

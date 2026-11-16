@@ -34,9 +34,14 @@ void main() {
     expect(themeLocked(paid, isPro: false), isTrue);
     expect(themeLocked(paid, isPro: true), isFalse);
     expect(
-      stickerThemes.where((t) => t.pro),
+      stickerThemes.take(7).where((t) => t.pro),
       isEmpty,
       reason: 'the launch themes stay free',
+    );
+    expect(
+      stickerThemes.skip(7).map((t) => (t.id, t.pro)),
+      [('race-bib', true), ('receipt', true), ('scoreboard', true)],
+      reason: 'phase 12 themes are Pro',
     );
   });
 

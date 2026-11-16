@@ -270,5 +270,6 @@
   "chartHeartRate": "Herzfrequenz",
   "chartPace": "Pace",
   "chartMax": "Max. {value}",
-  "chartAverage": "Ø {value}"
+  "chartAverage": "Ø {value}",
+  "receiptTotal": "Gesamt"
 }

@@ -30,6 +30,7 @@ import 'package:run4share/features/stickers/sticker_facts.dart';
 import 'package:run4share/features/stickers/stickers_panel.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/pills.dart';
+import 'package:run4share/shared/widgets/pro_badge.dart';
 
 /// Step 3: the photo with its sticker. Choose a theme, move, size and turn
 /// the sticker, then share (phase 5).
@@ -279,6 +280,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                           _BottomPanel(
                             child: switch (_panel) {
                               _Panel.themes => _ThemeCarousel(
+                                  isPro: ref.watch(isProProvider),
                                   draft: draft,
                                   data: data,
                                   bytes: bytes,
@@ -519,6 +521,7 @@ class _Tool extends StatelessWidget {
 
 class _ThemeCarousel extends StatelessWidget {
   const _ThemeCarousel({
+    required this.isPro,
     required this.draft,
     required this.data,
     required this.bytes,
@@ -526,6 +529,8 @@ class _ThemeCarousel extends StatelessWidget {
     required this.onClose,
   });
 
+  /// Without Pro, Pro themes carry a PRO badge.
+  final bool isPro;
   final CreationDraft draft;
   final StickerData data;
   final Uint8List bytes;
@@ -614,34 +619,44 @@ class _ThemeCarousel extends StatelessWidget {
                               width: 3,
                             ),
                           ),
-                          child: Opacity(
-                            opacity: usable ? 1 : 0.35,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                AppRadius.thumb - 2,
-                              ),
-                              child: SizedBox.square(
-                                dimension: _tile - 4,
-                                child: ExcludeSemantics(
-                                  child: StoryCanvas(
-                                    format: ShareFormat.square,
-                                    background: CroppedPhoto(
-                                      bytes: bytes,
-                                      crop: thumbCrop,
-                                      aspectRatio: 1,
+                          child: Stack(
+                            children: [
+                              Opacity(
+                                opacity: usable ? 1 : 0.35,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.thumb - 2,
+                                  ),
+                                  child: SizedBox.square(
+                                    dimension: _tile - 4,
+                                    child: ExcludeSemantics(
+                                      child: StoryCanvas(
+                                        format: ShareFormat.square,
+                                        background: CroppedPhoto(
+                                          bytes: bytes,
+                                          crop: thumbCrop,
+                                          aspectRatio: 1,
+                                        ),
+                                        theme: usable ? t : null,
+                                        data: data,
+                                        placement: StickerPlacement(
+                                          center: t.position,
+                                          scale: 1.25,
+                                        ),
+                                        style: draft.style,
+                                        watermark: false,
+                                      ),
                                     ),
-                                    theme: usable ? t : null,
-                                    data: data,
-                                    placement: StickerPlacement(
-                                      center: t.position,
-                                      scale: 1.25,
-                                    ),
-                                    style: draft.style,
-                                    watermark: false,
                                   ),
                                 ),
                               ),
-                            ),
+                              if (themeLocked(t, isPro: isPro))
+                                const Positioned(
+                                  top: 4,
+                                  right: 4,
+                                  child: ProBadge(),
+                                ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xs),

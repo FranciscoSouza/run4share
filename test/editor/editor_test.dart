@@ -30,8 +30,18 @@ void main() {
 
   /// Scrolls the theme carousel to [name] and taps it.
   Future<void> tapTheme(WidgetTester tester, String name) async {
-    await tester
-        .ensureVisible(find.bySemanticsLabel(name, skipOffstage: false));
+    // The carousel builds lazily: from the start, scroll until the
+    // thumbnail exists.
+    final carousel = find.byWidgetPredicate(
+      (w) => w is Scrollable && w.axisDirection == AxisDirection.right,
+    );
+    tester.state<ScrollableState>(carousel).position.jumpTo(0);
+    await tester.pump();
+    await tester.scrollUntilVisible(
+      find.bySemanticsLabel(name),
+      150,
+      scrollable: carousel,
+    );
     await settle(tester);
     await tester.tap(find.bySemanticsLabel(name));
     await settle(tester);
@@ -88,7 +98,7 @@ void main() {
     await openEditor(tester);
 
     expect(find.text('Lunch Run'), findsOneWidget);
-    expect(find.text('7 themes · more added over time'), findsOneWidget);
+    expect(find.text('10 themes · more added over time'), findsOneWidget);
 
     await tapTheme(tester, 'Heart Ring');
     expect(find.text('No heart rate in this activity'), findsOneWidget);
@@ -114,7 +124,7 @@ void main() {
     expect(find.bySemanticsLabel('Remove sticker'), findsOneWidget);
     expect(find.bySemanticsLabel('Rotate sticker'), findsOneWidget);
     // Selecting closes the theme carousel; the toolbar shows instead.
-    expect(find.text('7 themes · more added over time'), findsNothing);
+    expect(find.text('10 themes · more added over time'), findsNothing);
 
     final before = draft().sticker!.center;
     await tester.drag(sticker, const Offset(0, -60));
@@ -339,5 +349,34 @@ void main() {
     await settle(tester);
     expect(find.byType(ProScreen), findsOneWidget);
     expect(draft().extras, isEmpty);
+  });
+
+  testWidgets('Pro themes: badged and locked without Pro, usable with it', (
+    tester,
+  ) async {
+    await openEditor(tester);
+    // Free themes carry no badge; Pro ones do.
+    expect(find.text('PRO'), findsNothing, reason: 'first themes are free');
+    await tapTheme(tester, 'Race Bib');
+    expect(find.byType(ProScreen), findsOneWidget);
+    expect(draft().themeId, 'inline-top');
+    await tester.tap(find.byTooltip('Close'));
+    await settle(tester);
+    expect(find.text('PRO'), findsWidgets, reason: 'Pro thumbnails badged');
+  });
+
+  testWidgets('with Pro the new themes apply', (tester) async {
+    await openEditor(tester, pro: true);
+    for (final (name, id) in [
+      ('Race Bib', 'race-bib'),
+      ('Receipt', 'receipt'),
+      ('Scoreboard', 'scoreboard'),
+    ]) {
+      await tapTheme(tester, name);
+      expect(draft().themeId, id);
+    }
+    await tapTheme(tester, 'Receipt');
+    expect(find.text('TOTAL'), findsWidgets, reason: 'the receipt drew');
+    expect(find.text('PRO'), findsNothing, reason: 'no badges with Pro');
   });
 }

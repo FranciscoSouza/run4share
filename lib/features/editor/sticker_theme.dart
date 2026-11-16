@@ -24,6 +24,17 @@ enum StickerLayout {
 
   /// One small value above a huge weekday.
   weekday,
+
+  /// A race-number card: name on top, the first metric as the number,
+  /// the others underneath, pin holes in the corners.
+  bib,
+
+  /// A till receipt: name and date, the other metrics as line items, the
+  /// first as the total, a barcode at the bottom.
+  receipt,
+
+  /// A stadium board: each metric lit in its own dark box.
+  scoreboard,
 }
 
 /// One theme = one whole sticker: layout plus the metrics it shows. The
@@ -110,6 +121,32 @@ const stickerThemes = <StickerTheme>[
     layout: StickerLayout.inline,
     metrics: [Metric.time, Metric.calories],
     position: Offset(0.5, 0.72),
+  ),
+  // Phase 12: the first Pro themes.
+  StickerTheme(
+    id: 'race-bib',
+    name: 'Race Bib',
+    layout: StickerLayout.bib,
+    metrics: [Metric.distance, Metric.time, Metric.rate],
+    position: Offset(0.5, 0.7),
+    pro: true,
+  ),
+  StickerTheme(
+    id: 'receipt',
+    name: 'Receipt',
+    layout: StickerLayout.receipt,
+    metrics: [Metric.distance, Metric.time, Metric.rate],
+    position: Offset(0.5, 0.6),
+    pro: true,
+  ),
+  StickerTheme(
+    id: 'scoreboard',
+    name: 'Scoreboard',
+    layout: StickerLayout.scoreboard,
+    metrics: [Metric.distance, Metric.time, Metric.rate],
+    position: Offset(0.5, 0.76),
+    colour: StickerColour.amber,
+    pro: true,
   ),
 ];
 

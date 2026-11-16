@@ -25,7 +25,7 @@ or share to Instagram.
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
-charts.
+charts → 12 Pro themes.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -308,6 +308,26 @@ build). Not committed yet.
   true)`); `editor_screen.dart` changed only for that tool.
 - Laboratory demo streams (test builds only): a pause in longer runs,
   every 5th activity without heart rate, no GPS streams without a route.
+
+**Phase 12 status (Pro themes):** committed (`phase-12-pro-themes`);
+Francisco moved on 16 Nov 2026 without reporting problems.
+- Three Pro themes (Francisco chose them from proposals; no design
+  artboards): Race Bib (card with pin holes: name, distance as the
+  number, time and pace), Receipt (name, date and start time, line
+  items, TOTAL = distance, barcode, torn edge) and Scoreboard (dark
+  board, digits lit in the text colour, default amber). All need
+  distance, time and rate. Bib and Receipt fill with the chosen colour
+  and pick black/white text, like Poster.
+- New layouts `bib`, `receipt`, `scoreboard` in `sticker_view.dart`;
+  `StickerData` gains `name` and `date`. String `receiptTotal`.
+- Carousel shows a PRO badge on Pro themes without Pro (shared
+  `ProBadge` in `lib/shared/widgets/`); tapping one opens the Pro screen.
+  `editor_screen.dart` changed only for that badge.
+- No Popular templates for them (templates question unanswered; kept
+  as is).
+- A test draws every theme for a 4-hour marathon with a long name in
+  every language; `tool/preview/theme_preview_test.dart` renders the Pro
+  themes to PNGs with the real fonts for a visual check.
 
 ## Decisions already taken (do not reopen without asking)
 

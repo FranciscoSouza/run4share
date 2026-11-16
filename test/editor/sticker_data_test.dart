@@ -36,7 +36,7 @@ Activity activity({
 void main() {
   setUpAll(initializeDateFormatting);
 
-  test('the catalogue has the seven design themes, ids unique', () {
+  test('the seven design themes, then the Pro ones; ids unique', () {
     expect(stickerThemes.map((t) => t.name), [
       'Inline Top',
       'Vertical Stack',
@@ -45,11 +45,22 @@ void main() {
       'Heart Ring',
       'Weekday',
       'Time & Calories',
+      'Race Bib',
+      'Receipt',
+      'Scoreboard',
     ]);
-    expect(stickerThemes.map((t) => t.id).toSet(), hasLength(7));
+    expect(stickerThemes.map((t) => t.id).toSet(), hasLength(10));
     for (final template in storyTemplates) {
       expect(themeById(template.themeId), isNotNull, reason: template.id);
     }
+  });
+
+  test('name and start date for the Bib and the Receipt', () {
+    final data = stickerDataFor(activity(), format('en'));
+    expect(data.name, activity().name);
+    expect(data.date, matches(RegExp(r'^[A-Z]{3} \d+, 2026 · \d\d:\d\d$')));
+    final pt = stickerDataFor(activity(), format('pt'));
+    expect(pt.date, contains('2026 · '));
   });
 
   test('sample run: everything but what is missing', () {

@@ -9,6 +9,7 @@ import 'package:run4share/features/stickers/data_sticker_views.dart';
 import 'package:run4share/features/stickers/extra_sticker_view.dart';
 import 'package:run4share/features/stickers/sticker_catalogue.dart';
 import 'package:run4share/l10n/l10n.dart';
+import 'package:run4share/shared/widgets/pro_badge.dart';
 
 /// The editor's sticker pickers (Pro). Stickers: labels this activity
 /// earned, its start time, mood phrases, and stamps and seals. With
@@ -92,7 +93,7 @@ class _StickersPanelState extends State<StickersPanel> {
                   ),
                   if (!widget.isPro) ...[
                     const SizedBox(width: AppSpacing.sm),
-                    const _ProMark(),
+                    const ProBadge(),
                   ],
                   const Spacer(),
                   IconButton(
@@ -254,28 +255,6 @@ class _ReconnectTile extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _ProMark extends StatelessWidget {
-  const _ProMark();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: AppColors.warning60,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        'PRO',
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.neutral0,
-              fontWeight: FontWeight.w700,
-            ),
       ),
     );
   }

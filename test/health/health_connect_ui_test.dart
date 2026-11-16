@@ -19,20 +19,30 @@ void main() {
     await tester.pumpApp(overrides: baseOverrides(hub: hub));
 
     // Health Connect's Connect on Home (Strava's is the first).
-    await tester.tap(find.text('Connect').at(1));
+    await tester.showOnHome(find.text('Bring in your workouts'));
+    await tester.showOnHome(find.text('Add activity manually'));
+    await tester.tap(find.text('Connect').last);
     await settle(tester, rounds: 20);
 
     expect(find.text('Connected to Health Connect'), findsOneWidget);
-    expect(find.text('Morning Run'), findsOneWidget);
+    await tester.homeToTop();
+    // Named by the hour it started ("Morning Run", "Afternoon Run"...),
+    // and it started this time yesterday.
+    await tester.showOnHome(
+      find.textContaining(RegExp(r'^(Morning|Afternoon|Evening|Night) Run$')),
+    );
     expect(find.textContaining('Health Connect · '), findsOneWidget);
     // Strava can still be connected.
+    await tester.homeToTop();
     expect(find.text('Connect Strava'), findsOneWidget);
   });
 
   testWidgets('not installed: offers to install', (tester) async {
     final hub = FakeHealthHub(hubStatus: HubStatus.unavailable);
     await tester.pumpApp(overrides: baseOverrides(hub: hub));
-    await tester.tap(find.text('Connect').at(1));
+    await tester.showOnHome(find.text('Bring in your workouts'));
+    await tester.showOnHome(find.text('Add activity manually'));
+    await tester.tap(find.text('Connect').last);
     await settle(tester);
 
     expect(
@@ -76,7 +86,9 @@ void main() {
         platformProvider.overrideWithValue(TargetPlatform.iOS),
       ],
     );
-    await tester.tap(find.text('Connect').at(1));
+    await tester.showOnHome(find.text('Bring in your workouts'));
+    await tester.showOnHome(find.text('Add activity manually'));
+    await tester.tap(find.text('Connect').last);
     await settle(tester, rounds: 20);
 
     expect(find.text('Connected to Apple Health'), findsOneWidget);

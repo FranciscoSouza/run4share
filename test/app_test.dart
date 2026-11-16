@@ -20,7 +20,8 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
       expect(find.byType(AppLogo), findsOneWidget);
       expect(find.text('Connect Strava'), findsOneWidget);
-      expect(find.text('Popular templates'), findsOneWidget);
+      expect(find.text('Make posts like these'), findsOneWidget);
+      await tester.showOnHome(find.text('Add activity manually'));
       expect(find.text('Bring in your workouts'), findsOneWidget);
       expect(find.text('Strava'), findsOneWidget);
       // Tests run as Android: Health Connect only.
@@ -38,9 +39,11 @@ void main() {
           platformProvider.overrideWithValue(TargetPlatform.iOS),
         ],
       );
+      await tester.showOnHome(find.text('Add activity manually'));
       expect(find.text('Apple Health'), findsOneWidget);
       expect(find.text('Health Connect'), findsNothing);
 
+      await tester.homeToTop();
       await tester.tap(find.byTooltip('Settings'));
       await tester.pumpAndSettle();
       expect(find.text('Apple Health'), findsOneWidget);

@@ -10,10 +10,15 @@ import 'package:run4share/app/router.dart';
 import 'package:run4share/app/theme/app_colors.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/app/theme/app_theme.dart';
+import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
+import 'package:run4share/features/activities/strava_sync.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/stickers/extra_sticker_view.dart';
+import 'package:run4share/features/templates/template_info.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/pills.dart';
 
@@ -97,11 +102,15 @@ class _CropScreenState extends ConsumerState<CropScreen> {
     final crop = frame != null && photo != null
         ? fractionalCrop(frame: frame, photo: photo)
         : centreCrop(size, format);
+    final l10n = context.l10n;
     final db = ref.read(appDatabaseProvider);
     final template = templateById(ref.read(templateChoiceProvider));
     final theme = template?.theme ??
         themeById(await db.readPreference(themePreference)) ??
         stickerThemes.first;
+    final (extras, missing) = template == null || template.extras.isEmpty
+        ? (const <ExtraSticker>[], const <String>[])
+        : await _templateExtras(template, l10n);
     ref.read(creationDraftProvider.notifier).set(
           CreationDraft(
             activityId: widget.activityId,
@@ -110,10 +119,55 @@ class _CropScreenState extends ConsumerState<CropScreen> {
             crop: crop,
             themeId: theme.id,
             sticker: StickerPlacement(center: theme.position),
+            extras: extras,
           ),
         );
     await db.writePreference(formatPreference, format.name);
-    if (mounted) await context.push(AppRoutes.editor);
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final editor = context.push(AppRoutes.editor);
+    // One note for whatever the activity couldn't draw.
+    if (missing.isNotEmpty) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.templateExtraMissing(missing.join(', ')))),
+      );
+    }
+    await editor;
+  }
+
+  /// The template's extras this activity can draw. Strava's streams (heart
+  /// rate, pace, elevation) are fetched first, as the editor would, so a
+  /// chart isn't dropped only because they weren't cached yet.
+  Future<(List<ExtraSticker>, List<String>)> _templateExtras(
+    StoryTemplate template,
+    AppLocalizations l10n,
+  ) async {
+    final repo = ref.read(activityRepositoryProvider);
+    var activity = await repo.byId(widget.activityId);
+    if (activity == null) return (const <ExtraSticker>[], const <String>[]);
+    if (activity.source == ActivitySource.strava) {
+      try {
+        await ref
+            .read(stravaSyncProvider.notifier)
+            .fetchDetails(activity)
+            .timeout(const Duration(seconds: 10));
+      } on Object catch (error) {
+        debugPrint('Template details failed: $error');
+      }
+      activity = await repo.byId(widget.activityId) ?? activity;
+    }
+    final gearId = activity.gearId;
+    final facts = StickerFacts(
+      activity: activity,
+      units: ref.read(unitsProvider),
+      gear: gearId == null ? null : await repo.gearById(gearId),
+    );
+    return templateExtrasFor(
+      template,
+      facts,
+      history: await repo.watchAll().first,
+      l10n: l10n,
+    );
   }
 
   @override

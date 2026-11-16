@@ -19,6 +19,7 @@ import 'package:run4share/features/share/share_screen.dart';
 import 'package:run4share/features/strava/connect_strava_screen.dart';
 import 'package:run4share/features/templates/template_activity_screen.dart';
 import 'package:run4share/features/templates/template_preview_screen.dart';
+import 'package:run4share/features/templates/templates_screen.dart';
 
 /// Route paths, so screens never spell them out.
 abstract final class AppRoutes {
@@ -38,6 +39,9 @@ abstract final class AppRoutes {
   static const invite = '/invite';
   static const pro = '/pro';
   static String template(String id) => '/template/$id';
+
+  /// Every template (Home's See all).
+  static const templates = '/templates';
   static String templateActivity(String id) => '/template/$id/activity';
 
   /// The introduction; extra `true` replays it from Settings.
@@ -55,6 +59,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         ? AppRoutes.activities
         : AppRoutes.onboarding,
     routes: [
+      GoRoute(
+        path: AppRoutes.templates,
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => const TemplatesScreen(),
+      ),
       GoRoute(
         path: AppRoutes.onboarding,
         parentNavigatorKey: _rootKey,

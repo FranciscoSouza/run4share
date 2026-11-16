@@ -2,15 +2,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/features/activities/activity_format.dart'
+    show SportKind;
 import 'package:run4share/features/editor/sticker_data.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
 import 'package:run4share/features/onboarding/onboarding_art.dart';
-import 'package:run4share/features/onboarding/onboarding_sample.dart';
 import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/stickers/activity_labels.dart';
 import 'package:run4share/features/stickers/extra_sticker_view.dart';
+import 'package:run4share/features/templates/template_samples.dart';
 import 'package:run4share/l10n/app_localizations.dart';
 
 import '../helpers/pump_app.dart';
@@ -19,7 +21,7 @@ void main() {
   setUpAll(initializeDateFormatting);
 
   test('the sample run has everything the art draws', () {
-    final facts = onboardingSampleFacts(name: 'Run', units: Units.km);
+    final facts = sampleFactsFor(SportKind.run, name: 'Run', units: Units.km);
     final run = facts.activity;
     expect(run.distance, 10020);
     expect(facts.charts.pace, isNotNull);

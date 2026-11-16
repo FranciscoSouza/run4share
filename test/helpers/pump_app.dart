@@ -12,6 +12,7 @@ import 'package:run4share/app/theme/app_theme.dart';
 import 'package:run4share/data/creation_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/health/health_hub.dart';
+import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/lab/lab.dart';
 import 'package:run4share/features/onboarding/onboarding.dart';
 import 'package:run4share/features/pro/pro_store.dart';
@@ -73,6 +74,28 @@ AppDatabase testDatabase() => AppDatabase.forTesting(
     );
 
 extension PumpApp on WidgetTester {
+  Finder get _homeList => find
+      .descendant(
+        of: find.byType(HomeScreen),
+        matching: find.byWidgetPredicate(
+          (w) => w is Scrollable && w.axisDirection == AxisDirection.down,
+        ),
+      )
+      .first;
+
+  /// Back to the top of Home (the header with Settings).
+  Future<void> homeToTop() async {
+    state<ScrollableState>(_homeList).position.jumpTo(0);
+    await pump();
+  }
+
+  /// Scrolls Home's list until [finder] is on screen: the templates
+  /// carousel fills the first screen, the rest is below it.
+  Future<void> showOnHome(Finder finder) async {
+    await scrollUntilVisible(finder, 200, scrollable: _homeList);
+    await pump();
+  }
+
   void _usePhone() {
     view
       ..physicalSize = phoneSize * 3

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/clock.dart';
 import 'package:run4share/app/material.dart';
+import 'package:run4share/app/router.dart';
 import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/editor/editor_screen.dart';
@@ -10,11 +13,19 @@ import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/pro/pro_screen.dart';
 import 'package:run4share/features/templates/template_activity_screen.dart';
+import 'package:run4share/features/templates/template_preview_screen.dart';
+import 'package:run4share/features/templates/templates_screen.dart';
 
 import '../helpers/pump_app.dart';
 import '../photos/fake_photo_library.dart';
 import '../photos/photo_flow_test.dart' show settle;
 import '../strava/fakes.dart';
+
+/// The preview's own button (Home has one too, under the carousel).
+final Finder useButton = find.descendant(
+  of: find.byType(TemplatePreviewScreen),
+  matching: find.text('Use this template'),
+);
 
 void main() {
   testWidgets('Story Hero: preview, choose activity, photo, crop, editor', (
@@ -48,13 +59,24 @@ void main() {
       ],
     );
 
-    await tester.tap(find.text('Story Hero'));
+    // Story Hero is a free template, under See all.
+    await tester.tap(find.text('See all'));
     await settle(tester);
-    expect(find.text('Use this template'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.bySemanticsLabel(RegExp('^Story Hero, ')),
+      300,
+      scrollable: find.descendant(
+        of: find.byType(TemplatesScreen),
+        matching: find.byType(Scrollable),
+      ),
+    );
+    await tester.tap(find.bySemanticsLabel(RegExp('^Story Hero, ')));
+    await settle(tester);
+    expect(useButton, findsOneWidget);
     expect(find.text('Sample data · 9:16 · shows distance'), findsOneWidget);
     expect(find.text('Adjust the sticker and share'), findsOneWidget);
 
-    await tester.tap(find.text('Use this template'));
+    await tester.tap(useButton);
     await settle(tester);
     expect(find.byType(TemplateActivityScreen), findsOneWidget);
     expect(find.text('Choose an activity'), findsOneWidget);
@@ -113,38 +135,24 @@ void main() {
     return ProviderScope.containerOf(tester.element(find.byType(MaterialApp)));
   }
 
-  /// Scrolls Home's template carousel to [name].
-  Future<void> scrollTo(WidgetTester tester, String name) async {
-    await tester.scrollUntilVisible(
-      find.text(name),
-      120,
-      scrollable: find.byWidgetPredicate(
-        (w) => w is Scrollable && w.axisDirection == AxisDirection.right,
-      ),
-    );
-    await settle(tester);
+  /// Opens a template's preview, as Home's carousel or See all would.
+  Future<void> preview(ProviderContainer container, String id) async {
+    unawaited(container.read(routerProvider).push(AppRoutes.template(id)));
   }
 
-  testWidgets('Pro templates: badged, previewable, Use leads to Pro', (
+  testWidgets('a Pro template: badged preview, Use leads to Pro', (
     tester,
   ) async {
-    await start(tester);
-    expect(find.text('PRO'), findsNothing, reason: 'free ones come first');
-    for (final name in ['Race Day', 'Run Receipt', 'Final Score']) {
-      await scrollTo(tester, name);
-    }
-    expect(find.text('PRO'), findsWidgets);
-
-    await tester.tap(find.text('Race Day'));
+    final container = await start(tester);
+    await preview(container, 'race-day');
     await settle(tester);
-    expect(find.text('Use this template'), findsOneWidget);
+    expect(useButton, findsOneWidget);
     expect(
       find.descendant(of: find.byType(AppBar), matching: find.text('PRO')),
       findsOneWidget,
       reason: 'title badge',
     );
-
-    await tester.tap(find.text('Use this template'));
+    await tester.tap(useButton);
     await settle(tester);
     expect(find.byType(ProScreen), findsOneWidget);
     expect(find.byType(TemplateActivityScreen), findsNothing);
@@ -154,11 +162,9 @@ void main() {
     tester,
   ) async {
     final container = await start(tester, pro: true);
-    await scrollTo(tester, 'Run Receipt');
-    expect(find.text('PRO'), findsNothing);
-    await tester.tap(find.text('Run Receipt'));
+    await preview(container, 'run-receipt');
     await settle(tester);
-    await tester.tap(find.text('Use this template'));
+    await tester.tap(useButton);
     await settle(tester);
     await tester.tap(find.text('Lunch Run'));
     await settle(tester);
@@ -170,14 +176,20 @@ void main() {
     expect(container.read(creationDraftProvider)!.themeId, 'receipt');
   });
 
-  test('every template has a theme; Pro templates follow their theme', () {
-    expect(storyTemplates.map((t) => t.id).toSet(), hasLength(7));
+  test('every template has a theme; Pro as decided', () {
+    expect(storyTemplates.map((t) => t.id).toSet(), hasLength(11));
     expect(
       [
         for (final t in storyTemplates)
           if (t.pro) t.id,
       ],
-      ['race-day', 'run-receipt', 'final-score'],
+      [
+        'summit-day',
+        'mountain-climb',
+        'final-score',
+        'race-day',
+        'run-receipt',
+      ],
     );
   });
 }

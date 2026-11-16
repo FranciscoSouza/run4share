@@ -8,7 +8,6 @@ actionConnect,Buttons used in several places,,Connect,Conectar,Conectar,Connecte
 actionDisconnect,Buttons used in several places,,Disconnect,Desconectar,Desconectar,Déconnecter,Trennen
 actionUnlock,Buttons used in several places,,Unlock,Desbloquear,Desbloquear,Débloquer,Freischalten
 homeConnectStrava,Activities tab (Home),,Connect Strava,Conectar Strava,Conectar Strava,Connecter Strava,Strava verbinden
-homePopularTemplates,Activities tab (Home),,Popular templates,Modelos populares,Plantillas populares,Modèles populaires,Beliebte Vorlagen
 homeBringWorkouts,Activities tab (Home),,Bring in your workouts,Traga seus treinos,Trae tus entrenamientos,Importez vos séances,Hol dir deine Workouts
 homeAddManually,Activities tab (Home),,Add activity manually,Adicionar atividade manualmente,Añadir actividad manualmente,Ajouter une activité manuellement,Aktivität manuell hinzufügen
 sourceStravaSubtitle,Home: Bring in your workouts,,"Runs, rides and more","Corridas, pedais e mais","Carreras, salidas en bici y más","Courses, sorties vélo et plus","Läufe, Radtouren und mehr"
@@ -295,3 +294,12 @@ onboardingArtLabel4,,,"Pro receipt theme, a Record label and a heart-rate chart"
 settingsShowIntro,Settings,,Show introduction again,Ver a introdução de novo,Ver la introducción de nuevo,Revoir l’introduction,Einführung erneut zeigen
 chartMin,,Keep {value} as is.,Min {value},Mín. {value},Mín. {value},Min {value},Min. {value}
 chartSlowest,,Keep {value} as is.,Slowest {value},Mais lento {value},Más lento {value},Plus lent {value},Langsamste {value}
+homeTemplatesTitle,Activities tab (Home),,Make posts like these,Crie posts como estes,Crea publicaciones como estas,Crée des posts comme ceux-ci,Erstelle Posts wie diese
+homeSeeAll,Activities tab (Home),,See all,Ver todos,Ver todas,Tout voir,Alle ansehen
+homeTemplateOf,Activities tab (Home),"Keep {index}, {total} as is.",Template {index} of {total},Modelo {index} de {total},Plantilla {index} de {total},Modèle {index} sur {total},Vorlage {index} von {total}
+templatesTitle,Popular templates flow,,Templates,Modelos,Plantillas,Modèles,Vorlagen
+templateExtraMissing,Popular templates flow,Keep {thing} as is.,"{thing} isn't in this activity, so it was left out.","{thing} não está nesta atividade, então ficou de fora.","{thing} no está en esta actividad, así que se quitó.","{thing} n’est pas dans cette activité, donc il a été retiré.",{thing} ist in dieser Aktivität nicht vorhanden und wurde weggelassen.
+stickerRoute,,,Route,Percurso,Ruta,Tracé,Strecke
+editorProStickersTitle,Editor,,Pro stickers on this image,Stickers Pro nesta imagem,Stickers Pro en esta imagen,Stickers Pro sur cette image,Pro-Sticker auf diesem Bild
+editorProStickersBody,Editor,,"Charts, routes and labels are Pro. Unlock Pro to share this image, or remove those stickers to share it free.","Gráficos, percursos e etiquetas são Pro. Desbloqueie o Pro para compartilhar esta imagem, ou remova esses stickers para compartilhar de graça.","Los gráficos, rutas y etiquetas son Pro. Desbloquea Pro para compartir esta imagen, o quita esos stickers para compartirla gratis.","Les graphiques, tracés et étiquettes sont Pro. Débloque Pro pour partager cette image, ou retire ces stickers pour la partager gratuitement.","Diagramme, Strecken und Labels sind Pro. Schalte Pro frei, um dieses Bild zu teilen, oder entferne diese Sticker, um es kostenlos zu teilen."
+editorProStickersSeePro,Editor,,See Pro,Ver o Pro,Ver Pro,Voir Pro,Pro ansehen

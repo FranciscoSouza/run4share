@@ -15,19 +15,16 @@ import 'package:run4share/data/database.dart';
 import 'package:run4share/features/activities/activity_format.dart';
 import 'package:run4share/features/activities/strava_sync.dart';
 import 'package:run4share/features/create/creation_draft.dart';
-import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/health/connect_health.dart';
 import 'package:run4share/features/health/health_connect_sync.dart';
-import 'package:run4share/features/pro/pro.dart';
+import 'package:run4share/features/home/featured_templates.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
-import 'package:run4share/features/templates/template_canvas.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/app_header.dart';
 import 'package:run4share/shared/widgets/buttons.dart';
 import 'package:run4share/shared/widgets/grouped_list.dart';
 import 'package:run4share/shared/widgets/pills.dart';
-import 'package:run4share/shared/widgets/pro_badge.dart';
 
 /// Activities tab: popular templates, then the activity list (synced from
 /// Strava and added by hand), or the sources to connect when there is
@@ -109,9 +106,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
         ),
         if (sync.syncing) _PullingBanner(text: l10n.homePulling),
-        _Heading(l10n.homePopularTemplates, style: textTheme.headlineSmall),
-        const SizedBox(height: AppSpacing.md),
-        const _TemplateCarousel(),
+        Padding(
+          padding: const EdgeInsets.only(right: AppSpacing.sm),
+          child: Row(
+            children: [
+              Expanded(
+                child: _Heading(
+                  l10n.homeTemplatesTitle,
+                  style: textTheme.headlineSmall,
+                ),
+              ),
+              TextButton(
+                onPressed: () => context.push(AppRoutes.templates),
+                child: Text(l10n.homeSeeAll),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        const FeaturedTemplates(),
         const SizedBox(height: AppSpacing.xl),
         if (activities == null || checking)
           const SizedBox.shrink()
@@ -497,74 +510,6 @@ class _Heading extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
       child: Semantics(header: true, child: Text(text, style: style)),
-    );
-  }
-}
-
-class _TemplateCarousel extends ConsumerWidget {
-  const _TemplateCarousel();
-
-  static const _width = 100.0;
-  static const _height = 178.0;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final textTheme = Theme.of(context).textTheme;
-    final isPro = ref.watch(isProProvider);
-    return SizedBox(
-      height: _height + 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
-        itemCount: storyTemplates.length,
-        separatorBuilder: (context, index) =>
-            const SizedBox(width: AppSpacing.md - 2),
-        itemBuilder: (context, index) {
-          final template = storyTemplates[index];
-          return SizedBox(
-            width: _width,
-            child: InkWell(
-              onTap: () => context.push(AppRoutes.template(template.id)),
-              borderRadius: BorderRadius.circular(AppRadius.thumb),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(AppRadius.thumb),
-                        child: SizedBox(
-                          width: _width,
-                          height: _height,
-                          child: ExcludeSemantics(
-                            child: TemplateCanvas(
-                              template: template,
-                              watermark: false,
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (template.pro && !isPro)
-                        const Positioned(
-                          top: 6,
-                          right: 6,
-                          child: ProBadge(),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    template.name,
-                    style: textTheme.titleMedium,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 }

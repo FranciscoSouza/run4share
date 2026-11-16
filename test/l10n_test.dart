@@ -20,7 +20,7 @@ void main() {
       await tester.pumpApp(locale: locale);
       final l10n = lookupAppLocalizations(locale);
 
-      expect(find.text(l10n.homePopularTemplates), findsOneWidget);
+      expect(find.text(l10n.homeTemplatesTitle), findsOneWidget);
       expect(find.text(l10n.navActivities), findsOneWidget);
 
       await tester.tap(find.text(l10n.navCreations).last);

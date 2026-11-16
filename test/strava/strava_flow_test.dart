@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/clock.dart';
-import 'package:run4share/app/material.dart';
 import 'package:run4share/features/strava/connect_strava_screen.dart';
 import 'package:run4share/features/strava/strava_auth.dart';
 import 'package:run4share/features/strava/strava_config.dart';
@@ -55,18 +54,14 @@ void main() {
     expect(find.byType(ConnectStravaScreen), findsNothing);
     expect(find.text('Connected as Francisco Souza'), findsOneWidget);
     expect(find.text('Connect Strava'), findsNothing);
-    expect(find.text('Your activities'), findsOneWidget);
-    await tester.scrollUntilVisible(
-      find.text('Evening Ride'),
-      200,
-      scrollable: find.byWidgetPredicate(
-        (w) => w is Scrollable && w.axisDirection == AxisDirection.down,
-      ),
-    );
+    await tester.showOnHome(find.text('Your activities'));
+    await tester.showOnHome(find.text('Lunch Run'));
     expect(find.text('Lunch Run'), findsOneWidget);
+    await tester.showOnHome(find.text('Evening Ride'));
     expect(find.text('SPEED'), findsOneWidget);
     expect(store.session?.accessToken, 'access-1');
 
+    await tester.homeToTop();
     await tester.tap(find.byTooltip('Settings'));
     await tester.pumpAndSettle();
     expect(find.text('Connected as Francisco Souza'), findsWidgets);

@@ -28,6 +28,7 @@ import 'package:run4share/features/stickers/extra_sticker_view.dart';
 import 'package:run4share/features/stickers/sticker_catalogue.dart';
 import 'package:run4share/features/stickers/sticker_facts.dart';
 import 'package:run4share/features/stickers/stickers_panel.dart';
+import 'package:run4share/features/templates/template_info.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/pills.dart';
 import 'package:run4share/shared/widgets/pro_badge.dart';
@@ -117,6 +118,36 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     });
   }
 
+  /// Share, unless the image carries Pro-only stickers (a free template's
+  /// chart or route) and there's no Pro: then say so first.
+  Future<void> _share(CreationDraft draft) async {
+    if (ref.read(isProProvider) || !draftNeedsPro(draft)) {
+      await context.push(AppRoutes.share);
+      return;
+    }
+    final l10n = context.l10n;
+    final seePro = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.editorProStickersTitle),
+        content: Text(l10n.editorProStickersBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.editorProStickersSeePro),
+          ),
+        ],
+      ),
+    );
+    if (seePro ?? false) {
+      if (mounted) await context.push(AppRoutes.pro);
+    }
+  }
+
   /// The colour shown as chosen in the text colour panel, for whichever
   /// sticker is selected.
   StickerColour _selectedColour(CreationDraft draft) {
@@ -186,9 +217,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                   child: AppPill(
                     label: l10n.actionShare,
                     icon: AppIcons.share,
-                    onPressed: draft == null
-                        ? null
-                        : () => context.push(AppRoutes.share),
+                    onPressed: draft == null ? null : () => _share(draft),
                   ),
                 ),
               ],

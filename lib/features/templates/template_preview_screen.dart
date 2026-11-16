@@ -2,13 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:run4share/app/app_icons.dart';
 import 'package:run4share/app/material.dart';
-import 'package:run4share/app/router.dart';
 import 'package:run4share/app/theme/app_colors.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/theme_messages.dart';
 import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/templates/template_canvas.dart';
+import 'package:run4share/features/templates/template_info.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/buttons.dart';
 import 'package:run4share/shared/widgets/pro_badge.dart';
@@ -33,8 +33,8 @@ class TemplatePreviewScreen extends ConsumerWidget {
 
     final steps = [l10n.templateStep1, l10n.templateStep2, l10n.templateStep3];
     // Anyone can look; using a Pro template needs Pro.
-    final locked = themeLocked(
-      template.theme,
+    final locked = templateLocked(
+      template,
       isPro: ref.watch(isProProvider),
     );
     return Scaffold(
@@ -131,10 +131,10 @@ class TemplatePreviewScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: AppButton(
                 label: l10n.templateUse,
-                onPressed: () => context.push(
-                  locked
-                      ? AppRoutes.pro
-                      : AppRoutes.templateActivity(template.id),
+                onPressed: () => useTemplate(
+                  context,
+                  template,
+                  isPro: ref.read(isProProvider),
                 ),
               ),
             ),

@@ -59,6 +59,8 @@ flutter:
     - assets/strava/
     # Onboarding photos (see the README there).
     - assets/onboarding/
+    # Template photos (see the README there).
+    - assets/templates/
 
   fonts:
     - family: BarlowCondensed

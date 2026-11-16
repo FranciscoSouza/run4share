@@ -15,7 +15,6 @@
   "actionDisconnect": "Disconnect",
   "actionUnlock": "Unlock",
   "homeConnectStrava": "Connect Strava",
-  "homePopularTemplates": "Popular templates",
   "homeBringWorkouts": "Bring in your workouts",
   "homeAddManually": "Add activity manually",
   "sourceStravaSubtitle": "Runs, rides and more",
@@ -507,6 +506,32 @@
   "@chartSlowest": {
     "placeholders": {
       "value": {
+        "type": "String"
+      }
+    }
+  },
+  "homeTemplatesTitle": "Make posts like these",
+  "homeSeeAll": "See all",
+  "homeTemplateOf": "Template {index} of {total}",
+  "templatesTitle": "Templates",
+  "templateExtraMissing": "{thing} isn't in this activity, so it was left out.",
+  "stickerRoute": "Route",
+  "editorProStickersTitle": "Pro stickers on this image",
+  "editorProStickersBody": "Charts, routes and labels are Pro. Unlock Pro to share this image, or remove those stickers to share it free.",
+  "editorProStickersSeePro": "See Pro",
+  "@homeTemplateOf": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@templateExtraMissing": {
+    "placeholders": {
+      "thing": {
         "type": "String"
       }
     }

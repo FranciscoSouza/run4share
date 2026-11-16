@@ -8,9 +8,9 @@ import 'package:run4share/features/editor/sticker_data.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
 import 'package:run4share/features/editor/story_canvas.dart';
-import 'package:run4share/features/onboarding/onboarding_sample.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/stickers/extra_sticker_view.dart';
+import 'package:run4share/features/templates/template_samples.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/checkerboard.dart';
 
@@ -48,7 +48,7 @@ class OnboardingArt extends ConsumerWidget {
     final l10n = context.l10n;
     final units = ref.watch(unitsProvider);
     final name = l10n.typeRun;
-    final facts = onboardingSampleFacts(name: name, units: units);
+    final facts = sampleFactsFor(SportKind.run, name: name, units: units);
     final data = stickerDataFor(
       facts.activity,
       ActivityFormat(

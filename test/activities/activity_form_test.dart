@@ -58,6 +58,7 @@ void main() {
   ) async {
     await pump(tester);
 
+    await tester.showOnHome(find.text('Add activity manually'));
     await tester.tap(find.text('Add activity manually'));
     await tester.pumpAndSettle();
     expect(find.text('Add activity'), findsOneWidget);
@@ -138,6 +139,7 @@ void main() {
     tester,
   ) async {
     await pump(tester);
+    await tester.showOnHome(find.text('Add activity manually'));
     await tester.tap(find.text('Add activity manually'));
     await tester.pumpAndSettle();
 
@@ -154,6 +156,7 @@ void main() {
 
   testWidgets('a typed shoe is saved like Strava gear', (tester) async {
     await pump(tester);
+    await tester.showOnHome(find.text('Add activity manually'));
     await tester.tap(find.text('Add activity manually'));
     await tester.pumpAndSettle();
 
@@ -177,6 +180,7 @@ void main() {
 
   testWidgets('heart rate outside 30–250 is rejected', (tester) async {
     await pump(tester);
+    await tester.showOnHome(find.text('Add activity manually'));
     await tester.tap(find.text('Add activity manually'));
     await tester.pumpAndSettle();
 

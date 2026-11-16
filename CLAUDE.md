@@ -25,7 +25,7 @@ or share to Instagram.
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
-charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes.
+charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes → 16 Home templates.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -371,6 +371,44 @@ the first). Home templates followed as phase 16 (`docs/home_templates.md`).
 - Fix found here: speed readings while stopped (Strava `moving` false;
   health hubs under 0.5 m/s) are left out before averaging, so slices
   around a pause no longer show a fake slow spike.
+
+**Phase 16 status (Home templates):** code done on
+`phase-16-home-templates` from `docs/home_templates.md` (the doc calls it
+phase 15; extremes took that number). Committed 16 Nov 2026 after
+Francisco ran it on his phone.
+- Home: "Make posts like these" + See all, then `FeaturedTemplates`
+  (`lib/features/home/featured_templates.dart`): looping `PageView`,
+  centre card 9:16 at clamp(width x 0.565, 200, 280), neighbours at 0.82
+  scale / 0.85 opacity following the finger, name + "what" line + dots,
+  "Use this template". Auto-advance every 5 s; a touch stops it and it
+  restarts 10 s later; off with animations disabled, a screen reader,
+  Home not on screen or the app in the background.
+- See all: `/templates`, `TemplatesScreen`, two-column grid.
+- `StoryTemplate` gains sport, extras (`TemplateExtra`), featured,
+  `proOnly`, photo (`templatePhotos` lists those present). 11 templates:
+  7 featured (Sunrise Half, Summit Day, Mountain Climb, Night Run =
+  `final-score` renamed, Race Day, Run Receipt, Coast Walk) + 4 free.
+- Decisions (Francisco, 16 Nov 2026, against the doc's table):
+  Sunrise Half and Coast Walk are free, as in the artboards; Summit Day
+  and Mountain Climb are `proOnly`. Free templates' extras (pace chart,
+  route) show in the editor, but Share asks for Pro while any extra
+  (or a Pro theme) is on the image (`draftNeedsPro`, dialog in
+  `editor_screen.dart`'s Share; the only editor change). Samples: run
+  10.02 km (onboarding's), hike 14.6 km 4:32:10 +1,240 m, ride 64.3 km
+  2:16:05, walk 8.40 km (1:40:48, Claude's figure; the artboard has no
+  time). The route's name in the "what" line is a new string, "Route".
+- `lib/features/templates/template_samples.dart` (per-sport samples;
+  onboarding uses it), `template_info.dart` (what line, `useTemplate`
+  shared by Home and the preview, `templateExtrasFor`, `draftNeedsPro`).
+- Using a template: the crop step's Next fetches Strava details first
+  (heart rate, pace, elevation come from streams), keeps the extras the
+  activity can draw, and shows one "left out" snackbar for the rest.
+- Photos: none yet; `assets/templates/README.md` lists what to add.
+- Tests: `test/home/template_carousel_test.dart`,
+  `test/templates/{templates_screen,template_catalogue,template_extras}_test.dart`,
+  Share gate in `editor_test.dart`. Home content now starts below the
+  carousel: tests use `tester.showOnHome(...)` / `homeToTop()`.
+- `tool/preview/home_preview_test.dart` renders Home and See all.
 
 ## Decisions already taken (do not reopen without asking)
 

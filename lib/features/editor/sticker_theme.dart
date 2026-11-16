@@ -1,4 +1,6 @@
 import 'package:run4share/app/material.dart';
+import 'package:run4share/features/activities/activity_format.dart'
+    show SportKind;
 import 'package:run4share/features/create/creation_draft.dart';
 
 /// What a sticker can show. [rate] is pace on foot and speed on wheels.
@@ -157,7 +159,37 @@ StickerTheme? themeById(String? id) {
   return null;
 }
 
-/// A Popular template: a theme in a format, with sample background art.
+/// An extra sticker a template places with its theme.
+@immutable
+class TemplateExtra {
+  const TemplateExtra({
+    required this.kind,
+    required this.center,
+    this.value = '',
+    this.scale = 1,
+    this.rotation = 0,
+  });
+
+  final ExtraKind kind;
+
+  /// As in `ExtraSticker.value` (a route style, a label...).
+  final String value;
+
+  /// Fractions of the canvas.
+  final Offset center;
+  final double scale;
+
+  /// Radians, clockwise.
+  final double rotation;
+}
+
+/// Photos under assets/templates/ that exist (see the README there). Add
+/// a template's id here when its photo is added; others keep their
+/// gradient.
+const templatePhotos = <String>{};
+
+/// A Popular template: a theme in a format, with sample art, for one sport,
+/// optionally with extra stickers (charts, route, labels).
 @immutable
 class StoryTemplate {
   const StoryTemplate({
@@ -166,6 +198,10 @@ class StoryTemplate {
     required this.themeId,
     required this.format,
     required this.colours,
+    this.sport = SportKind.run,
+    this.extras = const [],
+    this.featured = false,
+    this.proOnly = false,
   });
 
   final String id;
@@ -173,16 +209,144 @@ class StoryTemplate {
   final String themeId;
   final ShareFormat format;
 
-  /// Gradient standing in for a photo in previews.
+  /// Gradient standing in for a photo until there is one.
   final List<Color> colours;
+
+  /// The sport the sample data and photo show.
+  final SportKind sport;
+
+  /// Extra stickers placed with the theme.
+  final List<TemplateExtra> extras;
+
+  /// Shown in the Home carousel (others only in See all).
+  final bool featured;
+
+  /// Pro even though its theme is free (Francisco, 16 Nov 2026: Summit
+  /// Day and Mountain Climb; Sunrise Half and Coast Walk stay free, their
+  /// extras then need Pro only to export).
+  final bool proOnly;
 
   StickerTheme get theme => themeById(themeId)!;
 
-  /// Pro when its theme is.
-  bool get pro => theme.pro;
+  /// Pro when its theme is, or when marked so.
+  bool get pro => theme.pro || proOnly;
+
+  /// `assets/templates/<id>.jpg` when present; null → gradient [colours].
+  String? get photo =>
+      templatePhotos.contains(id) ? 'assets/templates/$id.jpg' : null;
 }
 
+/// The catalogue: the seven featured ones in carousel order, then the
+/// four free ones (docs/home_templates.md).
 const storyTemplates = <StoryTemplate>[
+  StoryTemplate(
+    id: 'sunrise-half',
+    name: 'Sunrise Half',
+    themeId: 'big-distance',
+    format: ShareFormat.story,
+    colours: [Color(0xFFF0A65A), Color(0xFFB8653A), Color(0xFF6E3B2A)],
+    featured: true,
+    extras: [
+      TemplateExtra(
+        kind: ExtraKind.pace,
+        center: Offset(0.5, 0.8),
+        scale: 0.9,
+      ),
+    ],
+  ),
+  StoryTemplate(
+    id: 'summit-day',
+    name: 'Summit Day',
+    themeId: 'vertical-stack',
+    format: ShareFormat.story,
+    colours: [Color(0xFFC9DCE6), Color(0xFF7A9A86), Color(0xFF3E5A48)],
+    sport: SportKind.hike,
+    featured: true,
+    proOnly: true,
+    extras: [
+      TemplateExtra(
+        kind: ExtraKind.elevation,
+        center: Offset(0.5, 0.84),
+        scale: 0.95,
+      ),
+    ],
+  ),
+  StoryTemplate(
+    id: 'mountain-climb',
+    name: 'Mountain Climb',
+    themeId: 'inline-top',
+    format: ShareFormat.story,
+    colours: [Color(0xFF8CC2E8), Color(0xFF5A7A8C), Color(0xFF3F7A66)],
+    sport: SportKind.ride,
+    featured: true,
+    proOnly: true,
+    extras: [
+      TemplateExtra(
+        kind: ExtraKind.route,
+        value: 'glow',
+        center: Offset(0.5, 0.48),
+        scale: 0.9,
+      ),
+    ],
+  ),
+  StoryTemplate(
+    id: 'final-score',
+    name: 'Night Run',
+    themeId: 'scoreboard',
+    format: ShareFormat.story,
+    colours: [Color(0xFF1F2A44), Color(0xFF2B3560), Color(0xFF0E1220)],
+    featured: true,
+    extras: [
+      TemplateExtra(
+        kind: ExtraKind.heartRate,
+        // Below the corner where the PRO badge sits.
+        center: Offset(0.5, 0.2),
+        scale: 0.9,
+      ),
+    ],
+  ),
+  StoryTemplate(
+    id: 'race-day',
+    name: 'Race Day',
+    themeId: 'race-bib',
+    format: ShareFormat.story,
+    colours: [Color(0xFF5FACDB), Color(0xFF7FB3C8), Color(0xFFC0533A)],
+    featured: true,
+    extras: [
+      TemplateExtra(
+        kind: ExtraKind.label,
+        value: 'record',
+        center: Offset(0.74, 0.56),
+        scale: 1.2,
+        rotation: 0.1,
+      ),
+    ],
+  ),
+  StoryTemplate(
+    id: 'run-receipt',
+    name: 'Run Receipt',
+    themeId: 'receipt',
+    format: ShareFormat.story,
+    colours: [Color(0xFFF0A65A), Color(0xFFB8653A), Color(0xFF6E3B2A)],
+    featured: true,
+  ),
+  StoryTemplate(
+    id: 'coast-walk',
+    name: 'Coast Walk',
+    themeId: 'big-distance',
+    format: ShareFormat.story,
+    colours: [Color(0xFFBFD8E6), Color(0xFF2E92CE), Color(0xFFC9B48A)],
+    sport: SportKind.walk,
+    featured: true,
+    extras: [
+      TemplateExtra(
+        kind: ExtraKind.route,
+        value: 'glow',
+        center: Offset(0.5, 0.56),
+        scale: 0.9,
+      ),
+    ],
+  ),
   StoryTemplate(
     id: 'story-hero',
     name: 'Story Hero',
@@ -196,6 +360,7 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'inline-top',
     format: ShareFormat.story,
     colours: [Color(0xFF6A3F9A), Color(0xFF2A1F45), Color(0xFF1A1426)],
+    sport: SportKind.ride,
   ),
   StoryTemplate(
     id: 'left-stack',
@@ -211,28 +376,12 @@ const storyTemplates = <StoryTemplate>[
     format: ShareFormat.story,
     colours: [Color(0xFF6B4E7A), Color(0xFFC07A5A), Color(0xFF2A2235)],
   ),
-  // Phase 13: one per Pro theme; Pro like their theme.
-  StoryTemplate(
-    id: 'race-day',
-    name: 'Race Day',
-    themeId: 'race-bib',
-    format: ShareFormat.story,
-    colours: [Color(0xFF2F6F8F), Color(0xFF7FB3C8), Color(0xFF23343F)],
-  ),
-  StoryTemplate(
-    id: 'run-receipt',
-    name: 'Run Receipt',
-    themeId: 'receipt',
-    format: ShareFormat.story,
-    colours: [Color(0xFF8A9A5B), Color(0xFFD9C38A), Color(0xFF4A4A35)],
-  ),
-  StoryTemplate(
-    id: 'final-score',
-    name: 'Final Score',
-    themeId: 'scoreboard',
-    format: ShareFormat.story,
-    colours: [Color(0xFF1F2A44), Color(0xFF3B4C7A), Color(0xFF0E1220)],
-  ),
+];
+
+/// The Home carousel's templates, in order.
+final List<StoryTemplate> featuredTemplates = [
+  for (final t in storyTemplates)
+    if (t.featured) t,
 ];
 
 StoryTemplate? templateById(String? id) {

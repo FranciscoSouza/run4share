@@ -9,7 +9,6 @@
   "actionDisconnect": "Desconectar",
   "actionUnlock": "Desbloquear",
   "homeConnectStrava": "Conectar Strava",
-  "homePopularTemplates": "Plantillas populares",
   "homeBringWorkouts": "Trae tus entrenamientos",
   "homeAddManually": "Añadir actividad manualmente",
   "sourceStravaSubtitle": "Carreras, salidas en bici y más",
@@ -295,5 +294,14 @@
   "onboardingArtLabel4": "Tema Pro de recibo, etiqueta de Récord y gráfico de frecuencia cardiaca",
   "settingsShowIntro": "Ver la introducción de nuevo",
   "chartMin": "Mín. {value}",
-  "chartSlowest": "Más lento {value}"
+  "chartSlowest": "Más lento {value}",
+  "homeTemplatesTitle": "Crea publicaciones como estas",
+  "homeSeeAll": "Ver todas",
+  "homeTemplateOf": "Plantilla {index} de {total}",
+  "templatesTitle": "Plantillas",
+  "templateExtraMissing": "{thing} no está en esta actividad, así que se quitó.",
+  "stickerRoute": "Ruta",
+  "editorProStickersTitle": "Stickers Pro en esta imagen",
+  "editorProStickersBody": "Los gráficos, rutas y etiquetas son Pro. Desbloquea Pro para compartir esta imagen, o quita esos stickers para compartirla gratis.",
+  "editorProStickersSeePro": "Ver Pro"
 }

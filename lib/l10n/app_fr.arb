@@ -9,7 +9,6 @@
   "actionDisconnect": "Déconnecter",
   "actionUnlock": "Débloquer",
   "homeConnectStrava": "Connecter Strava",
-  "homePopularTemplates": "Modèles populaires",
   "homeBringWorkouts": "Importez vos séances",
   "homeAddManually": "Ajouter une activité manuellement",
   "sourceStravaSubtitle": "Courses, sorties vélo et plus",
@@ -295,5 +294,14 @@
   "onboardingArtLabel4": "Thème Pro ticket de caisse, étiquette Record et graphique de fréquence cardiaque",
   "settingsShowIntro": "Revoir l’introduction",
   "chartMin": "Min {value}",
-  "chartSlowest": "Plus lent {value}"
+  "chartSlowest": "Plus lent {value}",
+  "homeTemplatesTitle": "Crée des posts comme ceux-ci",
+  "homeSeeAll": "Tout voir",
+  "homeTemplateOf": "Modèle {index} sur {total}",
+  "templatesTitle": "Modèles",
+  "templateExtraMissing": "{thing} n’est pas dans cette activité, donc il a été retiré.",
+  "stickerRoute": "Tracé",
+  "editorProStickersTitle": "Stickers Pro sur cette image",
+  "editorProStickersBody": "Les graphiques, tracés et étiquettes sont Pro. Débloque Pro pour partager cette image, ou retire ces stickers pour la partager gratuitement.",
+  "editorProStickersSeePro": "Voir Pro"
 }

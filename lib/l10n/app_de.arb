@@ -9,7 +9,6 @@
   "actionDisconnect": "Trennen",
   "actionUnlock": "Freischalten",
   "homeConnectStrava": "Strava verbinden",
-  "homePopularTemplates": "Beliebte Vorlagen",
   "homeBringWorkouts": "Hol dir deine Workouts",
   "homeAddManually": "Aktivität manuell hinzufügen",
   "sourceStravaSubtitle": "Läufe, Radtouren und mehr",
@@ -295,5 +294,14 @@
   "onboardingArtLabel4": "Pro-Theme Kassenbon, Rekord-Label und Herzfrequenz-Diagramm",
   "settingsShowIntro": "Einführung erneut zeigen",
   "chartMin": "Min. {value}",
-  "chartSlowest": "Langsamste {value}"
+  "chartSlowest": "Langsamste {value}",
+  "homeTemplatesTitle": "Erstelle Posts wie diese",
+  "homeSeeAll": "Alle ansehen",
+  "homeTemplateOf": "Vorlage {index} von {total}",
+  "templatesTitle": "Vorlagen",
+  "templateExtraMissing": "{thing} ist in dieser Aktivität nicht vorhanden und wurde weggelassen.",
+  "stickerRoute": "Strecke",
+  "editorProStickersTitle": "Pro-Sticker auf diesem Bild",
+  "editorProStickersBody": "Diagramme, Strecken und Labels sind Pro. Schalte Pro frei, um dieses Bild zu teilen, oder entferne diese Sticker, um es kostenlos zu teilen.",
+  "editorProStickersSeePro": "Pro ansehen"
 }

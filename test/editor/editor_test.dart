@@ -379,4 +379,36 @@ void main() {
     expect(find.text('TOTAL'), findsWidgets, reason: 'the receipt drew');
     expect(find.text('PRO'), findsNothing, reason: 'no badges with Pro');
   });
+
+  testWidgets('Pro stickers without Pro: Share asks first', (tester) async {
+    await openEditor(tester);
+    // As a free template (Sunrise Half) would leave it: a chart on it.
+    container.read(creationDraftProvider.notifier).addExtra(
+          ExtraKind.pace,
+          '',
+        );
+    await settle(tester);
+    await tester.tap(find.text('Share'));
+    await settle(tester);
+    expect(find.text('Pro stickers on this image'), findsOneWidget);
+    expect(find.byType(ShareScreen), findsNothing);
+
+    await tester.tap(find.text('Cancel'));
+    await settle(tester);
+    expect(find.byType(EditorScreen), findsOneWidget);
+
+    await tester.tap(find.text('Share'));
+    await settle(tester);
+    await tester.tap(find.text('See Pro'));
+    await settle(tester);
+    expect(find.byType(ProScreen), findsOneWidget);
+  });
+
+  testWidgets('without Pro stickers, Share goes straight on', (tester) async {
+    await openEditor(tester);
+    await tester.tap(find.text('Share'));
+    await settle(tester);
+    expect(find.text('Pro stickers on this image'), findsNothing);
+    expect(find.byType(ShareScreen), findsOneWidget);
+  });
 }

@@ -462,8 +462,13 @@ paste into Instagram/TikTok wasn't reported.
 - Onboarding page 4's heart-rate chart is red (that page only); page 2's
   route is the glow style (neon green vanished on the forest). Page 1's
   picture is precached; Home already precached the first three.
-- White text on the palest skies (Top Line, Story Hero's small line)
-  reads weaker; raised with Francisco, not changed.
+- Pale skies (Francisco asked for a fix, 16 Nov 2026): Story Hero and
+  Top Line carry a template `style` with a soft dark backing (0.3, below
+  the 0.35 where the text shadow turns off), carried into the editor
+  when used. Not done in the generator: `tool/art/generate_art.py` still
+  draws runners/cyclists, unlike the shipped no-people JPGs, and no SVG
+  renderer is installed; regenerating would need the people removed
+  first.
 - Test: every listed picture is in the asset bundle.
 
 ## Decisions already taken (do not reopen without asking)

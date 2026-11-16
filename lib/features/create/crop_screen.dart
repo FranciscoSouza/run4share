@@ -122,6 +122,7 @@ class _CropScreenState extends ConsumerState<CropScreen> {
             sticker: StickerPlacement(
               center: template?.stickerCenter ?? theme.position,
             ),
+            style: template?.style ?? const StickerStyle(),
             extras: extras,
           ),
         );

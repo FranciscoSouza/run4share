@@ -32,4 +32,12 @@ void main() {
     final hero = templateById('story-hero')!;
     expect(hero.stickerCenter, hero.theme.position);
   });
+
+  test('pale skies get a soft backing; the rest none', () {
+    for (final t in storyTemplates) {
+      final pale = t.id == 'story-hero' || t.id == 'top-line';
+      expect(t.style.background, pale ? 0.3 : 0, reason: t.id);
+      expect(t.style.colour, isNull, reason: 'theme colour kept');
+    }
+  });
 }

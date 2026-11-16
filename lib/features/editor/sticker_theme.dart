@@ -215,6 +215,7 @@ class StoryTemplate {
     this.featured = false,
     this.proOnly = false,
     this.position,
+    this.style = const StickerStyle(),
   });
 
   final String id;
@@ -244,6 +245,10 @@ class StoryTemplate {
   /// Where this template puts the theme sticker, to suit its picture;
   /// null uses the theme's own position (Francisco, 16 Nov 2026).
   final Offset? position;
+
+  /// Colour and backing for the theme sticker, carried into the editor
+  /// when the template is used (a soft backing where the sky is pale).
+  final StickerStyle style;
 
   /// The theme sticker's centre: the template's, else the theme's.
   Offset get stickerCenter => position ?? theme.position;
@@ -377,6 +382,8 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'big-distance',
     format: ShareFormat.story,
     colours: [Color(0xFF4A9AD8), Color(0xFF8CC4EC), Color(0xFF3F7A6A)],
+    // Pale sky: a soft dark backing keeps the white text readable.
+    style: StickerStyle(background: 0.3),
   ),
   StoryTemplate(
     id: 'top-line',
@@ -384,6 +391,8 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'inline-top',
     format: ShareFormat.story,
     colours: [Color(0xFF6A3F9A), Color(0xFF2A1F45), Color(0xFF1A1426)],
+    // Pale sky: a soft dark backing keeps the white text readable.
+    style: StickerStyle(background: 0.3),
     position: Offset(0.5, 0.07),
     sport: SportKind.ride,
   ),

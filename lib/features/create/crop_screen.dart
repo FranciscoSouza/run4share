@@ -118,7 +118,10 @@ class _CropScreenState extends ConsumerState<CropScreen> {
             format: format,
             crop: crop,
             themeId: theme.id,
-            sticker: StickerPlacement(center: theme.position),
+            // A template places the sticker to suit its picture.
+            sticker: StickerPlacement(
+              center: template?.stickerCenter ?? theme.position,
+            ),
             extras: extras,
           ),
         );

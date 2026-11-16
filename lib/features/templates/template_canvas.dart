@@ -56,7 +56,7 @@ class TemplateCanvas extends ConsumerWidget {
             ),
       theme: template.theme,
       data: data,
-      placement: StickerPlacement(center: template.theme.position),
+      placement: StickerPlacement(center: template.stickerCenter),
       extras: [
         for (final (i, extra) in template.extras.indexed)
           CanvasItem(

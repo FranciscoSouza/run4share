@@ -46,9 +46,9 @@ void main() {
     );
   });
 
-  test('no photos yet: every template keeps its gradient', () {
+  test('every template has its picture', () {
     for (final t in storyTemplates) {
-      expect(t.photo, isNull, reason: t.id);
+      expect(t.photo, 'assets/templates/${t.id}.jpg', reason: t.id);
     }
   });
 

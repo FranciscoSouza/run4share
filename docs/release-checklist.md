@@ -1,15 +1,20 @@
 # run4share release checklist
 
 Steps that need Francisco's accounts or decisions, in order. Code-side
-release work is done in phase 7; this is what remains.
+release work was done in phase 7 and reviewed again in phase 18 (16 Nov
+2026, against phases 8-17); this is what remains.
 
-## 1. Merge to main
+## 1. Merge to main: done
 
-Open the pull requests in order and merge each once CI is green:
-phase-1-strava, phase-2-activities, phase-3-photo, phase-4a-editor,
-phase-4b-controls, phase-5-share, phase-6-settings, phase-7-release.
-The Settings privacy link points to `docs/privacy-policy.md` on `main`,
-so it only works after this.
+16 Nov 2026: `main` fast-forwarded to phase 17 (`e15562c`); the 17 phase
+branches were one linear stack, so nothing was rewritten. CI passed on
+`main`. The Settings privacy link (`docs/privacy-policy.md` on `main`)
+now resolves. Later work: a branch per phase, fast-forward `main` when
+Francisco approves it on the phone.
+
+Verified the same day: `flutter build appbundle --release` builds and is
+signed with the upload key (SHA-256 `DE:8D:3E:29:…:B0:D7`, matching
+`~/.run4share/run4share-upload.jks`).
 
 ## 2. Keys and secrets (back these up now)
 
@@ -27,6 +32,19 @@ so it only works after this.
 - Host it on a stable public URL (GitHub Pages is fine) and put that URL
   in `lib/app/links.dart` (`privacyPolicy`). Stores and Strava need it.
 
+## 3b. Photos and texts only Francisco can supply
+
+- Onboarding: four photos, `assets/onboarding/README.md`.
+- Templates: eleven photos and `CREDITS.md`, `assets/templates/README.md`.
+  Until then pages and templates show flat colours or gradients, which
+  is shippable but plain.
+- Translations: `docs/translations-review.csv` has every string from
+  phases 8-17 (stickers, phrases, stamps, charts, onboarding, templates,
+  effects); have native speakers of pt-BR, es, fr and de check it, then
+  `python3 tool/translations.py import`.
+- Store listing: drafts in `docs/store-listing.md` (all five languages;
+  same review).
+
 ## 4. Strava
 
 - When API access is available again: in the Strava API app settings set
@@ -34,6 +52,12 @@ so it only works after this.
 - Install Node.js, then deploy the token Worker:
   `server/strava-token/README.md` (wrangler login, two secrets, deploy).
 - Put the client ID and Worker URL in `config/strava.json`.
+- **Rate limits are per app, shared by every user.** Each activity opened
+  in the editor for the first time costs up to three calls (detail,
+  streams, gear), plus the list syncs. Check the limits on the API
+  settings page and ask Strava for more before launch; when a limit is
+  hit the app keeps working, just without the charts/shoe for that
+  activity until a later visit.
 - New Strava apps are limited to a small number of athletes. Apply for
   production access from the API settings page; Strava reviews brand use
   (the app uses the official Connect button and "Powered by Strava") and
@@ -49,13 +73,17 @@ so it only works after this.
    Accept Play App Signing. Add your Google account as a tester.
 4. **Pro product**: Monetize > Products > In-app products > Create:
    - Product ID: `run4share_pro` (must match `lib/features/pro/pro_store.dart`)
-   - Name: run4share Pro. Description: No watermark and every new theme.
+   - Name: run4share Pro. Description: Charts, route styles, Pro themes,
+     templates and stickers, photo effects, and no watermark. One payment.
+     (Keep it in step with the Pro screen and the onboarding's last page.)
    - Price: US$ 2.99 (accept Play's local prices). Activate.
    - Settings > License testing: add your account to buy for free.
    Install from the internal testing link: the Pro screen then shows the
    real price and the purchase works.
-5. **Store listing**: short and full description, phone screenshots (the
-   design artboards are a good guide), 512 px icon
+5. **Store listing**: short and full description (drafts in
+   `docs/store-listing.md`), phone screenshots (take them on the phone:
+   Home carousel, the editor with a theme and a chart, Share with sticker
+   only, My Creations, Pro), 512 px icon
    (`assets/icon/icon.png` scaled down), feature graphic 1024 x 500.
 6. **App content**:
    - Privacy policy URL (step 3).
@@ -86,6 +114,12 @@ so it only works after this.
   `Runner/Runner.entitlements`. App Store Connect asks about health data
   use in App Privacy; answer from the privacy policy.
 - Permission texts are translated (`ios/Runner/*.lproj/InfoPlist.strings`).
+- App Store review: HealthKit apps must have a privacy policy link in the
+  app and on the store page (both point at `docs/privacy-policy.md`), and
+  may not use health data for ads (it doesn't). In App Privacy, health
+  and fitness data is "not collected" (it stays on the iPhone).
+- Not yet run on a real iPhone: copy sticker (UIPasteboard), Apple Health
+  connect, photo access. Test them in the first TestFlight build.
 
 ## 7. Every release
 

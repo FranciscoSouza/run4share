@@ -71,11 +71,22 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      // Asset images decode outside fake time.
+      Future<void> images() async {
+        for (var i = 0; i < 4; i++) {
+          await tester.runAsync(
+            () => Future<void>.delayed(const Duration(milliseconds: 150)),
+          );
+          await tester.pump();
+        }
+      }
+
       for (var page = 1; page <= 4; page++) {
         if (page > 1) {
           await tester.tap(find.byType(FilledButton));
           await tester.pumpAndSettle();
         }
+        await images();
         await tester.runAsync(() async {
           final boundary =
               key.currentContext!.findRenderObject()! as RenderRepaintBoundary;

@@ -25,7 +25,8 @@ or share to Instagram.
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
-charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes → 16 Home templates → 17 photo effects + copy sticker.
+charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes → 16 Home templates → 17 photo effects + copy sticker → 18 release
+prep.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -430,6 +431,40 @@ paste into Instagram/TikTok wasn't reported.
   `UIPasteboard` (AppDelegate now registers the channel). Copying is an
   export, so it's kept in My Creations like Save/Share.
 - The Share buttons now share the row width (four didn't fit).
+
+**Phase 18 status (release prep):** committed on
+`phase-18-release-prep` (16 Nov 2026); `main` not moved yet.
+- `main` fast-forwarded to phase 17 (`e15562c`) on 16 Nov 2026 at
+  Francisco's request; CI green. From now on: a branch per phase, then
+  fast-forward `main` once Francisco approves on the phone.
+- Release AAB builds and is signed with the upload key (fingerprint in
+  `docs/release-checklist.md`); Laboratory stays hidden in release
+  (`config/strava.json` has no `LAB`).
+- `docs/privacy-policy.md` brought up to phase 17 (Apple Health,
+  purchases, clipboard copy); `docs/release-checklist.md` updated
+  (merge done, photos/translations to supply, Strava's shared per-app
+  rate limits, Pro product text, App Store HealthKit review notes);
+  `docs/store-listing.md` drafted in all five languages, within the
+  stores' length limits.
+
+**Phase 18 status (illustrations):** committed on
+`phase-18-release-prep` (16 Nov 2026), from `docs/illustrations.md`.
+- 15 original flat illustrations (no people; `tool/art/generate_art.py`)
+  turned on: `templatePhotos` lists all 11 templates, `onboardingPhotos`
+  all 4 pages. About 0.9 MB in the app.
+- Templates gain an optional `position` (Francisco, 16 Nov 2026), used
+  on Home, See all, the preview and as the starting position when the
+  template is used; themes and the editor default are unchanged.
+  Set for Mountain Climb and Top Line (stats at the top), Night Run
+  (scoreboard low, on the dark water), Left Stack (over the water) and
+  Race Poster (low, clear of the banner); Sunrise Half's pace chart
+  moved lower. Checked with `tool/preview/template_sheet_test.dart`.
+- Onboarding page 4's heart-rate chart is red (that page only); page 2's
+  route is the glow style (neon green vanished on the forest). Page 1's
+  picture is precached; Home already precached the first three.
+- White text on the palest skies (Top Line, Story Hero's small line)
+  reads weaker; raised with Francisco, not changed.
+- Test: every listed picture is in the asset bundle.
 
 ## Decisions already taken (do not reopen without asking)
 

@@ -1,7 +1,7 @@
 # run4share privacy policy
 
 > **Draft for review, not legal advice.** Written from what the app does
-> today (phase 6). Francisco must review it, ideally with someone who
+> today (phase 17, 16 Nov 2026). Francisco must review it, ideally with someone who
 > knows the privacy law where the app is offered (for example the GDPR in
 > the EU and the LGPD in Brazil), fill in the contact details, and host
 > it before release. Update it whenever the app starts doing something
@@ -19,7 +19,8 @@ and no tracking.
 Everything below is stored only on your phone, inside the app.
 
 - **Activities.** Activities you add by hand, and activities copied from
-  Strava if you connect it: name, sport, date and time, distance,
+  Strava, Health Connect or Apple Health if you connect them: name,
+  sport, date and time, distance,
   duration, pace or speed, heart rate, calories and elevation, and, for
   the charts, how heart rate, pace and altitude changed during the
   activity.
@@ -79,11 +80,30 @@ also change the permissions any time in Health Connect.
 run4share's use of data from Health Connect follows the Health Connect
 Permissions policy, including its Limited Use requirements.
 
+## Apple Health (iPhone)
+
+Connecting Apple Health is optional. run4share asks to **read** your
+workouts and, for them, distance, calories, heart rate and route. It
+never writes to Apple Health. The data is read on your iPhone and kept in
+run4share's own storage; it is never sent anywhere, and never used for
+advertising. When you disconnect in Settings, run4share removes those
+workouts from its storage. To stop run4share reading Apple Health, use
+the Health app: Profile › Apps › run4share.
+
+## Purchases
+
+run4share Pro is a one-time purchase made through Google Play or the
+App Store. They handle the payment; run4share never sees your payment
+details. The app only learns whether you own Pro, and remembers that on
+your phone.
+
 ## Sharing
 
 When you share an image, run4share hands it to the app you pick
 (Instagram, messages, email...). What happens to it next is up to you
-and that app.
+and that app. **Copy** puts a sticker image on your phone's clipboard so
+you can paste it; any app you paste into can read it, as with anything
+you copy.
 
 ## Ratings, feedback and invites
 
@@ -104,8 +124,8 @@ digital services in your country).
   stay in Photos until you delete them there.
 - Delete an activity you added: its menu on the Activities tab.
 - Delete everything Strava-related: Settings, Strava, Disconnect.
-- Delete everything from Health Connect: Settings, Health Connect,
-  Disconnect.
+- Delete everything from Health Connect or Apple Health: Settings, the
+  health source, Disconnect.
 - Delete everything: uninstall run4share. This removes all its data from
   your phone. Images you saved to Photos stay in Photos.
 

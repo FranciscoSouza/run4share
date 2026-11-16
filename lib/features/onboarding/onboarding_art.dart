@@ -17,7 +17,12 @@ import 'package:run4share/shared/widgets/checkerboard.dart';
 /// Photos under assets/onboarding/ that exist (see the README there).
 /// Add a file name here when its photo is added; pages without one show
 /// a flat colour.
-const onboardingPhotos = <String>[];
+const onboardingPhotos = <String>[
+  'page1.jpg',
+  'page2.jpg',
+  'page3.jpg',
+  'page4.jpg',
+];
 
 /// Flat stand-ins while a page has no photo.
 const List<Color> _flat = [
@@ -83,6 +88,7 @@ class OnboardingArt extends ConsumerWidget {
     Offset center, {
     double scale = 1,
     double rotation = 0,
+    StickerColour? colour,
   }) =>
       CanvasItem(
         id: id,
@@ -91,7 +97,12 @@ class OnboardingArt extends ConsumerWidget {
           scale: scale,
           rotation: rotation,
         ),
-        child: ExtraStickerView(kind: kind, value: value, facts: facts),
+        child: ExtraStickerView(
+          kind: kind,
+          value: value,
+          facts: facts,
+          colour: colour,
+        ),
       );
 
   static Widget _canvas(int page, StickerData data, StickerFacts facts) {
@@ -120,7 +131,8 @@ class OnboardingArt extends ConsumerWidget {
               1,
               facts,
               ExtraKind.route,
-              'neon',
+              // Glow (white): the neon green vanishes on the forest.
+              'glow',
               const Offset(0.5, 0.36),
               scale: 0.85,
             ),
@@ -138,6 +150,8 @@ class OnboardingArt extends ConsumerWidget {
               '',
               const Offset(0.5, 0.15),
               scale: 0.85,
+              // Red stands out on the night picture (docs/illustrations.md).
+              colour: StickerColour.red,
             ),
             _extra(
               2,

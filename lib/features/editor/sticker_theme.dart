@@ -183,10 +183,22 @@ class TemplateExtra {
   final double rotation;
 }
 
-/// Photos under assets/templates/ that exist (see the README there). Add
-/// a template's id here when its photo is added; others keep their
-/// gradient.
-const templatePhotos = <String>{};
+/// Pictures under assets/templates/ that exist (see the README there):
+/// the app's own illustrations since phase 18. A template not listed
+/// keeps its gradient.
+const templatePhotos = <String>{
+  'sunrise-half',
+  'summit-day',
+  'mountain-climb',
+  'final-score',
+  'race-day',
+  'run-receipt',
+  'coast-walk',
+  'story-hero',
+  'top-line',
+  'left-stack',
+  'race-poster',
+};
 
 /// A Popular template: a theme in a format, with sample art, for one sport,
 /// optionally with extra stickers (charts, route, labels).
@@ -202,6 +214,7 @@ class StoryTemplate {
     this.extras = const [],
     this.featured = false,
     this.proOnly = false,
+    this.position,
   });
 
   final String id;
@@ -228,6 +241,13 @@ class StoryTemplate {
 
   StickerTheme get theme => themeById(themeId)!;
 
+  /// Where this template puts the theme sticker, to suit its picture;
+  /// null uses the theme's own position (Francisco, 16 Nov 2026).
+  final Offset? position;
+
+  /// The theme sticker's centre: the template's, else the theme's.
+  Offset get stickerCenter => position ?? theme.position;
+
   /// Pro when its theme is, or when marked so.
   bool get pro => theme.pro || proOnly;
 
@@ -237,7 +257,9 @@ class StoryTemplate {
 }
 
 /// The catalogue: the seven featured ones in carousel order, then the
-/// four free ones (docs/home_templates.md).
+/// four free ones (docs/home_templates.md). Positions suit each picture
+/// (docs/illustrations.md): stickers on sky or plain ground, clear of
+/// busy middles and banners.
 const storyTemplates = <StoryTemplate>[
   StoryTemplate(
     id: 'sunrise-half',
@@ -249,7 +271,7 @@ const storyTemplates = <StoryTemplate>[
     extras: [
       TemplateExtra(
         kind: ExtraKind.pace,
-        center: Offset(0.5, 0.8),
+        center: Offset(0.5, 0.86),
         scale: 0.9,
       ),
     ],
@@ -277,6 +299,7 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'inline-top',
     format: ShareFormat.story,
     colours: [Color(0xFF8CC2E8), Color(0xFF5A7A8C), Color(0xFF3F7A66)],
+    position: Offset(0.5, 0.07),
     sport: SportKind.ride,
     featured: true,
     proOnly: true,
@@ -295,6 +318,7 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'scoreboard',
     format: ShareFormat.story,
     colours: [Color(0xFF1F2A44), Color(0xFF2B3560), Color(0xFF0E1220)],
+    position: Offset(0.5, 0.86),
     featured: true,
     extras: [
       TemplateExtra(
@@ -360,6 +384,7 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'inline-top',
     format: ShareFormat.story,
     colours: [Color(0xFF6A3F9A), Color(0xFF2A1F45), Color(0xFF1A1426)],
+    position: Offset(0.5, 0.07),
     sport: SportKind.ride,
   ),
   StoryTemplate(
@@ -368,6 +393,7 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'vertical-stack',
     format: ShareFormat.story,
     colours: [Color(0xFF1E3F6E), Color(0xFF27406B), Color(0xFFB8492F)],
+    position: Offset(0.3, 0.52),
   ),
   StoryTemplate(
     id: 'race-poster',
@@ -375,6 +401,7 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'poster',
     format: ShareFormat.story,
     colours: [Color(0xFF6B4E7A), Color(0xFFC07A5A), Color(0xFF2A2235)],
+    position: Offset(0.6, 0.82),
   ),
 ];
 

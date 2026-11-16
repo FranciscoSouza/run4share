@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:run4share/app/brand.dart';
@@ -38,6 +40,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void initState() {
     super.initState();
     _offer = ref.read(proStoreProvider).offer().catchError((Object _) => null);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The first page's picture, so it doesn't flash in.
+    if (onboardingPhotos.contains('page1.jpg')) {
+      unawaited(
+        precacheImage(
+          const AssetImage('assets/onboarding/page1.jpg'),
+          context,
+        ),
+      );
+    }
   }
 
   @override

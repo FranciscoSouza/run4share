@@ -30,6 +30,7 @@ import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/features/stickers/extra_sticker_view.dart';
 import 'package:run4share/features/stickers/sticker_facts.dart';
 import 'package:run4share/l10n/l10n.dart';
+import 'package:run4share/shared/widgets/checkerboard.dart';
 import 'package:run4share/shared/widgets/logo.dart';
 
 /// Width of exported images: Instagram's 1080 for every format.
@@ -390,7 +391,7 @@ class _StickerOnlyPreview extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.thumb),
       child: CustomPaint(
-        painter: const _Checkerboard(),
+        painter: const Checkerboard(),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: RepaintBoundary(
@@ -412,26 +413,6 @@ class _StickerOnlyPreview extends StatelessWidget {
       ),
     );
   }
-}
-
-class _Checkerboard extends CustomPainter {
-  const _Checkerboard();
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    const cell = 12.0;
-    final a = Paint()..color = AppColors.neutral20;
-    final b = Paint()..color = AppColors.neutral10;
-    for (var y = 0.0; y < size.height; y += cell) {
-      for (var x = 0.0; x < size.width; x += cell) {
-        final odd = ((x / cell).floor() + (y / cell).floor()).isOdd;
-        canvas.drawRect(Rect.fromLTWH(x, y, cell, cell), odd ? a : b);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_Checkerboard oldDelegate) => false;
 }
 
 class _Options extends StatelessWidget {

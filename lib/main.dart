@@ -5,9 +5,11 @@ import 'package:run4share/app/material.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/health/health_connect_sync.dart';
 import 'package:run4share/features/lab/lab.dart';
+import 'package:run4share/features/onboarding/onboarding.dart';
 import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/settings/language.dart';
 import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/strava/strava_session_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +24,14 @@ Future<void> main() async {
   final pro = await db.readPreference(proPreference) == 'true';
   final healthConnect = await HealthConnectSync.wasConnected(db);
   final pretendPro = labVisible && await SecureLabStore().readPretendPro();
+  final onboardingDone =
+      await onboardingAlreadyDone(db, SecureStravaSessionStore());
+  // Done only because data exists (an update): remember it, so next time
+  // it's a single read.
+  if (onboardingDone &&
+      await db.readPreference(onboardingPreference) != 'true') {
+    await db.writePreference(onboardingPreference, 'true');
+  }
   runApp(
     ProviderScope(
       overrides: [
@@ -32,6 +42,7 @@ Future<void> main() async {
         proAtLaunchProvider.overrideWithValue(pro),
         healthConnectAtLaunchProvider.overrideWithValue(healthConnect),
         pretendProAtLaunchProvider.overrideWithValue(pretendPro),
+        onboardingDoneAtLaunchProvider.overrideWithValue(onboardingDone),
       ],
       child: const App(),
     ),

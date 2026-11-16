@@ -455,5 +455,44 @@
       }
     }
   },
-  "receiptTotal": "Total"
+  "receiptTotal": "Total",
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingStart": "Get started",
+  "onboardingSeePro": "See what's in Pro",
+  "onboardingSeeProPrice": "See what's in Pro · {price}",
+  "onboardingPageOf": "Page {page} of {total}",
+  "onboardingTitle1": "Your run. Your story.",
+  "onboardingBody1": "Turn every workout into an image worth sharing: your photo, your stats, your style.",
+  "onboardingTitle2": "Ready the moment you finish",
+  "onboardingBody2": "Connect once and your latest workouts are waiting, with their route, splits and charts.",
+  "onboardingByHand": "Or add it by hand",
+  "onboardingTitle3": "Full image or just the sticker",
+  "onboardingBody3": "Save to Photos, post to Instagram, or export only the sticker on a clear background to paste anywhere.",
+  "onboardingFullImage": "Full image",
+  "onboardingStickerOnly": "Sticker only",
+  "onboardingTitle4": "Pay once. Keep it forever.",
+  "onboardingBody4": "Charts, route styles, Pro themes and stickers, and no watermark. One payment, no subscription.",
+  "onboardingArtLabel1": "A running photo with the distance and a pace chart",
+  "onboardingArtLabel2": "A photo with the route, distance and pace",
+  "onboardingArtLabel3": "The same stats as a full image and as a sticker alone",
+  "onboardingArtLabel4": "Pro receipt theme, a Record label and a heart-rate chart",
+  "settingsShowIntro": "Show introduction again",
+  "@onboardingSeeProPrice": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "@onboardingPageOf": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  }
 }

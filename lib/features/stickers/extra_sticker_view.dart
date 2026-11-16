@@ -62,7 +62,11 @@ class ExtraStickerView extends StatelessWidget {
   final StickerColour? colour;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      // Part of an image: the phone's font size never changes it.
+      MediaQuery.withNoTextScaling(child: Builder(builder: _sticker));
+
+  Widget _sticker(BuildContext context) {
     final l10n = context.l10n;
     final c = colour ?? defaultColour(kind, value);
     final activity = facts.activity;

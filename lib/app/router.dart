@@ -9,6 +9,8 @@ import 'package:run4share/features/creations/creations_screen.dart';
 import 'package:run4share/features/editor/editor_screen.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/invite/invite_screen.dart';
+import 'package:run4share/features/onboarding/onboarding.dart';
+import 'package:run4share/features/onboarding/onboarding_screen.dart';
 import 'package:run4share/features/photos/photo_step_screen.dart';
 import 'package:run4share/features/pro/pro_screen.dart';
 import 'package:run4share/features/settings/settings_screen.dart';
@@ -37,6 +39,9 @@ abstract final class AppRoutes {
   static const pro = '/pro';
   static String template(String id) => '/template/$id';
   static String templateActivity(String id) => '/template/$id/activity';
+
+  /// The introduction; extra `true` replays it from Settings.
+  static const onboarding = '/welcome';
 }
 
 final _rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -45,8 +50,17 @@ final _rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     navigatorKey: _rootKey,
-    initialLocation: AppRoutes.activities,
+    // Read once: watching would rebuild the router when it completes.
+    initialLocation: ref.read(onboardingDoneProvider)
+        ? AppRoutes.activities
+        : AppRoutes.onboarding,
     routes: [
+      GoRoute(
+        path: AppRoutes.onboarding,
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) =>
+            OnboardingScreen(replay: state.extra == true),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(shell: shell),
         branches: [

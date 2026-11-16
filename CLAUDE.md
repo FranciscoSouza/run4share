@@ -25,7 +25,7 @@ or share to Instagram.
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
-charts → 12 Pro themes → 13 Pro templates.
+charts → 12 Pro themes → 13 Pro templates → 14 onboarding.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -335,6 +335,29 @@ Francisco moved on 16 Nov 2026 without reporting problems.
   template is Pro when its theme is (`StoryTemplate.pro`).
 - Without Pro: PRO badge on the Home tile and in the preview title; the
   preview is open to everyone, "Use this template" opens the Pro screen.
+
+**Phase 14 status (onboarding):** committed (`phase-14-onboarding`),
+built from `docs/onboarding.md` (the spec, with the decisions it took);
+Francisco approved it 16 Nov 2026. His four photos are still to come.
+- `lib/features/onboarding/`: four pages at `/welcome` (dark), shown
+  only on a true first launch; an update with any activity, creation or
+  Strava session marks it done unseen (preference `onboarding.done`).
+  Skip / Get started go Home; "See what's in Pro · price" goes Home then
+  Pro. Settings › About › Show introduction again replays it (`extra:
+  true`) and returns to Settings.
+- Art is live `StoryCanvas`es (Big Distance + pace; Inline Top + neon
+  route; Vertical Stack full and sticker-only on the shared
+  `Checkerboard`; Receipt + Record + heart rate) from
+  `onboardingSampleActivity` (10.02 km, demo route/splits/streams via the
+  now top-level `demoStreams` and `encodeSplits`). Name is the localised
+  sport word.
+- Photos: none yet; `assets/onboarding/README.md` says what to add and
+  `onboardingPhotos` lists the ones present. Flat colours meanwhile.
+- Fix found here: stickers (`StickerView`, `ExtraStickerView`) now ignore
+  the phone's font size, so large-font phones no longer get enlarged,
+  overflowing sticker text in the editor or the exported PNG.
+- `tool/preview/onboarding_preview_test.dart` renders the pages
+  (PREVIEW_LANGS, PREVIEW_TEXT_SCALE).
 
 ## Decisions already taken (do not reopen without asking)
 

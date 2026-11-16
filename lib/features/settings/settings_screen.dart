@@ -170,6 +170,11 @@ class SettingsScreen extends ConsumerWidget {
                   onTap: () => context.push(AppRoutes.invite),
                 ),
                 GroupedListTile(
+                  icon: AppIcons.intro,
+                  title: l10n.settingsShowIntro,
+                  onTap: () => context.push(AppRoutes.onboarding, extra: true),
+                ),
+                GroupedListTile(
                   icon: AppIcons.shield,
                   title: l10n.settingsPrivacy,
                   onTap: () => ref

@@ -57,6 +57,8 @@ flutter:
     # Official Strava brand assets (developers.strava.com/guidelines),
     # used unmodified as their guidelines require.
     - assets/strava/
+    # Onboarding photos (see the README there).
+    - assets/onboarding/
 
   fonts:
     - family: BarlowCondensed

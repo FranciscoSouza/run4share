@@ -46,6 +46,7 @@ abstract final class AppIcons {
   static const IconData story = LucideIcons.squarePlus;
   static const IconData square = LucideIcons.square;
   static const IconData sparkle = LucideIcons.sparkle;
+  static const IconData intro = LucideIcons.sparkles;
   static const IconData invite = LucideIcons.userPlus;
   static const IconData shield = LucideIcons.shield;
   static const IconData flask = LucideIcons.flaskConical;

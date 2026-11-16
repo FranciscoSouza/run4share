@@ -43,18 +43,16 @@ class ActivityRepository {
     required List<StravaSplit> metric,
     required List<StravaSplit> standard,
   }) {
-    List<List<num>> rows(List<StravaSplit> splits) => [
-          for (final s in splits)
-            [s.distance, s.movingTime, s.elevationDifference],
-        ];
     return (_db.update(_table)..where((a) => a.id.equals(id))).write(
       ActivitiesCompanion(
-        splitsJson: Value(
-          jsonEncode({'km': rows(metric), 'mi': rows(standard)}),
-        ),
+        splitsJson: Value(encodeSplits(metric: metric, standard: standard)),
       ),
     );
   }
+
+  /// Whether anything at all is stored: an activity of any source.
+  Future<bool> any() async =>
+      await (_db.select(_table)..limit(1)).getSingleOrNull() != null;
 
   /// Stores the elevation profile, downsampled to [maxPoints].
   Future<void> setElevation(
@@ -355,4 +353,17 @@ List<Activity> hideDuplicates(List<Activity> all) {
     for (final a in all)
       if (!_hubSources.contains(a.source) || !duplicate(a)) a,
   ];
+}
+
+/// Splits as stored in `activities.splits_json`:
+/// {"km": [[metres, seconds, climb], ...], "mi": [...]}.
+String encodeSplits({
+  required List<StravaSplit> metric,
+  required List<StravaSplit> standard,
+}) {
+  List<List<num>> rows(List<StravaSplit> splits) => [
+        for (final s in splits)
+          [s.distance, s.movingTime, s.elevationDifference],
+      ];
+  return jsonEncode({'km': rows(metric), 'mi': rows(standard)});
 }

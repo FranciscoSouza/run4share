@@ -71,6 +71,23 @@ abstract final class AppText {
     height: 1.2,
   );
 
+  /// Onboarding page title, upper case.
+  static const onboardingTitle = TextStyle(
+    fontFamily: display,
+    fontWeight: FontWeight.w800,
+    fontStyle: FontStyle.italic,
+    fontSize: 44,
+    height: 1,
+  );
+
+  /// Onboarding page text under the title.
+  static const onboardingBody = TextStyle(
+    fontFamily: ui,
+    fontWeight: FontWeight.w400,
+    fontSize: 17,
+    height: 1.45,
+  );
+
   /// Wordmark "run4share".
   static const logo = TextStyle(
     fontFamily: display,

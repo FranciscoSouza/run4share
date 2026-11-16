@@ -116,7 +116,11 @@ class StickerView extends StatelessWidget {
       );
     }
 
-    return DefaultTextStyle(style: const TextStyle(), child: sticker);
+    // A sticker is part of an image: the phone's font size never changes
+    // it, so the editor, previews and exports always match.
+    return MediaQuery.withNoTextScaling(
+      child: DefaultTextStyle(style: const TextStyle(), child: sticker),
+    );
   }
 }
 

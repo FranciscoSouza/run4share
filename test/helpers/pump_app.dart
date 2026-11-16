@@ -13,6 +13,7 @@ import 'package:run4share/data/creation_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/health/health_hub.dart';
 import 'package:run4share/features/lab/lab.dart';
+import 'package:run4share/features/onboarding/onboarding.dart';
 import 'package:run4share/features/pro/pro_store.dart';
 import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/features/strava/strava_config.dart';
@@ -43,8 +44,11 @@ List<Override> baseOverrides({
   SystemActions? system,
   ProStore? pro,
   HealthHub? hub,
+  bool onboardingDone = true,
 }) =>
     [
+      // Tests start on Home unless they're about the introduction.
+      onboardingDoneAtLaunchProvider.overrideWithValue(onboardingDone),
       stravaSessionStoreProvider.overrideWithValue(
         store ?? MemoryStravaSessionStore(),
       ),

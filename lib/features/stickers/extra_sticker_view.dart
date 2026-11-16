@@ -5,8 +5,11 @@ import 'package:run4share/app/app_icons.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/app/theme/app_colors.dart';
 import 'package:run4share/app/theme/app_text.dart';
+import 'package:run4share/data/database.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/editor/story_canvas.dart';
+import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/stickers/data_sticker_views.dart';
 import 'package:run4share/features/stickers/sticker_catalogue.dart';
 import 'package:run4share/l10n/l10n.dart';
 
@@ -14,22 +17,37 @@ const _shadow = [
   Shadow(color: Color(0x59000000), blurRadius: 14, offset: Offset(0, 3)),
 ];
 
+/// What the data stickers draw from: the activity, its shoe, the units.
+@immutable
+class StickerFacts {
+  const StickerFacts({
+    required this.activity,
+    this.units = Units.km,
+    this.gear,
+  });
+
+  final Activity activity;
+  final Units units;
+  final Gear? gear;
+
+  StickerFacts withUnits(Units units) =>
+      StickerFacts(activity: activity, units: units, gear: gear);
+}
+
 /// Draws one extra sticker at canvas units (1080-wide canvas), like the
 /// theme stickers, so it scales the same in the editor and the export.
 class ExtraStickerView extends StatelessWidget {
   const ExtraStickerView({
     required this.kind,
     required this.value,
-    required this.start,
+    required this.facts,
     this.colour,
     super.key,
   });
 
   final ExtraKind kind;
   final String value;
-
-  /// The activity's wall-clock start, for the time sticker.
-  final DateTime start;
+  final StickerFacts facts;
 
   /// Null: the kind's own colour.
   final StickerColour? colour;
@@ -37,7 +55,8 @@ class ExtraStickerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final c = colour ?? defaultColour(kind);
+    final c = colour ?? defaultColour(kind, value);
+    final activity = facts.activity;
     return DefaultTextStyle(
       style: const TextStyle(),
       child: switch (kind) {
@@ -50,7 +69,39 @@ class ExtraStickerView extends StatelessWidget {
                 : labelIcon(labelFromValue(value)!.kind),
             fill: c,
           ),
-        ExtraKind.time => _Time(start: start, colour: c),
+        ExtraKind.time => _Time(start: activity.startLocal, colour: c),
+        ExtraKind.shoe => switch (facts.gear) {
+            final gear? => ShoeSticker(
+                gear: gear,
+                units: facts.units,
+                colour: c.color,
+              ),
+            null => const SizedBox.shrink(),
+          },
+        ExtraKind.route => switch (activity.polyline) {
+            final line? => RouteSticker(
+                polyline: line,
+                style: RouteStyle.values.asNameMap()[value] ?? RouteStyle.neon,
+                colour: c.color,
+              ),
+            null => const SizedBox.shrink(),
+          },
+        ExtraKind.elevation => switch (activity.elevationJson) {
+            final json? => ElevationSticker(
+                json: json,
+                colour: c.color,
+                climb: activity.elevationGain,
+              ),
+            null => const SizedBox.shrink(),
+          },
+        ExtraKind.splits => switch (activity.splitsJson) {
+            final json? => SplitsSticker(
+                json: json,
+                units: facts.units,
+                colour: c.color,
+              ),
+            null => const SizedBox.shrink(),
+          },
         ExtraKind.phrase => _Phrase(
             text: phraseText(l10n, value) ?? value,
             colour: c,
@@ -303,7 +354,7 @@ class _SealPainter extends CustomPainter {
 
 /// The draft's extra stickers as canvas items, for the editor and the
 /// export alike.
-List<CanvasItem> extraItems(CreationDraft draft, DateTime start) => [
+List<CanvasItem> extraItems(CreationDraft draft, StickerFacts facts) => [
       for (final extra in draft.extras)
         CanvasItem(
           id: extra.id,
@@ -311,7 +362,7 @@ List<CanvasItem> extraItems(CreationDraft draft, DateTime start) => [
           child: ExtraStickerView(
             kind: extra.kind,
             value: extra.value,
-            start: start,
+            facts: facts,
             colour: extra.colour,
           ),
         ),

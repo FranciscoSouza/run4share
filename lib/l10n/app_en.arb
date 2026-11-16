@@ -383,5 +383,34 @@
       }
     },
     "description": "Label for beating a round race time, e.g. Sub-25 (minutes) or Sub-1:45."
+  },
+  "stickersYourData": "Your data",
+  "stickersNoData": "Route, shoe and charts come from Strava activities. Add a shoe in the activity form.",
+  "stickersReconnect": "Reconnect Strava to show your shoe",
+  "stickerShoeTotal": "Total",
+  "routeNeon": "Neon",
+  "routeGlow": "Glow",
+  "routeDotted": "Dotted",
+  "chartElevation": "Elevation",
+  "chartSplits": "Splits",
+  "chartBest": "Best {pace} {unit}",
+  "formShoe": "Shoe",
+  "formShoeDistance": "Shoe total ({unit})",
+  "@chartBest": {
+    "placeholders": {
+      "pace": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "@formShoeDistance": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
   }
 }

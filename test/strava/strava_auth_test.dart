@@ -23,7 +23,7 @@ void main() {
       );
     }
 
-    test('asks Strava for read and activity:read_all, back to the app', () {
+    test('asks Strava for profile, activities and gear, back to the app', () {
       final uri = auth().authorizeUri();
 
       expect(uri.host, 'www.strava.com');
@@ -33,7 +33,7 @@ void main() {
         'redirect_uri': 'run4share://localhost',
         'response_type': 'code',
         'approval_prompt': 'auto',
-        'scope': 'read,activity:read_all',
+        'scope': 'read,activity:read_all,profile:read_all',
       });
     });
 

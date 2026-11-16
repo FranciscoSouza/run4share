@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/clock.dart';
@@ -5,6 +7,7 @@ import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/activities/strava_sync.dart';
 import 'package:run4share/features/strava/strava_api.dart';
+import 'package:run4share/features/strava/strava_config.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/features/strava/strava_session_store.dart';
 
@@ -170,6 +173,44 @@ void main() {
     // A later list sync must not wipe the calories.
     await sync().sync();
     expect((await repo().byId(first.id))?.calories, 321);
+  });
+
+  test('details fill in splits, elevation and the shoe', () async {
+    container = ProviderContainer.test(
+      overrides: [
+        ...baseOverrides(
+          store: MemoryStravaSessionStore(
+            session().copyWith(scopes: StravaConfig.scope.split(',')),
+          ),
+          db: db,
+        ),
+        stravaApiProvider.overrideWithValue(api),
+        clockProvider.overrideWithValue(() => now),
+      ],
+    );
+    await sync().sync();
+    final first = (await repo().watchAll().first).first;
+    expect(first.polyline, isNotNull);
+    expect(first.gearId, 'g1');
+
+    await sync().fetchDetails(first);
+    final updated = (await repo().byId(first.id))!;
+    expect(updated.splitsJson, contains('"km"'));
+    final elevation = jsonDecode(updated.elevationJson!) as List;
+    expect(elevation.length, lessThanOrEqualTo(120), reason: 'downsampled');
+    expect((await repo().gearById('g1'))?.name, 'Pegasus 41');
+
+    // Known gear is not fetched again.
+    await sync().fetchDetails(updated);
+    expect(api.gearCalls, ['g1']);
+  });
+
+  test('without the gear permission the shoe is not fetched', () async {
+    await sync().sync();
+    final first = (await repo().watchAll().first).first;
+    await sync().fetchDetails(first);
+    expect(api.gearCalls, isEmpty);
+    expect(await repo().gearById('g1'), isNull);
   });
 
   test('nothing is fetched while disconnected', () async {

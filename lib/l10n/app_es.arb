@@ -248,5 +248,17 @@
   "stampRainOrShine": "Llueva o truene",
   "stampWeekendWarrior": "Guerrero de fin de semana",
   "stampDone": "Hecho",
-  "stampNoExcuses": "Sin excusas"
+  "stampNoExcuses": "Sin excusas",
+  "stickersYourData": "Tus datos",
+  "stickersNoData": "La ruta, las zapatillas y los gráficos vienen de las actividades de Strava. Añade unas zapatillas en el formulario de la actividad.",
+  "stickersReconnect": "Vuelve a conectar Strava para mostrar tus zapatillas",
+  "stickerShoeTotal": "Total",
+  "routeNeon": "Neón",
+  "routeGlow": "Brillo",
+  "routeDotted": "Punteada",
+  "chartElevation": "Desnivel",
+  "chartSplits": "Parciales",
+  "chartBest": "Mejor {pace} {unit}",
+  "formShoe": "Zapatillas",
+  "formShoeDistance": "Total de las zapatillas ({unit})"
 }

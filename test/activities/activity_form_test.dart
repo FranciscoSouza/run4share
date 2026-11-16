@@ -152,6 +152,29 @@ void main() {
     expect(find.text('189 kcal', findRichText: true), findsOneWidget);
   });
 
+  testWidgets('a typed shoe is saved like Strava gear', (tester) async {
+    await pump(tester);
+    await tester.tap(find.text('Add activity manually'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(field('duration'), '30:00');
+    await tester.enterText(field('shoe'), 'Pegasus 41');
+    await tester.enterText(field('shoeKm'), '412');
+    await tester.tap(find.text('Save activity'));
+    await tester.pumpAndSettle();
+
+    final saved = (await tester.runAsync(
+      () => db.select(db.activities).get(),
+    ))!
+        .single;
+    expect(saved.gearId, 'manual:pegasus 41');
+    final gear = await tester.runAsync(
+      () => ActivityRepository(db).gearById('manual:pegasus 41'),
+    );
+    expect(gear?.name, 'Pegasus 41');
+    expect(gear?.distance, 412000);
+  });
+
   testWidgets('heart rate outside 30–250 is rejected', (tester) async {
     await pump(tester);
     await tester.tap(find.text('Add activity manually'));

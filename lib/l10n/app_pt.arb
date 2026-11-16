@@ -248,5 +248,17 @@
   "stampRainOrShine": "Faça chuva ou sol",
   "stampWeekendWarrior": "Guerreiro de fim de semana",
   "stampDone": "Feito",
-  "stampNoExcuses": "Sem desculpas"
+  "stampNoExcuses": "Sem desculpas",
+  "stickersYourData": "Seus dados",
+  "stickersNoData": "Rota, tênis e gráficos vêm das atividades do Strava. Adicione um tênis no formulário da atividade.",
+  "stickersReconnect": "Reconecte o Strava para mostrar seu tênis",
+  "stickerShoeTotal": "Total",
+  "routeNeon": "Neon",
+  "routeGlow": "Brilho",
+  "routeDotted": "Pontilhada",
+  "chartElevation": "Altimetria",
+  "chartSplits": "Parciais",
+  "chartBest": "Melhor {pace} {unit}",
+  "formShoe": "Tênis",
+  "formShoeDistance": "Total do tênis ({unit})"
 }

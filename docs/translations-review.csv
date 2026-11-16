@@ -248,3 +248,15 @@ stampRainOrShine,,,Rain or shine,Faça chuva ou sol,Llueva o truene,Qu’il pleu
 stampWeekendWarrior,,,Weekend warrior,Guerreiro de fim de semana,Guerrero de fin de semana,Guerrier du week-end,Wochenendkrieger
 stampDone,,,Done,Feito,Hecho,Fait,Erledigt
 stampNoExcuses,,,No excuses,Sem desculpas,Sin excusas,Sans excuses,Keine Ausreden
+stickersYourData,,,Your data,Seus dados,Tus datos,Vos données,Deine Daten
+stickersNoData,,,"Route, shoe and charts come from Strava activities. Add a shoe in the activity form.","Rota, tênis e gráficos vêm das atividades do Strava. Adicione um tênis no formulário da atividade.","La ruta, las zapatillas y los gráficos vienen de las actividades de Strava. Añade unas zapatillas en el formulario de la actividad.","Le tracé, les chaussures et les graphiques viennent des activités Strava. Ajoutez des chaussures dans le formulaire de l’activité.","Strecke, Schuh und Diagramme kommen aus Strava-Aktivitäten. Füge im Aktivitätsformular einen Schuh hinzu."
+stickersReconnect,,,Reconnect Strava to show your shoe,Reconecte o Strava para mostrar seu tênis,Vuelve a conectar Strava para mostrar tus zapatillas,Reconnectez Strava pour afficher vos chaussures,"Verbinde Strava erneut, um deinen Schuh zu zeigen"
+stickerShoeTotal,,,Total,Total,Total,Total,Gesamt
+routeNeon,,,Neon,Neon,Neón,Néon,Neon
+routeGlow,,,Glow,Brilho,Brillo,Lueur,Leuchten
+routeDotted,,,Dotted,Pontilhada,Punteada,Pointillé,Gepunktet
+chartElevation,,,Elevation,Altimetria,Desnivel,Dénivelé,Höhenprofil
+chartSplits,,,Splits,Parciais,Parciales,Temps intermédiaires,Splits
+chartBest,,"Keep {pace}, {unit} as is.",Best {pace} {unit},Melhor {pace} {unit},Mejor {pace} {unit},Meilleur {pace} {unit},Beste {pace} {unit}
+formShoe,Add / edit activity form,,Shoe,Tênis,Zapatillas,Chaussures,Schuh
+formShoeDistance,Add / edit activity form,Keep {unit} as is.,Shoe total ({unit}),Total do tênis ({unit}),Total de las zapatillas ({unit}),Total des chaussures ({unit}),Schuh gesamt ({unit})

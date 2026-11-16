@@ -248,5 +248,17 @@
   "stampRainOrShine": "Bei jedem Wetter",
   "stampWeekendWarrior": "Wochenendkrieger",
   "stampDone": "Erledigt",
-  "stampNoExcuses": "Keine Ausreden"
+  "stampNoExcuses": "Keine Ausreden",
+  "stickersYourData": "Deine Daten",
+  "stickersNoData": "Strecke, Schuh und Diagramme kommen aus Strava-Aktivitäten. Füge im Aktivitätsformular einen Schuh hinzu.",
+  "stickersReconnect": "Verbinde Strava erneut, um deinen Schuh zu zeigen",
+  "stickerShoeTotal": "Gesamt",
+  "routeNeon": "Neon",
+  "routeGlow": "Leuchten",
+  "routeDotted": "Gepunktet",
+  "chartElevation": "Höhenprofil",
+  "chartSplits": "Splits",
+  "chartBest": "Beste {pace} {unit}",
+  "formShoe": "Schuh",
+  "formShoeDistance": "Schuh gesamt ({unit})"
 }

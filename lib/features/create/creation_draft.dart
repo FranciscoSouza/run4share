@@ -155,6 +155,18 @@ enum ExtraKind {
 
   /// A stamp or seal.
   stamp,
+
+  /// The shoe and its lifetime distance (8b).
+  shoe,
+
+  /// The route; value is the line style: neon, glow or dotted (8b).
+  route,
+
+  /// The elevation profile (8b).
+  elevation,
+
+  /// Per-km (or mile) splits (8b).
+  splits,
 }
 
 /// One extra sticker on the image.

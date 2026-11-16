@@ -14,6 +14,8 @@ _StravaSession _$StravaSessionFromJson(Map<String, dynamic> json) =>
       connectedAt: DateTime.parse(json['connected_at'] as String),
       athleteId: (json['athlete_id'] as num?)?.toInt(),
       athleteName: json['athlete_name'] as String?,
+      scopes:
+          (json['scopes'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$StravaSessionToJson(_StravaSession instance) =>
@@ -24,6 +26,7 @@ Map<String, dynamic> _$StravaSessionToJson(_StravaSession instance) =>
       'connected_at': instance.connectedAt.toIso8601String(),
       'athlete_id': instance.athleteId,
       'athlete_name': instance.athleteName,
+      'scopes': instance.scopes,
     };
 
 _StravaActivity _$StravaActivityFromJson(Map<String, dynamic> json) =>
@@ -42,6 +45,16 @@ _StravaActivity _$StravaActivityFromJson(Map<String, dynamic> json) =>
       calories: (json['calories'] as num?)?.toDouble(),
       prCount: (json['pr_count'] as num?)?.toInt(),
       workoutType: (json['workout_type'] as num?)?.toInt(),
+      polyline: _summaryPolyline(json, 'polyline') as String?,
+      gearId: json['gear_id'] as String?,
+      splitsMetric: (json['splits_metric'] as List<dynamic>?)
+              ?.map((e) => StravaSplit.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      splitsStandard: (json['splits_standard'] as List<dynamic>?)
+              ?.map((e) => StravaSplit.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$StravaActivityToJson(_StravaActivity instance) =>
@@ -60,4 +73,36 @@ Map<String, dynamic> _$StravaActivityToJson(_StravaActivity instance) =>
       'calories': instance.calories,
       'pr_count': instance.prCount,
       'workout_type': instance.workoutType,
+      'polyline': instance.polyline,
+      'gear_id': instance.gearId,
+      'splits_metric': instance.splitsMetric.map((e) => e.toJson()).toList(),
+      'splits_standard':
+          instance.splitsStandard.map((e) => e.toJson()).toList(),
+    };
+
+_StravaSplit _$StravaSplitFromJson(Map<String, dynamic> json) => _StravaSplit(
+      distance: (json['distance'] as num?)?.toDouble() ?? 0,
+      movingTime: (json['moving_time'] as num?)?.toInt() ?? 0,
+      elevationDifference:
+          (json['elevation_difference'] as num?)?.toDouble() ?? 0,
+    );
+
+Map<String, dynamic> _$StravaSplitToJson(_StravaSplit instance) =>
+    <String, dynamic>{
+      'distance': instance.distance,
+      'moving_time': instance.movingTime,
+      'elevation_difference': instance.elevationDifference,
+    };
+
+_StravaGear _$StravaGearFromJson(Map<String, dynamic> json) => _StravaGear(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      distance: (json['distance'] as num?)?.toDouble() ?? 0,
+    );
+
+Map<String, dynamic> _$StravaGearToJson(_StravaGear instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'distance': instance.distance,
     };

@@ -25,6 +25,10 @@ mixin _$StravaSession {
   int? get athleteId;
   String? get athleteName;
 
+  /// What the user allowed on Strava's page; null for sessions from
+  /// before scopes were stored.
+  List<String>? get scopes;
+
   /// Create a copy of StravaSession
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -53,21 +57,29 @@ mixin _$StravaSession {
             (identical(other.athleteId, _this.athleteId) ||
                 other.athleteId == _this.athleteId) &&
             (identical(other.athleteName, _this.athleteName) ||
-                other.athleteName == _this.athleteName));
+                other.athleteName == _this.athleteName) &&
+            const DeepCollectionEquality().equals(other.scopes, _this.scopes));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode {
     final _this = this as StravaSession;
-    return Object.hash(runtimeType, _this.accessToken, _this.refreshToken,
-        _this.expiresAt, _this.connectedAt, _this.athleteId, _this.athleteName);
+    return Object.hash(
+        runtimeType,
+        _this.accessToken,
+        _this.refreshToken,
+        _this.expiresAt,
+        _this.connectedAt,
+        _this.athleteId,
+        _this.athleteName,
+        const DeepCollectionEquality().hash(_this.scopes));
   }
 
   @override
   String toString() {
     final _this = this as StravaSession;
-    return 'StravaSession(accessToken: ${_this.accessToken}, refreshToken: ${_this.refreshToken}, expiresAt: ${_this.expiresAt}, connectedAt: ${_this.connectedAt}, athleteId: ${_this.athleteId}, athleteName: ${_this.athleteName})';
+    return 'StravaSession(accessToken: ${_this.accessToken}, refreshToken: ${_this.refreshToken}, expiresAt: ${_this.expiresAt}, connectedAt: ${_this.connectedAt}, athleteId: ${_this.athleteId}, athleteName: ${_this.athleteName}, scopes: ${_this.scopes})';
   }
 }
 
@@ -83,7 +95,8 @@ abstract mixin class $StravaSessionCopyWith<$Res> {
       int expiresAt,
       DateTime connectedAt,
       int? athleteId,
-      String? athleteName});
+      String? athleteName,
+      List<String>? scopes});
 }
 
 /// @nodoc
@@ -105,6 +118,7 @@ class _$StravaSessionCopyWithImpl<$Res>
     Object? connectedAt = null,
     Object? athleteId = freezed,
     Object? athleteName = freezed,
+    Object? scopes = freezed,
   }) {
     return _then(StravaSession(
       accessToken: null == accessToken
@@ -131,6 +145,10 @@ class _$StravaSessionCopyWithImpl<$Res>
           ? _self.athleteName
           : athleteName // ignore: cast_nullable_to_non_nullable
               as String?,
+      scopes: freezed == scopes
+          ? _self.scopes
+          : scopes // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ));
   }
 }
@@ -228,16 +246,28 @@ extension StravaSessionPatterns on StravaSession {
 
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(String accessToken, String refreshToken, int expiresAt,
-            DateTime connectedAt, int? athleteId, String? athleteName)?
+    TResult Function(
+            String accessToken,
+            String refreshToken,
+            int expiresAt,
+            DateTime connectedAt,
+            int? athleteId,
+            String? athleteName,
+            List<String>? scopes)?
         $default, {
     required TResult orElse(),
   }) {
     final _that = this;
     switch (_that) {
       case _StravaSession() when $default != null:
-        return $default(_that.accessToken, _that.refreshToken, _that.expiresAt,
-            _that.connectedAt, _that.athleteId, _that.athleteName);
+        return $default(
+            _that.accessToken,
+            _that.refreshToken,
+            _that.expiresAt,
+            _that.connectedAt,
+            _that.athleteId,
+            _that.athleteName,
+            _that.scopes);
       case _:
         return orElse();
     }
@@ -258,15 +288,27 @@ extension StravaSessionPatterns on StravaSession {
 
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(String accessToken, String refreshToken, int expiresAt,
-            DateTime connectedAt, int? athleteId, String? athleteName)
+    TResult Function(
+            String accessToken,
+            String refreshToken,
+            int expiresAt,
+            DateTime connectedAt,
+            int? athleteId,
+            String? athleteName,
+            List<String>? scopes)
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _StravaSession():
-        return $default(_that.accessToken, _that.refreshToken, _that.expiresAt,
-            _that.connectedAt, _that.athleteId, _that.athleteName);
+        return $default(
+            _that.accessToken,
+            _that.refreshToken,
+            _that.expiresAt,
+            _that.connectedAt,
+            _that.athleteId,
+            _that.athleteName,
+            _that.scopes);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -286,15 +328,27 @@ extension StravaSessionPatterns on StravaSession {
 
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(String accessToken, String refreshToken, int expiresAt,
-            DateTime connectedAt, int? athleteId, String? athleteName)?
+    TResult? Function(
+            String accessToken,
+            String refreshToken,
+            int expiresAt,
+            DateTime connectedAt,
+            int? athleteId,
+            String? athleteName,
+            List<String>? scopes)?
         $default,
   ) {
     final _that = this;
     switch (_that) {
       case _StravaSession() when $default != null:
-        return $default(_that.accessToken, _that.refreshToken, _that.expiresAt,
-            _that.connectedAt, _that.athleteId, _that.athleteName);
+        return $default(
+            _that.accessToken,
+            _that.refreshToken,
+            _that.expiresAt,
+            _that.connectedAt,
+            _that.athleteId,
+            _that.athleteName,
+            _that.scopes);
       case _:
         return null;
     }
@@ -310,8 +364,10 @@ class _StravaSession extends StravaSession {
       required this.expiresAt,
       required this.connectedAt,
       this.athleteId,
-      this.athleteName})
-      : super._();
+      this.athleteName,
+      List<String>? scopes})
+      : _scopes = scopes,
+        super._();
   factory _StravaSession.fromJson(Map<String, dynamic> json) =>
       _$StravaSessionFromJson(json);
 
@@ -330,6 +386,21 @@ class _StravaSession extends StravaSession {
   final int? athleteId;
   @override
   final String? athleteName;
+
+  /// What the user allowed on Strava's page; null for sessions from
+  /// before scopes were stored.
+  final List<String>? _scopes;
+
+  /// What the user allowed on Strava's page; null for sessions from
+  /// before scopes were stored.
+  @override
+  List<String>? get scopes {
+    final value = _scopes;
+    if (value == null) return null;
+    if (_scopes is EqualUnmodifiableListView) return _scopes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   /// Create a copy of StravaSession
   /// with the given fields replaced by the non-null parameter values.
@@ -362,19 +433,27 @@ class _StravaSession extends StravaSession {
             (identical(other.athleteId, athleteId) ||
                 other.athleteId == athleteId) &&
             (identical(other.athleteName, athleteName) ||
-                other.athleteName == athleteName));
+                other.athleteName == athleteName) &&
+            const DeepCollectionEquality().equals(other.scopes, _scopes));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode {
-    return Object.hash(runtimeType, accessToken, refreshToken, expiresAt,
-        connectedAt, athleteId, athleteName);
+    return Object.hash(
+        runtimeType,
+        accessToken,
+        refreshToken,
+        expiresAt,
+        connectedAt,
+        athleteId,
+        athleteName,
+        const DeepCollectionEquality().hash(_scopes));
   }
 
   @override
   String toString() {
-    return 'StravaSession(accessToken: $accessToken, refreshToken: $refreshToken, expiresAt: $expiresAt, connectedAt: $connectedAt, athleteId: $athleteId, athleteName: $athleteName)';
+    return 'StravaSession(accessToken: $accessToken, refreshToken: $refreshToken, expiresAt: $expiresAt, connectedAt: $connectedAt, athleteId: $athleteId, athleteName: $athleteName, scopes: $scopes)';
   }
 }
 
@@ -392,7 +471,8 @@ abstract mixin class _$StravaSessionCopyWith<$Res>
       int expiresAt,
       DateTime connectedAt,
       int? athleteId,
-      String? athleteName});
+      String? athleteName,
+      List<String>? scopes});
 }
 
 /// @nodoc
@@ -414,6 +494,7 @@ class __$StravaSessionCopyWithImpl<$Res>
     Object? connectedAt = null,
     Object? athleteId = freezed,
     Object? athleteName = freezed,
+    Object? scopes = freezed,
   }) {
     return _then(_StravaSession(
       accessToken: null == accessToken
@@ -440,6 +521,10 @@ class __$StravaSessionCopyWithImpl<$Res>
           ? _self.athleteName
           : athleteName // ignore: cast_nullable_to_non_nullable
               as String?,
+      scopes: freezed == scopes
+          ? _self._scopes
+          : scopes // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ));
   }
 }
@@ -478,6 +563,17 @@ mixin _$StravaActivity {
 
   /// Strava's workout type: 1 is a run race, 11 a ride race.
   int? get workoutType;
+
+  /// The route as an encoded polyline (map.summary_polyline).
+  @JsonKey(readValue: _summaryPolyline)
+  String? get polyline;
+
+  /// The shoe or bike used, e.g. "g12345".
+  String? get gearId;
+
+  /// Only in the detail: one split per kilometre, and per mile.
+  List<StravaSplit> get splitsMetric;
+  List<StravaSplit> get splitsStandard;
 
   /// Create a copy of StravaActivity
   /// with the given fields replaced by the non-null parameter values.
@@ -521,7 +617,15 @@ mixin _$StravaActivity {
             (identical(other.prCount, _this.prCount) ||
                 other.prCount == _this.prCount) &&
             (identical(other.workoutType, _this.workoutType) ||
-                other.workoutType == _this.workoutType));
+                other.workoutType == _this.workoutType) &&
+            (identical(other.polyline, _this.polyline) ||
+                other.polyline == _this.polyline) &&
+            (identical(other.gearId, _this.gearId) ||
+                other.gearId == _this.gearId) &&
+            const DeepCollectionEquality()
+                .equals(other.splitsMetric, _this.splitsMetric) &&
+            const DeepCollectionEquality()
+                .equals(other.splitsStandard, _this.splitsStandard));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -543,13 +647,17 @@ mixin _$StravaActivity {
         _this.totalElevationGain,
         _this.calories,
         _this.prCount,
-        _this.workoutType);
+        _this.workoutType,
+        _this.polyline,
+        _this.gearId,
+        const DeepCollectionEquality().hash(_this.splitsMetric),
+        const DeepCollectionEquality().hash(_this.splitsStandard));
   }
 
   @override
   String toString() {
     final _this = this as StravaActivity;
-    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain}, calories: ${_this.calories}, prCount: ${_this.prCount}, workoutType: ${_this.workoutType})';
+    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain}, calories: ${_this.calories}, prCount: ${_this.prCount}, workoutType: ${_this.workoutType}, polyline: ${_this.polyline}, gearId: ${_this.gearId}, splitsMetric: ${_this.splitsMetric}, splitsStandard: ${_this.splitsStandard})';
   }
 }
 
@@ -573,7 +681,11 @@ abstract mixin class $StravaActivityCopyWith<$Res> {
       double? totalElevationGain,
       double? calories,
       int? prCount,
-      int? workoutType});
+      int? workoutType,
+      @JsonKey(readValue: _summaryPolyline) String? polyline,
+      String? gearId,
+      List<StravaSplit> splitsMetric,
+      List<StravaSplit> splitsStandard});
 }
 
 /// @nodoc
@@ -603,6 +715,10 @@ class _$StravaActivityCopyWithImpl<$Res>
     Object? calories = freezed,
     Object? prCount = freezed,
     Object? workoutType = freezed,
+    Object? polyline = freezed,
+    Object? gearId = freezed,
+    Object? splitsMetric = null,
+    Object? splitsStandard = null,
   }) {
     return _then(StravaActivity(
       id: null == id
@@ -661,6 +777,22 @@ class _$StravaActivityCopyWithImpl<$Res>
           ? _self.workoutType
           : workoutType // ignore: cast_nullable_to_non_nullable
               as int?,
+      polyline: freezed == polyline
+          ? _self.polyline
+          : polyline // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gearId: freezed == gearId
+          ? _self.gearId
+          : gearId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      splitsMetric: null == splitsMetric
+          ? _self.splitsMetric
+          : splitsMetric // ignore: cast_nullable_to_non_nullable
+              as List<StravaSplit>,
+      splitsStandard: null == splitsStandard
+          ? _self.splitsStandard
+          : splitsStandard // ignore: cast_nullable_to_non_nullable
+              as List<StravaSplit>,
     ));
   }
 }
@@ -772,7 +904,11 @@ extension StravaActivityPatterns on StravaActivity {
             double? totalElevationGain,
             double? calories,
             int? prCount,
-            int? workoutType)?
+            int? workoutType,
+            @JsonKey(readValue: _summaryPolyline) String? polyline,
+            String? gearId,
+            List<StravaSplit> splitsMetric,
+            List<StravaSplit> splitsStandard)?
         $default, {
     required TResult orElse(),
   }) {
@@ -793,7 +929,11 @@ extension StravaActivityPatterns on StravaActivity {
             _that.totalElevationGain,
             _that.calories,
             _that.prCount,
-            _that.workoutType);
+            _that.workoutType,
+            _that.polyline,
+            _that.gearId,
+            _that.splitsMetric,
+            _that.splitsStandard);
       case _:
         return orElse();
     }
@@ -828,7 +968,11 @@ extension StravaActivityPatterns on StravaActivity {
             double? totalElevationGain,
             double? calories,
             int? prCount,
-            int? workoutType)
+            int? workoutType,
+            @JsonKey(readValue: _summaryPolyline) String? polyline,
+            String? gearId,
+            List<StravaSplit> splitsMetric,
+            List<StravaSplit> splitsStandard)
         $default,
   ) {
     final _that = this;
@@ -848,7 +992,11 @@ extension StravaActivityPatterns on StravaActivity {
             _that.totalElevationGain,
             _that.calories,
             _that.prCount,
-            _that.workoutType);
+            _that.workoutType,
+            _that.polyline,
+            _that.gearId,
+            _that.splitsMetric,
+            _that.splitsStandard);
       case _:
         throw StateError('Unexpected subclass');
     }
@@ -882,7 +1030,11 @@ extension StravaActivityPatterns on StravaActivity {
             double? totalElevationGain,
             double? calories,
             int? prCount,
-            int? workoutType)?
+            int? workoutType,
+            @JsonKey(readValue: _summaryPolyline) String? polyline,
+            String? gearId,
+            List<StravaSplit> splitsMetric,
+            List<StravaSplit> splitsStandard)?
         $default,
   ) {
     final _that = this;
@@ -902,7 +1054,11 @@ extension StravaActivityPatterns on StravaActivity {
             _that.totalElevationGain,
             _that.calories,
             _that.prCount,
-            _that.workoutType);
+            _that.workoutType,
+            _that.polyline,
+            _that.gearId,
+            _that.splitsMetric,
+            _that.splitsStandard);
       case _:
         return null;
     }
@@ -926,8 +1082,14 @@ class _StravaActivity extends StravaActivity {
       this.totalElevationGain,
       this.calories,
       this.prCount,
-      this.workoutType})
-      : super._();
+      this.workoutType,
+      @JsonKey(readValue: _summaryPolyline) this.polyline,
+      this.gearId,
+      List<StravaSplit> splitsMetric = const [],
+      List<StravaSplit> splitsStandard = const []})
+      : _splitsMetric = splitsMetric,
+        _splitsStandard = splitsStandard,
+        super._();
   factory _StravaActivity.fromJson(Map<String, dynamic> json) =>
       _$StravaActivityFromJson(json);
 
@@ -981,6 +1143,36 @@ class _StravaActivity extends StravaActivity {
   @override
   final int? workoutType;
 
+  /// The route as an encoded polyline (map.summary_polyline).
+  @override
+  @JsonKey(readValue: _summaryPolyline)
+  final String? polyline;
+
+  /// The shoe or bike used, e.g. "g12345".
+  @override
+  final String? gearId;
+
+  /// Only in the detail: one split per kilometre, and per mile.
+  final List<StravaSplit> _splitsMetric;
+
+  /// Only in the detail: one split per kilometre, and per mile.
+  @override
+  @JsonKey()
+  List<StravaSplit> get splitsMetric {
+    if (_splitsMetric is EqualUnmodifiableListView) return _splitsMetric;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_splitsMetric);
+  }
+
+  final List<StravaSplit> _splitsStandard;
+  @override
+  @JsonKey()
+  List<StravaSplit> get splitsStandard {
+    if (_splitsStandard is EqualUnmodifiableListView) return _splitsStandard;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_splitsStandard);
+  }
+
   /// Create a copy of StravaActivity
   /// with the given fields replaced by the non-null parameter values.
   @override
@@ -1025,7 +1217,14 @@ class _StravaActivity extends StravaActivity {
                 other.calories == calories) &&
             (identical(other.prCount, prCount) || other.prCount == prCount) &&
             (identical(other.workoutType, workoutType) ||
-                other.workoutType == workoutType));
+                other.workoutType == workoutType) &&
+            (identical(other.polyline, polyline) ||
+                other.polyline == polyline) &&
+            (identical(other.gearId, gearId) || other.gearId == gearId) &&
+            const DeepCollectionEquality()
+                .equals(other.splitsMetric, _splitsMetric) &&
+            const DeepCollectionEquality()
+                .equals(other.splitsStandard, _splitsStandard));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1046,12 +1245,16 @@ class _StravaActivity extends StravaActivity {
         totalElevationGain,
         calories,
         prCount,
-        workoutType);
+        workoutType,
+        polyline,
+        gearId,
+        const DeepCollectionEquality().hash(_splitsMetric),
+        const DeepCollectionEquality().hash(_splitsStandard));
   }
 
   @override
   String toString() {
-    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain, calories: $calories, prCount: $prCount, workoutType: $workoutType)';
+    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain, calories: $calories, prCount: $prCount, workoutType: $workoutType, polyline: $polyline, gearId: $gearId, splitsMetric: $splitsMetric, splitsStandard: $splitsStandard)';
   }
 }
 
@@ -1077,7 +1280,11 @@ abstract mixin class _$StravaActivityCopyWith<$Res>
       double? totalElevationGain,
       double? calories,
       int? prCount,
-      int? workoutType});
+      int? workoutType,
+      @JsonKey(readValue: _summaryPolyline) String? polyline,
+      String? gearId,
+      List<StravaSplit> splitsMetric,
+      List<StravaSplit> splitsStandard});
 }
 
 /// @nodoc
@@ -1107,6 +1314,10 @@ class __$StravaActivityCopyWithImpl<$Res>
     Object? calories = freezed,
     Object? prCount = freezed,
     Object? workoutType = freezed,
+    Object? polyline = freezed,
+    Object? gearId = freezed,
+    Object? splitsMetric = null,
+    Object? splitsStandard = null,
   }) {
     return _then(_StravaActivity(
       id: null == id
@@ -1165,6 +1376,721 @@ class __$StravaActivityCopyWithImpl<$Res>
           ? _self.workoutType
           : workoutType // ignore: cast_nullable_to_non_nullable
               as int?,
+      polyline: freezed == polyline
+          ? _self.polyline
+          : polyline // ignore: cast_nullable_to_non_nullable
+              as String?,
+      gearId: freezed == gearId
+          ? _self.gearId
+          : gearId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      splitsMetric: null == splitsMetric
+          ? _self._splitsMetric
+          : splitsMetric // ignore: cast_nullable_to_non_nullable
+              as List<StravaSplit>,
+      splitsStandard: null == splitsStandard
+          ? _self._splitsStandard
+          : splitsStandard // ignore: cast_nullable_to_non_nullable
+              as List<StravaSplit>,
+    ));
+  }
+}
+
+/// @nodoc
+mixin _$StravaSplit {
+  /// Metres actually covered (the last split is often short).
+  double get distance;
+  int get movingTime;
+  double get elevationDifference;
+
+  /// Create a copy of StravaSplit
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $StravaSplitCopyWith<StravaSplit> get copyWith =>
+      _$StravaSplitCopyWithImpl<StravaSplit>(this as StravaSplit, _$identity);
+
+  /// Serializes this StravaSplit to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    final _this = this as StravaSplit;
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is StravaSplit &&
+            (identical(other.distance, _this.distance) ||
+                other.distance == _this.distance) &&
+            (identical(other.movingTime, _this.movingTime) ||
+                other.movingTime == _this.movingTime) &&
+            (identical(other.elevationDifference, _this.elevationDifference) ||
+                other.elevationDifference == _this.elevationDifference));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode {
+    final _this = this as StravaSplit;
+    return Object.hash(runtimeType, _this.distance, _this.movingTime,
+        _this.elevationDifference);
+  }
+
+  @override
+  String toString() {
+    final _this = this as StravaSplit;
+    return 'StravaSplit(distance: ${_this.distance}, movingTime: ${_this.movingTime}, elevationDifference: ${_this.elevationDifference})';
+  }
+}
+
+/// @nodoc
+abstract mixin class $StravaSplitCopyWith<$Res> {
+  factory $StravaSplitCopyWith(
+          StravaSplit value, $Res Function(StravaSplit) _then) =
+      _$StravaSplitCopyWithImpl;
+  @useResult
+  $Res call({double distance, int movingTime, double elevationDifference});
+}
+
+/// @nodoc
+class _$StravaSplitCopyWithImpl<$Res> implements $StravaSplitCopyWith<$Res> {
+  _$StravaSplitCopyWithImpl(this._self, this._then);
+
+  final StravaSplit _self;
+  final $Res Function(StravaSplit) _then;
+
+  /// Create a copy of StravaSplit
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? distance = null,
+    Object? movingTime = null,
+    Object? elevationDifference = null,
+  }) {
+    return _then(StravaSplit(
+      distance: null == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double,
+      movingTime: null == movingTime
+          ? _self.movingTime
+          : movingTime // ignore: cast_nullable_to_non_nullable
+              as int,
+      elevationDifference: null == elevationDifference
+          ? _self.elevationDifference
+          : elevationDifference // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [StravaSplit].
+extension StravaSplitPatterns on StravaSplit {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_StravaSplit value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _StravaSplit() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_StravaSplit value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _StravaSplit():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_StravaSplit value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _StravaSplit() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(
+            double distance, int movingTime, double elevationDifference)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _StravaSplit() when $default != null:
+        return $default(
+            _that.distance, _that.movingTime, _that.elevationDifference);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(
+            double distance, int movingTime, double elevationDifference)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _StravaSplit():
+        return $default(
+            _that.distance, _that.movingTime, _that.elevationDifference);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(
+            double distance, int movingTime, double elevationDifference)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _StravaSplit() when $default != null:
+        return $default(
+            _that.distance, _that.movingTime, _that.elevationDifference);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _StravaSplit implements StravaSplit {
+  const _StravaSplit(
+      {this.distance = 0, this.movingTime = 0, this.elevationDifference = 0});
+  factory _StravaSplit.fromJson(Map<String, dynamic> json) =>
+      _$StravaSplitFromJson(json);
+
+  /// Metres actually covered (the last split is often short).
+  @override
+  @JsonKey()
+  final double distance;
+  @override
+  @JsonKey()
+  final int movingTime;
+  @override
+  @JsonKey()
+  final double elevationDifference;
+
+  /// Create a copy of StravaSplit
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$StravaSplitCopyWith<_StravaSplit> get copyWith =>
+      __$StravaSplitCopyWithImpl<_StravaSplit>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$StravaSplitToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _StravaSplit &&
+            (identical(other.distance, distance) ||
+                other.distance == distance) &&
+            (identical(other.movingTime, movingTime) ||
+                other.movingTime == movingTime) &&
+            (identical(other.elevationDifference, elevationDifference) ||
+                other.elevationDifference == elevationDifference));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, distance, movingTime, elevationDifference);
+  }
+
+  @override
+  String toString() {
+    return 'StravaSplit(distance: $distance, movingTime: $movingTime, elevationDifference: $elevationDifference)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$StravaSplitCopyWith<$Res>
+    implements $StravaSplitCopyWith<$Res> {
+  factory _$StravaSplitCopyWith(
+          _StravaSplit value, $Res Function(_StravaSplit) _then) =
+      __$StravaSplitCopyWithImpl;
+  @override
+  @useResult
+  $Res call({double distance, int movingTime, double elevationDifference});
+}
+
+/// @nodoc
+class __$StravaSplitCopyWithImpl<$Res> implements _$StravaSplitCopyWith<$Res> {
+  __$StravaSplitCopyWithImpl(this._self, this._then);
+
+  final _StravaSplit _self;
+  final $Res Function(_StravaSplit) _then;
+
+  /// Create a copy of StravaSplit
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? distance = null,
+    Object? movingTime = null,
+    Object? elevationDifference = null,
+  }) {
+    return _then(_StravaSplit(
+      distance: null == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double,
+      movingTime: null == movingTime
+          ? _self.movingTime
+          : movingTime // ignore: cast_nullable_to_non_nullable
+              as int,
+      elevationDifference: null == elevationDifference
+          ? _self.elevationDifference
+          : elevationDifference // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// @nodoc
+mixin _$StravaGear {
+  String get id;
+  String get name;
+
+  /// Lifetime metres Strava has recorded with it.
+  double get distance;
+
+  /// Create a copy of StravaGear
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $StravaGearCopyWith<StravaGear> get copyWith =>
+      _$StravaGearCopyWithImpl<StravaGear>(this as StravaGear, _$identity);
+
+  /// Serializes this StravaGear to a JSON map.
+  Map<String, dynamic> toJson();
+
+  @override
+  bool operator ==(Object other) {
+    final _this = this as StravaGear;
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is StravaGear &&
+            (identical(other.id, _this.id) || other.id == _this.id) &&
+            (identical(other.name, _this.name) || other.name == _this.name) &&
+            (identical(other.distance, _this.distance) ||
+                other.distance == _this.distance));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode {
+    final _this = this as StravaGear;
+    return Object.hash(runtimeType, _this.id, _this.name, _this.distance);
+  }
+
+  @override
+  String toString() {
+    final _this = this as StravaGear;
+    return 'StravaGear(id: ${_this.id}, name: ${_this.name}, distance: ${_this.distance})';
+  }
+}
+
+/// @nodoc
+abstract mixin class $StravaGearCopyWith<$Res> {
+  factory $StravaGearCopyWith(
+          StravaGear value, $Res Function(StravaGear) _then) =
+      _$StravaGearCopyWithImpl;
+  @useResult
+  $Res call({String id, String name, double distance});
+}
+
+/// @nodoc
+class _$StravaGearCopyWithImpl<$Res> implements $StravaGearCopyWith<$Res> {
+  _$StravaGearCopyWithImpl(this._self, this._then);
+
+  final StravaGear _self;
+  final $Res Function(StravaGear) _then;
+
+  /// Create a copy of StravaGear
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? distance = null,
+  }) {
+    return _then(StravaGear(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      distance: null == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
+  }
+}
+
+/// Adds pattern-matching-related methods to [StravaGear].
+extension StravaGearPatterns on StravaGear {
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_StravaGear value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _StravaGear() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_StravaGear value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _StravaGear():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_StravaGear value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _StravaGear() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
+
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(String id, String name, double distance)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _StravaGear() when $default != null:
+        return $default(_that.id, _that.name, _that.distance);
+      case _:
+        return orElse();
+    }
+  }
+
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(String id, String name, double distance) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _StravaGear():
+        return $default(_that.id, _that.name, _that.distance);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
+
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
+
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(String id, String name, double distance)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _StravaGear() when $default != null:
+        return $default(_that.id, _that.name, _that.distance);
+      case _:
+        return null;
+    }
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _StravaGear implements StravaGear {
+  const _StravaGear({required this.id, required this.name, this.distance = 0});
+  factory _StravaGear.fromJson(Map<String, dynamic> json) =>
+      _$StravaGearFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String name;
+
+  /// Lifetime metres Strava has recorded with it.
+  @override
+  @JsonKey()
+  final double distance;
+
+  /// Create a copy of StravaGear
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$StravaGearCopyWith<_StravaGear> get copyWith =>
+      __$StravaGearCopyWithImpl<_StravaGear>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$StravaGearToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _StravaGear &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.distance, distance) ||
+                other.distance == distance));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, id, name, distance);
+  }
+
+  @override
+  String toString() {
+    return 'StravaGear(id: $id, name: $name, distance: $distance)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$StravaGearCopyWith<$Res>
+    implements $StravaGearCopyWith<$Res> {
+  factory _$StravaGearCopyWith(
+          _StravaGear value, $Res Function(_StravaGear) _then) =
+      __$StravaGearCopyWithImpl;
+  @override
+  @useResult
+  $Res call({String id, String name, double distance});
+}
+
+/// @nodoc
+class __$StravaGearCopyWithImpl<$Res> implements _$StravaGearCopyWith<$Res> {
+  __$StravaGearCopyWithImpl(this._self, this._then);
+
+  final _StravaGear _self;
+  final $Res Function(_StravaGear) _then;
+
+  /// Create a copy of StravaGear
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? distance = null,
+  }) {
+    return _then(_StravaGear(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _self.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      distance: null == distance
+          ? _self.distance
+          : distance // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }

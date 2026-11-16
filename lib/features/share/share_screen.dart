@@ -28,6 +28,7 @@ import 'package:run4share/features/rate/rate_prompt.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/features/stickers/extra_sticker_view.dart';
+import 'package:run4share/features/stickers/sticker_facts.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/logo.dart';
 
@@ -181,6 +182,9 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
           );
     final theme = draft == null ? null : themeById(draft.themeId);
     final isPro = ref.watch(isProProvider);
+    final facts = draft == null
+        ? null
+        : ref.watch(stickerFactsProvider(draft.activityId));
 
     return Theme(
       data: AppTheme.dark,
@@ -232,7 +236,7 @@ class _ShareScreenState extends ConsumerState<ShareScreen> {
                                               theme: theme,
                                               data: data,
                                               watermark: !isPro,
-                                              start: activity!.startLocal,
+                                              facts: facts!,
                                             ),
                                 ),
                               ),
@@ -315,13 +319,13 @@ class _ImagePreview extends StatelessWidget {
     required this.theme,
     required this.data,
     required this.watermark,
-    required this.start,
+    required this.facts,
   });
 
   final bool watermark;
 
-  /// The activity's start, for the time sticker.
-  final DateTime start;
+  /// What the extra stickers draw from.
+  final StickerFacts facts;
 
   final GlobalKey boundary;
   final CreationDraft draft;
@@ -353,7 +357,7 @@ class _ImagePreview extends StatelessWidget {
             data: data,
             placement: draft.sticker,
             style: draft.style,
-            extras: extraItems(draft, start),
+            extras: extraItems(draft, facts),
             watermark: watermark,
           ),
         ),

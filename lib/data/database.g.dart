@@ -109,6 +109,29 @@ class $ActivitiesTable extends Activities
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("race" IN (0, 1))'),
       defaultValue: const Constant(false));
+  static const VerificationMeta _polylineMeta =
+      const VerificationMeta('polyline');
+  @override
+  late final GeneratedColumn<String> polyline = GeneratedColumn<String>(
+      'polyline', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _gearIdMeta = const VerificationMeta('gearId');
+  @override
+  late final GeneratedColumn<String> gearId = GeneratedColumn<String>(
+      'gear_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _splitsJsonMeta =
+      const VerificationMeta('splitsJson');
+  @override
+  late final GeneratedColumn<String> splitsJson = GeneratedColumn<String>(
+      'splits_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _elevationJsonMeta =
+      const VerificationMeta('elevationJson');
+  @override
+  late final GeneratedColumn<String> elevationJson = GeneratedColumn<String>(
+      'elevation_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -126,7 +149,11 @@ class $ActivitiesTable extends Activities
         calories,
         elevationGain,
         prCount,
-        race
+        race,
+        polyline,
+        gearId,
+        splitsJson,
+        elevationJson
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -217,6 +244,26 @@ class $ActivitiesTable extends Activities
       context.handle(
           _raceMeta, race.isAcceptableOrUnknown(data['race']!, _raceMeta));
     }
+    if (data.containsKey('polyline')) {
+      context.handle(_polylineMeta,
+          polyline.isAcceptableOrUnknown(data['polyline']!, _polylineMeta));
+    }
+    if (data.containsKey('gear_id')) {
+      context.handle(_gearIdMeta,
+          gearId.isAcceptableOrUnknown(data['gear_id']!, _gearIdMeta));
+    }
+    if (data.containsKey('splits_json')) {
+      context.handle(
+          _splitsJsonMeta,
+          splitsJson.isAcceptableOrUnknown(
+              data['splits_json']!, _splitsJsonMeta));
+    }
+    if (data.containsKey('elevation_json')) {
+      context.handle(
+          _elevationJsonMeta,
+          elevationJson.isAcceptableOrUnknown(
+              data['elevation_json']!, _elevationJsonMeta));
+    }
     return context;
   }
 
@@ -263,6 +310,14 @@ class $ActivitiesTable extends Activities
           .read(DriftSqlType.int, data['${effectivePrefix}pr_count']),
       race: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}race'])!,
+      polyline: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}polyline']),
+      gearId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}gear_id']),
+      splitsJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}splits_json']),
+      elevationJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}elevation_json']),
     );
   }
 
@@ -313,6 +368,18 @@ class Activity extends DataClass implements Insertable<Activity> {
 
   /// A race: Strava's "Race" workout type, or the manual form's switch.
   final bool race;
+
+  /// The route, as an encoded polyline (Strava only).
+  final String? polyline;
+
+  /// The shoe: a Strava gear ID, or "manual:<name>" for typed ones.
+  final String? gearId;
+
+  /// Per-kilometre splits as JSON: [[metres, seconds, climb], ...].
+  final String? splitsJson;
+
+  /// Elevation profile as JSON, downsampled: [[metres, altitude], ...].
+  final String? elevationJson;
   const Activity(
       {required this.id,
       required this.source,
@@ -329,7 +396,11 @@ class Activity extends DataClass implements Insertable<Activity> {
       this.calories,
       this.elevationGain,
       this.prCount,
-      required this.race});
+      required this.race,
+      this.polyline,
+      this.gearId,
+      this.splitsJson,
+      this.elevationJson});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -370,6 +441,18 @@ class Activity extends DataClass implements Insertable<Activity> {
       map['pr_count'] = Variable<int>(prCount);
     }
     map['race'] = Variable<bool>(race);
+    if (!nullToAbsent || polyline != null) {
+      map['polyline'] = Variable<String>(polyline);
+    }
+    if (!nullToAbsent || gearId != null) {
+      map['gear_id'] = Variable<String>(gearId);
+    }
+    if (!nullToAbsent || splitsJson != null) {
+      map['splits_json'] = Variable<String>(splitsJson);
+    }
+    if (!nullToAbsent || elevationJson != null) {
+      map['elevation_json'] = Variable<String>(elevationJson);
+    }
     return map;
   }
 
@@ -409,6 +492,17 @@ class Activity extends DataClass implements Insertable<Activity> {
           ? const Value.absent()
           : Value(prCount),
       race: Value(race),
+      polyline: polyline == null && nullToAbsent
+          ? const Value.absent()
+          : Value(polyline),
+      gearId:
+          gearId == null && nullToAbsent ? const Value.absent() : Value(gearId),
+      splitsJson: splitsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(splitsJson),
+      elevationJson: elevationJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(elevationJson),
     );
   }
 
@@ -433,6 +527,10 @@ class Activity extends DataClass implements Insertable<Activity> {
       elevationGain: serializer.fromJson<double?>(json['elevationGain']),
       prCount: serializer.fromJson<int?>(json['prCount']),
       race: serializer.fromJson<bool>(json['race']),
+      polyline: serializer.fromJson<String?>(json['polyline']),
+      gearId: serializer.fromJson<String?>(json['gearId']),
+      splitsJson: serializer.fromJson<String?>(json['splitsJson']),
+      elevationJson: serializer.fromJson<String?>(json['elevationJson']),
     );
   }
   @override
@@ -456,6 +554,10 @@ class Activity extends DataClass implements Insertable<Activity> {
       'elevationGain': serializer.toJson<double?>(elevationGain),
       'prCount': serializer.toJson<int?>(prCount),
       'race': serializer.toJson<bool>(race),
+      'polyline': serializer.toJson<String?>(polyline),
+      'gearId': serializer.toJson<String?>(gearId),
+      'splitsJson': serializer.toJson<String?>(splitsJson),
+      'elevationJson': serializer.toJson<String?>(elevationJson),
     };
   }
 
@@ -475,7 +577,11 @@ class Activity extends DataClass implements Insertable<Activity> {
           Value<double?> calories = const Value.absent(),
           Value<double?> elevationGain = const Value.absent(),
           Value<int?> prCount = const Value.absent(),
-          bool? race}) =>
+          bool? race,
+          Value<String?> polyline = const Value.absent(),
+          Value<String?> gearId = const Value.absent(),
+          Value<String?> splitsJson = const Value.absent(),
+          Value<String?> elevationJson = const Value.absent()}) =>
       Activity(
         id: id ?? this.id,
         source: source ?? this.source,
@@ -497,6 +603,11 @@ class Activity extends DataClass implements Insertable<Activity> {
             elevationGain.present ? elevationGain.value : this.elevationGain,
         prCount: prCount.present ? prCount.value : this.prCount,
         race: race ?? this.race,
+        polyline: polyline.present ? polyline.value : this.polyline,
+        gearId: gearId.present ? gearId.value : this.gearId,
+        splitsJson: splitsJson.present ? splitsJson.value : this.splitsJson,
+        elevationJson:
+            elevationJson.present ? elevationJson.value : this.elevationJson,
       );
   Activity copyWithCompanion(ActivitiesCompanion data) {
     return Activity(
@@ -525,6 +636,13 @@ class Activity extends DataClass implements Insertable<Activity> {
           : this.elevationGain,
       prCount: data.prCount.present ? data.prCount.value : this.prCount,
       race: data.race.present ? data.race.value : this.race,
+      polyline: data.polyline.present ? data.polyline.value : this.polyline,
+      gearId: data.gearId.present ? data.gearId.value : this.gearId,
+      splitsJson:
+          data.splitsJson.present ? data.splitsJson.value : this.splitsJson,
+      elevationJson: data.elevationJson.present
+          ? data.elevationJson.value
+          : this.elevationJson,
     );
   }
 
@@ -546,7 +664,11 @@ class Activity extends DataClass implements Insertable<Activity> {
           ..write('calories: $calories, ')
           ..write('elevationGain: $elevationGain, ')
           ..write('prCount: $prCount, ')
-          ..write('race: $race')
+          ..write('race: $race, ')
+          ..write('polyline: $polyline, ')
+          ..write('gearId: $gearId, ')
+          ..write('splitsJson: $splitsJson, ')
+          ..write('elevationJson: $elevationJson')
           ..write(')'))
         .toString();
   }
@@ -568,7 +690,11 @@ class Activity extends DataClass implements Insertable<Activity> {
       calories,
       elevationGain,
       prCount,
-      race);
+      race,
+      polyline,
+      gearId,
+      splitsJson,
+      elevationJson);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -588,7 +714,11 @@ class Activity extends DataClass implements Insertable<Activity> {
           other.calories == this.calories &&
           other.elevationGain == this.elevationGain &&
           other.prCount == this.prCount &&
-          other.race == this.race);
+          other.race == this.race &&
+          other.polyline == this.polyline &&
+          other.gearId == this.gearId &&
+          other.splitsJson == this.splitsJson &&
+          other.elevationJson == this.elevationJson);
 }
 
 class ActivitiesCompanion extends UpdateCompanion<Activity> {
@@ -608,6 +738,10 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
   final Value<double?> elevationGain;
   final Value<int?> prCount;
   final Value<bool> race;
+  final Value<String?> polyline;
+  final Value<String?> gearId;
+  final Value<String?> splitsJson;
+  final Value<String?> elevationJson;
   const ActivitiesCompanion({
     this.id = const Value.absent(),
     this.source = const Value.absent(),
@@ -625,6 +759,10 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     this.elevationGain = const Value.absent(),
     this.prCount = const Value.absent(),
     this.race = const Value.absent(),
+    this.polyline = const Value.absent(),
+    this.gearId = const Value.absent(),
+    this.splitsJson = const Value.absent(),
+    this.elevationJson = const Value.absent(),
   });
   ActivitiesCompanion.insert({
     this.id = const Value.absent(),
@@ -643,6 +781,10 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     this.elevationGain = const Value.absent(),
     this.prCount = const Value.absent(),
     this.race = const Value.absent(),
+    this.polyline = const Value.absent(),
+    this.gearId = const Value.absent(),
+    this.splitsJson = const Value.absent(),
+    this.elevationJson = const Value.absent(),
   })  : source = Value(source),
         name = Value(name),
         sportType = Value(sportType),
@@ -665,6 +807,10 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     Expression<double>? elevationGain,
     Expression<int>? prCount,
     Expression<bool>? race,
+    Expression<String>? polyline,
+    Expression<String>? gearId,
+    Expression<String>? splitsJson,
+    Expression<String>? elevationJson,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -683,6 +829,10 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       if (elevationGain != null) 'elevation_gain': elevationGain,
       if (prCount != null) 'pr_count': prCount,
       if (race != null) 'race': race,
+      if (polyline != null) 'polyline': polyline,
+      if (gearId != null) 'gear_id': gearId,
+      if (splitsJson != null) 'splits_json': splitsJson,
+      if (elevationJson != null) 'elevation_json': elevationJson,
     });
   }
 
@@ -702,7 +852,11 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       Value<double?>? calories,
       Value<double?>? elevationGain,
       Value<int?>? prCount,
-      Value<bool>? race}) {
+      Value<bool>? race,
+      Value<String?>? polyline,
+      Value<String?>? gearId,
+      Value<String?>? splitsJson,
+      Value<String?>? elevationJson}) {
     return ActivitiesCompanion(
       id: id ?? this.id,
       source: source ?? this.source,
@@ -720,6 +874,10 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       elevationGain: elevationGain ?? this.elevationGain,
       prCount: prCount ?? this.prCount,
       race: race ?? this.race,
+      polyline: polyline ?? this.polyline,
+      gearId: gearId ?? this.gearId,
+      splitsJson: splitsJson ?? this.splitsJson,
+      elevationJson: elevationJson ?? this.elevationJson,
     );
   }
 
@@ -775,6 +933,18 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     if (race.present) {
       map['race'] = Variable<bool>(race.value);
     }
+    if (polyline.present) {
+      map['polyline'] = Variable<String>(polyline.value);
+    }
+    if (gearId.present) {
+      map['gear_id'] = Variable<String>(gearId.value);
+    }
+    if (splitsJson.present) {
+      map['splits_json'] = Variable<String>(splitsJson.value);
+    }
+    if (elevationJson.present) {
+      map['elevation_json'] = Variable<String>(elevationJson.value);
+    }
     return map;
   }
 
@@ -796,7 +966,11 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
           ..write('calories: $calories, ')
           ..write('elevationGain: $elevationGain, ')
           ..write('prCount: $prCount, ')
-          ..write('race: $race')
+          ..write('race: $race, ')
+          ..write('polyline: $polyline, ')
+          ..write('gearId: $gearId, ')
+          ..write('splitsJson: $splitsJson, ')
+          ..write('elevationJson: $elevationJson')
           ..write(')'))
         .toString();
   }
@@ -1508,18 +1682,246 @@ class CreationsCompanion extends UpdateCompanion<Creation> {
   }
 }
 
+class $GearTableTable extends GearTable with TableInfo<$GearTableTable, Gear> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GearTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _distanceMeta =
+      const VerificationMeta('distance');
+  @override
+  late final GeneratedColumn<double> distance = GeneratedColumn<double>(
+      'distance', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, name, distance];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'gear';
+  @override
+  VerificationContext validateIntegrity(Insertable<Gear> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('distance')) {
+      context.handle(_distanceMeta,
+          distance.isAcceptableOrUnknown(data['distance']!, _distanceMeta));
+    } else if (isInserting) {
+      context.missing(_distanceMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Gear map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Gear(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      distance: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}distance'])!,
+    );
+  }
+
+  @override
+  $GearTableTable createAlias(String alias) {
+    return $GearTableTable(attachedDatabase, alias);
+  }
+}
+
+class Gear extends DataClass implements Insertable<Gear> {
+  final String id;
+  final String name;
+
+  /// Lifetime metres with it, as last known.
+  final double distance;
+  const Gear({required this.id, required this.name, required this.distance});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['distance'] = Variable<double>(distance);
+    return map;
+  }
+
+  GearTableCompanion toCompanion(bool nullToAbsent) {
+    return GearTableCompanion(
+      id: Value(id),
+      name: Value(name),
+      distance: Value(distance),
+    );
+  }
+
+  factory Gear.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Gear(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      distance: serializer.fromJson<double>(json['distance']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'distance': serializer.toJson<double>(distance),
+    };
+  }
+
+  Gear copyWith({String? id, String? name, double? distance}) => Gear(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        distance: distance ?? this.distance,
+      );
+  Gear copyWithCompanion(GearTableCompanion data) {
+    return Gear(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      distance: data.distance.present ? data.distance.value : this.distance,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Gear(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('distance: $distance')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, distance);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Gear &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.distance == this.distance);
+}
+
+class GearTableCompanion extends UpdateCompanion<Gear> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<double> distance;
+  final Value<int> rowid;
+  const GearTableCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.distance = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GearTableCompanion.insert({
+    required String id,
+    required String name,
+    required double distance,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        name = Value(name),
+        distance = Value(distance);
+  static Insertable<Gear> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<double>? distance,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (distance != null) 'distance': distance,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GearTableCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? name,
+      Value<double>? distance,
+      Value<int>? rowid}) {
+    return GearTableCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      distance: distance ?? this.distance,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (distance.present) {
+      map['distance'] = Variable<double>(distance.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GearTableCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('distance: $distance, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ActivitiesTable activities = $ActivitiesTable(this);
   late final $PreferencesTable preferences = $PreferencesTable(this);
   late final $CreationsTable creations = $CreationsTable(this);
+  late final $GearTableTable gearTable = $GearTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [activities, preferences, creations];
+      [activities, preferences, creations, gearTable];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
@@ -1542,6 +1944,10 @@ typedef $$ActivitiesTableCreateCompanionBuilder = ActivitiesCompanion Function({
   Value<double?> elevationGain,
   Value<int?> prCount,
   Value<bool> race,
+  Value<String?> polyline,
+  Value<String?> gearId,
+  Value<String?> splitsJson,
+  Value<String?> elevationJson,
 });
 typedef $$ActivitiesTableUpdateCompanionBuilder = ActivitiesCompanion Function({
   Value<int> id,
@@ -1560,6 +1966,10 @@ typedef $$ActivitiesTableUpdateCompanionBuilder = ActivitiesCompanion Function({
   Value<double?> elevationGain,
   Value<int?> prCount,
   Value<bool> race,
+  Value<String?> polyline,
+  Value<String?> gearId,
+  Value<String?> splitsJson,
+  Value<String?> elevationJson,
 });
 
 class $$ActivitiesTableFilterComposer
@@ -1621,6 +2031,18 @@ class $$ActivitiesTableFilterComposer
 
   ColumnFilters<bool> get race => $composableBuilder(
       column: $table.race, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get polyline => $composableBuilder(
+      column: $table.polyline, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get gearId => $composableBuilder(
+      column: $table.gearId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get splitsJson => $composableBuilder(
+      column: $table.splitsJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get elevationJson => $composableBuilder(
+      column: $table.elevationJson, builder: (column) => ColumnFilters(column));
 }
 
 class $$ActivitiesTableOrderingComposer
@@ -1682,6 +2104,19 @@ class $$ActivitiesTableOrderingComposer
 
   ColumnOrderings<bool> get race => $composableBuilder(
       column: $table.race, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get polyline => $composableBuilder(
+      column: $table.polyline, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get gearId => $composableBuilder(
+      column: $table.gearId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get splitsJson => $composableBuilder(
+      column: $table.splitsJson, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get elevationJson => $composableBuilder(
+      column: $table.elevationJson,
+      builder: (column) => ColumnOrderings(column));
 }
 
 class $$ActivitiesTableAnnotationComposer
@@ -1740,6 +2175,18 @@ class $$ActivitiesTableAnnotationComposer
 
   GeneratedColumn<bool> get race =>
       $composableBuilder(column: $table.race, builder: (column) => column);
+
+  GeneratedColumn<String> get polyline =>
+      $composableBuilder(column: $table.polyline, builder: (column) => column);
+
+  GeneratedColumn<String> get gearId =>
+      $composableBuilder(column: $table.gearId, builder: (column) => column);
+
+  GeneratedColumn<String> get splitsJson => $composableBuilder(
+      column: $table.splitsJson, builder: (column) => column);
+
+  GeneratedColumn<String> get elevationJson => $composableBuilder(
+      column: $table.elevationJson, builder: (column) => column);
 }
 
 class $$ActivitiesTableTableManager extends RootTableManager<
@@ -1781,6 +2228,10 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             Value<double?> elevationGain = const Value.absent(),
             Value<int?> prCount = const Value.absent(),
             Value<bool> race = const Value.absent(),
+            Value<String?> polyline = const Value.absent(),
+            Value<String?> gearId = const Value.absent(),
+            Value<String?> splitsJson = const Value.absent(),
+            Value<String?> elevationJson = const Value.absent(),
           }) =>
               ActivitiesCompanion(
             id: id,
@@ -1799,6 +2250,10 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             elevationGain: elevationGain,
             prCount: prCount,
             race: race,
+            polyline: polyline,
+            gearId: gearId,
+            splitsJson: splitsJson,
+            elevationJson: elevationJson,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -1817,6 +2272,10 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             Value<double?> elevationGain = const Value.absent(),
             Value<int?> prCount = const Value.absent(),
             Value<bool> race = const Value.absent(),
+            Value<String?> polyline = const Value.absent(),
+            Value<String?> gearId = const Value.absent(),
+            Value<String?> splitsJson = const Value.absent(),
+            Value<String?> elevationJson = const Value.absent(),
           }) =>
               ActivitiesCompanion.insert(
             id: id,
@@ -1835,6 +2294,10 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             elevationGain: elevationGain,
             prCount: prCount,
             race: race,
+            polyline: polyline,
+            gearId: gearId,
+            splitsJson: splitsJson,
+            elevationJson: elevationJson,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (
@@ -2224,6 +2687,145 @@ typedef $$CreationsTableProcessedTableManager = ProcessedTableManager<
     (Creation, BaseReferences<_$AppDatabase, $CreationsTable, Creation>),
     Creation,
     PrefetchHooks Function()>;
+typedef $$GearTableTableCreateCompanionBuilder = GearTableCompanion Function({
+  required String id,
+  required String name,
+  required double distance,
+  Value<int> rowid,
+});
+typedef $$GearTableTableUpdateCompanionBuilder = GearTableCompanion Function({
+  Value<String> id,
+  Value<String> name,
+  Value<double> distance,
+  Value<int> rowid,
+});
+
+class $$GearTableTableFilterComposer
+    extends Composer<_$AppDatabase, $GearTableTable> {
+  $$GearTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get distance => $composableBuilder(
+      column: $table.distance, builder: (column) => ColumnFilters(column));
+}
+
+class $$GearTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $GearTableTable> {
+  $$GearTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get distance => $composableBuilder(
+      column: $table.distance, builder: (column) => ColumnOrderings(column));
+}
+
+class $$GearTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GearTableTable> {
+  $$GearTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<double> get distance =>
+      $composableBuilder(column: $table.distance, builder: (column) => column);
+}
+
+class $$GearTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $GearTableTable,
+    Gear,
+    $$GearTableTableFilterComposer,
+    $$GearTableTableOrderingComposer,
+    $$GearTableTableAnnotationComposer,
+    $$GearTableTableCreateCompanionBuilder,
+    $$GearTableTableUpdateCompanionBuilder,
+    (Gear, BaseReferences<_$AppDatabase, $GearTableTable, Gear>),
+    Gear,
+    PrefetchHooks Function()> {
+  $$GearTableTableTableManager(_$AppDatabase db, $GearTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GearTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GearTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GearTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<double> distance = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              GearTableCompanion(
+            id: id,
+            name: name,
+            distance: distance,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String name,
+            required double distance,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              GearTableCompanion.insert(
+            id: id,
+            name: name,
+            distance: distance,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable<$GearTableTable, Gear>(table),
+                    BaseReferences<_$AppDatabase, $GearTableTable, Gear>(
+                        db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$GearTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $GearTableTable,
+    Gear,
+    $$GearTableTableFilterComposer,
+    $$GearTableTableOrderingComposer,
+    $$GearTableTableAnnotationComposer,
+    $$GearTableTableCreateCompanionBuilder,
+    $$GearTableTableUpdateCompanionBuilder,
+    (Gear, BaseReferences<_$AppDatabase, $GearTableTable, Gear>),
+    Gear,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -2234,4 +2836,6 @@ class $AppDatabaseManager {
       $$PreferencesTableTableManager(_db, _db.preferences);
   $$CreationsTableTableManager get creations =>
       $$CreationsTableTableManager(_db, _db.creations);
+  $$GearTableTableTableManager get gearTable =>
+      $$GearTableTableTableManager(_db, _db.gearTable);
 }

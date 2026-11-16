@@ -40,6 +40,34 @@ class StravaApi {
     ];
   }
 
+  /// A shoe or bike. Needs the profile:read_all permission.
+  Future<StravaGear> gear(String id) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '$_base/gear/$id',
+      options: Options(headers: {'Authorization': 'Bearer ${await _token()}'}),
+    );
+    return StravaGear.fromJson(response.data!);
+  }
+
+  /// The elevation profile: (metres along the route, altitude) pairs.
+  Future<List<(double, double)>> elevation(int id) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '$_base/activities/$id/streams',
+      queryParameters: {'keys': 'altitude,distance', 'key_by_type': true},
+      options: Options(headers: {'Authorization': 'Bearer ${await _token()}'}),
+    );
+    final data = response.data ?? const {};
+    List<double> series(String key) => [
+          for (final v in (data[key] as Map?)?['data'] as List? ?? const [])
+            (v as num).toDouble(),
+        ];
+    final distance = series('distance');
+    final altitude = series('altitude');
+    final n =
+        distance.length < altitude.length ? distance.length : altitude.length;
+    return [for (var i = 0; i < n; i++) (distance[i], altitude[i])];
+  }
+
   /// One activity in detail (adds calories).
   Future<StravaActivity> activity(int id) async {
     final response = await _dio.get<Map<String, dynamic>>(

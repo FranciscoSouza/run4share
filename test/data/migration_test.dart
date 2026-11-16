@@ -42,6 +42,10 @@ void main() {
     // Schema 3 columns, with their defaults.
     expect(activities.single.race, isFalse);
     expect(activities.single.prCount, isNull);
+    // Schema 4: route, shoe, charts, and the gear table.
+    expect(activities.single.polyline, isNull);
+    expect(activities.single.gearId, isNull);
+    expect(await db.select(db.gearTable).get(), isEmpty);
     expect(await db.readPreference('units'), 'mi');
     expect(await db.select(db.creations).get(), isEmpty);
   });

@@ -105,7 +105,9 @@ IconData labelIcon(LabelKind kind) => switch (kind) {
     };
 
 /// The default colour of each kind when the user hasn't picked one.
-StickerColour defaultColour(ExtraKind kind) => switch (kind) {
+StickerColour defaultColour(ExtraKind kind, [String value = '']) =>
+    switch (kind) {
       ExtraKind.label => StickerColour.amber,
+      ExtraKind.route when value == 'neon' => StickerColour.green,
       _ => StickerColour.white,
     };

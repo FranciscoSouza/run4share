@@ -225,7 +225,12 @@ void main() {
     // A phrase, by mood.
     await tester.tap(find.text('Stickers'));
     await settle(tester);
+    // The panel scrolls: Your data comes before the phrases.
+    await tester.ensureVisible(find.text('Tired'));
+    await settle(tester);
     await tester.tap(find.text('Tired'));
+    await settle(tester);
+    await tester.ensureVisible(find.text('Tired, but not done.'));
     await settle(tester);
     await tester.tap(find.text('Tired, but not done.'));
     await settle(tester);

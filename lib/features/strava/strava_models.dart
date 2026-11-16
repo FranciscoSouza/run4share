@@ -17,6 +17,10 @@ abstract class StravaSession with _$StravaSession {
     required DateTime connectedAt,
     int? athleteId,
     String? athleteName,
+
+    /// What the user allowed on Strava's page; null for sessions from
+    /// before scopes were stored.
+    List<String>? scopes,
   }) = _StravaSession;
 
   const StravaSession._();
@@ -69,6 +73,16 @@ abstract class StravaActivity with _$StravaActivity {
 
     /// Strava's workout type: 1 is a run race, 11 a ride race.
     int? workoutType,
+
+    /// The route as an encoded polyline (map.summary_polyline).
+    @JsonKey(readValue: _summaryPolyline) String? polyline,
+
+    /// The shoe or bike used, e.g. "g12345".
+    String? gearId,
+
+    /// Only in the detail: one split per kilometre, and per mile.
+    @Default([]) List<StravaSplit> splitsMetric,
+    @Default([]) List<StravaSplit> splitsStandard,
   }) = _StravaActivity;
 
   const StravaActivity._();
@@ -78,4 +92,40 @@ abstract class StravaActivity with _$StravaActivity {
 
   /// Marked as a race on Strava.
   bool get isRace => workoutType == 1 || workoutType == 11;
+}
+
+Object? _summaryPolyline(Map<dynamic, dynamic> json, String key) {
+  final map = json['map'];
+  if (map is! Map) return null;
+  final line = map['summary_polyline'];
+  return line is String && line.isNotEmpty ? line : null;
+}
+
+/// One kilometre (or mile) of an activity.
+@freezed
+abstract class StravaSplit with _$StravaSplit {
+  const factory StravaSplit({
+    /// Metres actually covered (the last split is often short).
+    @Default(0) double distance,
+    @Default(0) int movingTime,
+    @Default(0) double elevationDifference,
+  }) = _StravaSplit;
+
+  factory StravaSplit.fromJson(Map<String, dynamic> json) =>
+      _$StravaSplitFromJson(json);
+}
+
+/// A shoe (or bike) from the athlete's Strava gear.
+@freezed
+abstract class StravaGear with _$StravaGear {
+  const factory StravaGear({
+    required String id,
+    required String name,
+
+    /// Lifetime metres Strava has recorded with it.
+    @Default(0) double distance,
+  }) = _StravaGear;
+
+  factory StravaGear.fromJson(Map<String, dynamic> json) =>
+      _$StravaGearFromJson(json);
 }

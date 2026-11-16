@@ -105,6 +105,7 @@ class StravaAuth {
       connectedAt: _clock(),
       athleteId: (athlete?['id'] as num?)?.toInt(),
       athleteName: name.isEmpty ? null : name,
+      scopes: granted,
     );
   }
 

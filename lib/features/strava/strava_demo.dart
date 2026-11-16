@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:dio/dio.dart';
 import 'package:run4share/app/clock.dart';
+import 'package:run4share/features/stickers/polyline.dart';
 import 'package:run4share/features/strava/strava_api.dart';
 import 'package:run4share/features/strava/strava_auth.dart';
 import 'package:run4share/features/strava/strava_config.dart';
@@ -41,6 +44,7 @@ class DemoStravaAuth extends StravaAuth {
       connectedAt: now,
       athleteId: 0,
       athleteName: 'Demo athlete',
+      scopes: StravaConfig.scope.split(','),
     );
   }
 
@@ -79,9 +83,87 @@ class DemoStravaApi extends StravaApi {
   Future<StravaActivity> activity(int id) async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
     final summary = demoActivities(_now()).firstWhere((a) => a.id == id);
-    // Roughly 10 kcal a minute, like the design's 320 kcal for 33 minutes.
-    return summary.copyWith(calories: (summary.movingTime / 6).roundToDouble());
+    return summary.copyWith(
+      // Roughly 10 kcal a minute, like the design's 320 kcal for 33 min.
+      calories: (summary.movingTime / 6).roundToDouble(),
+      splitsMetric: demoSplits(summary, 1000),
+      splitsStandard: demoSplits(summary, 1609.344),
+    );
   }
+
+  @override
+  Future<List<(double, double)>> elevation(int id) async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    final summary = demoActivities(_now()).firstWhere((a) => a.id == id);
+    const points = 200;
+    return [
+      for (var i = 0; i < points; i++)
+        (
+          summary.distance * i / (points - 1),
+          40 +
+              25 * math.sin(i / points * math.pi * 2 + id) +
+              8 * math.sin(i / points * math.pi * 9 + id * 2),
+        ),
+    ];
+  }
+
+  @override
+  Future<StravaGear> gear(String id) async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    return switch (id) {
+      demoBikeId => const StravaGear(
+          id: demoBikeId,
+          name: 'Gravel bike',
+          distance: 3210000,
+        ),
+      _ => const StravaGear(
+          id: demoShoeId,
+          name: 'Pegasus 41',
+          distance: 412300,
+        ),
+    };
+  }
+}
+
+const demoShoeId = 'g-demo-shoe';
+const demoBikeId = 'b-demo-bike';
+
+/// Splits of [unit] metres with a little natural variation.
+List<StravaSplit> demoSplits(StravaActivity a, double unit) {
+  if (a.distance <= 0 || a.movingTime <= 0) return const [];
+  final speed = a.distance / a.movingTime;
+  final full = (a.distance / unit).floor();
+  final rest = a.distance - full * unit;
+  return [
+    for (var i = 0; i < full + (rest > 50 ? 1 : 0); i++)
+      StravaSplit(
+        distance: i < full ? unit : rest,
+        movingTime: ((i < full ? unit : rest) /
+                (speed * (1 + 0.05 * math.sin(i * 1.7 + a.id))))
+            .round(),
+        elevationDifference: 6 * math.sin(i * 0.9 + a.id),
+      ),
+  ];
+}
+
+/// A loop of about [metres], wobbly enough to look like a real route.
+String demoRoute(int seed, double metres) {
+  const lat0 = 38.72;
+  const lng0 = -9.14;
+  final radius = metres / (2 * math.pi) / 111000;
+  const points = 64;
+  return encodePolyline([
+    for (var i = 0; i <= points; i++)
+      () {
+        final t = i / points * 2 * math.pi;
+        final wobble =
+            1 + 0.25 * math.sin(3 * t + seed) + 0.12 * math.cos(5 * t + seed);
+        return (
+          lat0 + radius * wobble * math.sin(t),
+          lng0 + radius * wobble * math.cos(t) * 1.3,
+        );
+      }(),
+  ]);
 }
 
 /// Sample activities, newest first, dated relative to [now]: seven named
@@ -106,6 +188,12 @@ List<StravaActivity> demoActivities(DateTime now) {
     int? workoutType,
   }) =>
       StravaActivity(
+        polyline: metres > 0 ? demoRoute(id, metres) : null,
+        gearId: metres <= 0
+            ? null
+            : sportType == 'Ride'
+                ? demoBikeId
+                : demoShoeId,
         id: id,
         name: name,
         sportType: sportType,

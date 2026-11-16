@@ -48,6 +48,18 @@ class Activities extends Table {
   /// A race: Strava's "Race" workout type, or the manual form's switch.
   BoolColumn get race => boolean().withDefault(const Constant(false))();
 
+  /// The route, as an encoded polyline (Strava only).
+  TextColumn get polyline => text().nullable()();
+
+  /// The shoe: a Strava gear ID, or `manual:<name>` for typed ones.
+  TextColumn get gearId => text().nullable()();
+
+  /// Per-kilometre splits as JSON: [[metres, seconds, climb], ...].
+  TextColumn get splitsJson => text().nullable()();
+
+  /// Elevation profile as JSON, downsampled: [[metres, altitude], ...].
+  TextColumn get elevationJson => text().nullable()();
+
   @override
   List<Set<Column>> get uniqueKeys => [
         {source, sourceId},
@@ -81,6 +93,22 @@ class Creations extends Table {
   TextColumn get settings => text()();
 }
 
+/// Shoes (and bikes): from Strava's gear, or typed for manual activities.
+@DataClassName('Gear')
+class GearTable extends Table {
+  @override
+  String get tableName => 'gear';
+
+  TextColumn get id => text()();
+  TextColumn get name => text()();
+
+  /// Lifetime metres with it, as last known.
+  RealColumn get distance => real()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// Small key/value settings (units, sync state).
 class Preferences extends Table {
   TextColumn get key => text()();
@@ -90,7 +118,7 @@ class Preferences extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Activities, Preferences, Creations])
+@DriftDatabase(tables: [Activities, Preferences, Creations, GearTable])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor])
       : super(executor ?? driftDatabase(name: 'run4share'));
@@ -99,7 +127,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -110,6 +138,14 @@ class AppDatabase extends _$AppDatabase {
           if (from < 3) {
             await m.addColumn(activities, activities.prCount);
             await m.addColumn(activities, activities.race);
+          }
+          // 4: route, shoe, splits and elevation, for the data stickers.
+          if (from < 4) {
+            await m.addColumn(activities, activities.polyline);
+            await m.addColumn(activities, activities.gearId);
+            await m.addColumn(activities, activities.splitsJson);
+            await m.addColumn(activities, activities.elevationJson);
+            await m.createTable(gearTable);
           }
         },
       );

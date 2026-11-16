@@ -12,6 +12,7 @@ import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/activities/activity_format.dart';
 import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/strava/strava_models.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/buttons.dart';
 import 'package:run4share/shared/widgets/pills.dart';
@@ -57,6 +58,8 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
   final _distance = TextEditingController();
   final _calories = TextEditingController();
   final _heartRate = TextEditingController();
+  final _shoe = TextEditingController();
+  final _shoeDistance = TextEditingController();
 
   String _sportType = manualSportTypes.first;
   bool _race = false;
@@ -91,6 +94,11 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
     }
     final format = _format();
     final number = NumberFormat('0.##', format.l10n.localeName);
+    final gearId = activity.gearId;
+    final gear = gearId == null
+        ? null
+        : await ref.read(activityRepositoryProvider).gearById(gearId);
+    if (!mounted) return;
     setState(() {
       _loading = false;
       _sportType = manualSportTypes.contains(activity.sportType)
@@ -98,6 +106,15 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
           : manualSportTypes.first;
       _start = activity.startLocal;
       _race = activity.race;
+      if (gear != null && gearId!.startsWith('manual:')) {
+        _shoe.text = gear.name;
+        if (gear.distance > 0) {
+          _shoeDistance.text = NumberFormat(
+            '0',
+            format.l10n.localeName,
+          ).format(gear.distance / format.metresPerUnit);
+        }
+      }
       _name.text = activity.name;
       _duration.text = format.duration(activity.movingTime);
       if (activity.distance case final metres?) {
@@ -114,7 +131,15 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
 
   @override
   void dispose() {
-    for (final c in [_name, _duration, _distance, _calories, _heartRate]) {
+    for (final c in [
+      _name,
+      _duration,
+      _distance,
+      _calories,
+      _heartRate,
+      _shoe,
+      _shoeDistance,
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -170,6 +195,22 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
     final name = _name.text.trim();
     final distance = parseNumber(_distance.text);
     setState(() => _saving = true);
+    final repo = ref.read(activityRepositoryProvider);
+    // A typed shoe is stored like Strava gear, keyed by its name, so the
+    // shoe sticker works the same and the same name updates one shoe.
+    final shoe = _shoe.text.trim();
+    String? gearId;
+    if (shoe.isNotEmpty) {
+      gearId = 'manual:${shoe.toLowerCase()}';
+      await repo.saveGear(
+        StravaGear(
+          id: gearId,
+          name: shoe,
+          distance:
+              (parseNumber(_shoeDistance.text) ?? 0) * format.metresPerUnit,
+        ),
+      );
+    }
     await ref.read(activityRepositoryProvider).saveManual(
           id: widget.activityId,
           name: name.isEmpty ? _typeLabel(_sportType) : name,
@@ -180,6 +221,7 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
           calories: parseNumber(_calories.text),
           averageHeartrate: parseNumber(_heartRate.text),
           race: _race,
+          gearId: gearId,
         );
     messenger
       ..hideCurrentSnackBar()
@@ -326,6 +368,38 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
                               ),
                               const SizedBox(width: AppSpacing.md),
                               const Expanded(child: SizedBox()),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _Label(l10n.formShoe, optional: true),
+                                    TextFormField(
+                                      key: const ValueKey('activity.shoe'),
+                                      controller: _shoe,
+                                      textCapitalization:
+                                          TextCapitalization.words,
+                                      textInputAction: TextInputAction.next,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.md),
+                              Expanded(
+                                flex: 2,
+                                child: _OptionalNumber(
+                                  label: l10n.formShoeDistance(
+                                    format.distanceUnit,
+                                  ),
+                                  controller: _shoeDistance,
+                                  fieldKey: const ValueKey('activity.shoeKm'),
+                                ),
+                              ),
                             ],
                           ),
                           const SizedBox(height: AppSpacing.md),

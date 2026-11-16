@@ -23,8 +23,12 @@ class StravaConfig {
   static const callbackScheme = 'run4share';
   static const redirectUri = '$callbackScheme://localhost';
 
-  /// Profile (for the name) and all activities, private ones included.
-  static const scope = 'read,activity:read_all';
+  /// Profile (for the name), all activities (private ones included) and
+  /// the profile's gear, for the shoe sticker (decided 15 Nov 2026).
+  static const scope = 'read,activity:read_all,profile:read_all';
+
+  /// Needed to read gear (shoes).
+  static const gearScope = 'profile:read_all';
 }
 
 final stravaConfigProvider = Provider<StravaConfig>(

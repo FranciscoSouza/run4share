@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show StreamProviderFamily;
@@ -23,6 +25,62 @@ class ActivityRepository {
   Stream<Activity?> watchById(int id) => (_db.select(
         _table,
       )..where((a) => a.id.equals(id)))
+          .watchSingleOrNull();
+
+  /// Stores the splits, per kilometre and per mile, as
+  /// {"km": [[metres, seconds, climb], ...], "mi": [...]}.
+  Future<void> setSplits(
+    int id, {
+    required List<StravaSplit> metric,
+    required List<StravaSplit> standard,
+  }) {
+    List<List<num>> rows(List<StravaSplit> splits) => [
+          for (final s in splits)
+            [s.distance, s.movingTime, s.elevationDifference],
+        ];
+    return (_db.update(_table)..where((a) => a.id.equals(id))).write(
+      ActivitiesCompanion(
+        splitsJson: Value(
+          jsonEncode({'km': rows(metric), 'mi': rows(standard)}),
+        ),
+      ),
+    );
+  }
+
+  /// Stores the elevation profile, downsampled to [maxPoints].
+  Future<void> setElevation(
+    int id,
+    List<(double, double)> profile, {
+    int maxPoints = 120,
+  }) {
+    final step =
+        profile.length <= maxPoints ? 1 : (profile.length / maxPoints).ceil();
+    final points = [
+      for (var i = 0; i < profile.length; i += step)
+        [profile[i].$1.roundToDouble(), (profile[i].$2 * 10).round() / 10],
+    ];
+    return (_db.update(_table)..where((a) => a.id.equals(id))).write(
+      ActivitiesCompanion(elevationJson: Value(jsonEncode(points))),
+    );
+  }
+
+  Future<void> saveGear(StravaGear gear) =>
+      _db.into(_db.gearTable).insertOnConflictUpdate(
+            GearTableCompanion.insert(
+              id: gear.id,
+              name: gear.name,
+              distance: gear.distance,
+            ),
+          );
+
+  Future<Gear?> gearById(String id) => (_db.select(
+        _db.gearTable,
+      )..where((g) => g.id.equals(id)))
+          .getSingleOrNull();
+
+  Stream<Gear?> watchGear(String id) => (_db.select(
+        _db.gearTable,
+      )..where((g) => g.id.equals(id)))
           .watchSingleOrNull();
 
   Future<void> setCalories(int id, double calories) =>
@@ -87,6 +145,8 @@ class ActivityRepository {
               calories: Value(a.calories),
               prCount: Value(a.prCount),
               race: Value(a.isRace),
+              polyline: Value(a.polyline),
+              gearId: Value(a.gearId),
             ),
             onConflict: DoUpdate(
               (old) => ActivitiesCompanion(
@@ -102,6 +162,8 @@ class ActivityRepository {
                 elevationGain: Value(a.totalElevationGain),
                 prCount: Value(a.prCount),
                 race: Value(a.isRace),
+                polyline: Value(a.polyline),
+                gearId: Value(a.gearId),
                 // The list has no calories; keep any fetched from detail.
                 calories: a.calories == null
                     ? const Value.absent()
@@ -127,6 +189,7 @@ class ActivityRepository {
     double? calories,
     double? averageHeartrate,
     bool race = false,
+    String? gearId,
     int? id,
   }) async {
     final companion = ActivitiesCompanion(
@@ -143,6 +206,7 @@ class ActivityRepository {
       calories: Value(calories),
       averageHeartrate: Value(averageHeartrate),
       race: Value(race),
+      gearId: Value(gearId),
     );
     if (id == null) return await _db.into(_table).insert(companion);
     await (_db.update(_table)

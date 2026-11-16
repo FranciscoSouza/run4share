@@ -26,6 +26,7 @@ import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/stickers/extra_sticker_view.dart';
 import 'package:run4share/features/stickers/sticker_catalogue.dart';
+import 'package:run4share/features/stickers/sticker_facts.dart';
 import 'package:run4share/features/stickers/stickers_panel.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/pills.dart';
@@ -158,6 +159,9 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     }
 
     final data = activity == null ? null : stickerDataFor(activity, _format());
+    final facts = draft == null
+        ? null
+        : ref.watch(stickerFactsProvider(draft.activityId));
     if (draft != null && data != null) _ensureUsableTheme(draft, data);
 
     return Theme(
@@ -219,10 +223,9 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   data: data,
                                   placement: draft.sticker,
                                   style: draft.style,
-                                  extras: extraItems(
-                                    draft,
-                                    activity!.startLocal,
-                                  ),
+                                  extras: facts == null
+                                      ? const []
+                                      : extraItems(draft, facts),
                                   editable: true,
                                   selected: _selected,
                                   activeTool: _tool,
@@ -281,7 +284,10 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   onClose: () => setState(() => _panel = null),
                                 ),
                               _Panel.stickers => StickersPanel(
-                                  activity: activity,
+                                  facts: facts!,
+                                  canReadGear: ref.watch(canReadGearProvider),
+                                  onReconnect: () =>
+                                      context.push(AppRoutes.connectStrava),
                                   history:
                                       ref.watch(activitiesProvider).value ??
                                           const [],

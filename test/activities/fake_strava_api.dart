@@ -28,8 +28,27 @@ class FakeStravaApi extends StravaApi {
   @override
   Future<StravaActivity> activity(int id) async {
     detailCalls.add(id);
-    return all.firstWhere((a) => a.id == id).copyWith(calories: 321);
+    return all.firstWhere((a) => a.id == id).copyWith(
+      calories: 321,
+      splitsMetric: const [
+        StravaSplit(distance: 1000, movingTime: 300),
+        StravaSplit(distance: 1000, movingTime: 290),
+      ],
+    );
   }
+
+  final gearCalls = <String>[];
+
+  @override
+  Future<StravaGear> gear(String id) async {
+    gearCalls.add(id);
+    return StravaGear(id: id, name: 'Pegasus 41', distance: 412300);
+  }
+
+  @override
+  Future<List<(double, double)>> elevation(int id) async => [
+        for (var i = 0; i < 500; i++) (i * 10.0, 40.0 + i % 9),
+      ];
 }
 
 /// [count] runs, one a day, newest first, IDs from [firstId] upwards.
@@ -45,6 +64,8 @@ List<StravaActivity> runs(int count, {int firstId = 1, DateTime? newest}) {
         startDateLocal: start.subtract(Duration(days: i)),
         distance: 5000,
         movingTime: 1800,
+        polyline: '_p~iF~ps|U_ulLnnqC',
+        gearId: 'g1',
       ),
   ];
 }

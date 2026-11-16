@@ -4,6 +4,7 @@ import 'package:run4share/app/clock.dart';
 import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/strava/strava_api.dart';
+import 'package:run4share/features/strava/strava_config.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 
 @immutable
@@ -147,23 +148,53 @@ class StravaSync extends Notifier<SyncState> {
     }
   }
 
-  /// Adds what only Strava's detail has (calories) to [activity]. Best
-  /// effort: themes needing it stay unavailable if this fails.
+  /// Fills in what the list doesn't have, for the stickers: calories and
+  /// splits (detail), the elevation profile (streams) and the shoe
+  /// (gear, if the user allowed it). Each part is best effort; stickers
+  /// needing a missing part simply aren't offered.
   Future<void> fetchDetails(Activity activity) async {
-    if (activity.source != ActivitySource.strava ||
-        activity.calories != null ||
-        !await _connected()) {
-      return;
-    }
+    if (activity.source != ActivitySource.strava) return;
+    final session = await ref.read(stravaConnectionProvider.future);
+    if (session == null) return;
     final id = int.tryParse(activity.sourceId ?? '');
     if (id == null) return;
-    try {
-      final detail = await _api.activity(id);
-      if (detail.calories case final kcal? when kcal > 0) {
-        await _repo.setCalories(activity.id, kcal);
+
+    if (activity.calories == null || activity.splitsJson == null) {
+      try {
+        final detail = await _api.activity(id);
+        if (detail.calories case final kcal? when kcal > 0) {
+          await _repo.setCalories(activity.id, kcal);
+        }
+        if (detail.splitsMetric.isNotEmpty) {
+          await _repo.setSplits(
+            activity.id,
+            metric: detail.splitsMetric,
+            standard: detail.splitsStandard,
+          );
+        }
+      } on Object catch (error) {
+        debugPrint('Strava detail failed: $error');
       }
-    } on Object catch (error) {
-      debugPrint('Strava detail failed: $error');
+    }
+
+    if (activity.elevationJson == null && activity.polyline != null) {
+      try {
+        final profile = await _api.elevation(id);
+        if (profile.isNotEmpty) await _repo.setElevation(activity.id, profile);
+      } on Object catch (error) {
+        debugPrint('Strava elevation failed: $error');
+      }
+    }
+
+    final gearId = activity.gearId;
+    final canReadGear =
+        session.scopes?.contains(StravaConfig.gearScope) ?? false;
+    if (gearId != null && canReadGear && await _repo.gearById(gearId) == null) {
+      try {
+        await _repo.saveGear(await _api.gear(gearId));
+      } on Object catch (error) {
+        debugPrint('Strava gear failed: $error');
+      }
     }
   }
 

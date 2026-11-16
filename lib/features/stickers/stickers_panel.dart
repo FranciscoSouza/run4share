@@ -5,6 +5,7 @@ import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/stickers/activity_labels.dart';
+import 'package:run4share/features/stickers/data_sticker_views.dart';
 import 'package:run4share/features/stickers/extra_sticker_view.dart';
 import 'package:run4share/features/stickers/sticker_catalogue.dart';
 import 'package:run4share/l10n/l10n.dart';
@@ -13,7 +14,9 @@ import 'package:run4share/l10n/l10n.dart';
 /// start time, mood phrases, and stamps and seals.
 class StickersPanel extends StatefulWidget {
   const StickersPanel({
-    required this.activity,
+    required this.facts,
+    required this.canReadGear,
+    required this.onReconnect,
     required this.history,
     required this.isPro,
     required this.onAdd,
@@ -21,7 +24,14 @@ class StickersPanel extends StatefulWidget {
     super.key,
   });
 
-  final Activity activity;
+  /// The activity and what its data stickers draw from.
+  final StickerFacts facts;
+
+  /// Whether the Strava connection may read the shoe (gear).
+  final bool canReadGear;
+
+  /// Connect to Strava again, to grant the gear permission.
+  final VoidCallback onReconnect;
 
   /// Every stored activity, for run4share's own records.
   final List<Activity> history;
@@ -40,14 +50,15 @@ class _StickersPanelState extends State<StickersPanel> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    final labels = labelsFor(widget.activity, widget.history);
+    final activity = widget.facts.activity;
+    final labels = labelsFor(activity, widget.history);
     Widget tile(ExtraKind kind, String value, String name) => _Tile(
           label: name,
           onTap: () => widget.onAdd(kind, value),
           child: ExtraStickerView(
             kind: kind,
             value: value,
-            start: widget.activity.startLocal,
+            facts: widget.facts,
           ),
         );
 
@@ -101,6 +112,20 @@ class _StickersPanelState extends State<StickersPanel> {
                 tile(ExtraKind.time, '', l10n.stickersTime),
               ],
             ),
+            _Section(title: l10n.stickersYourData),
+            if (_dataTiles(context, tile) case final tiles
+                when tiles.isNotEmpty)
+              _Row(children: tiles)
+            else
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.page,
+                ),
+                child: Text(
+                  l10n.stickersNoData,
+                  style: theme.textTheme.bodySmall,
+                ),
+              ),
             _Section(title: l10n.stickersPhrases),
             SizedBox(
               height: 44,
@@ -136,6 +161,85 @@ class _StickersPanelState extends State<StickersPanel> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+extension on _StickersPanelState {
+  /// Shoe, route styles, elevation and splits: only what this activity
+  /// has. A Strava shoe without the gear permission offers to reconnect.
+  List<Widget> _dataTiles(
+    BuildContext context,
+    Widget Function(ExtraKind kind, String value, String name) tile,
+  ) {
+    final l10n = context.l10n;
+    final activity = widget.facts.activity;
+    final gearId = activity.gearId;
+    return [
+      if (widget.facts.gear != null)
+        tile(ExtraKind.shoe, '', widget.facts.gear!.name)
+      else if (gearId != null &&
+          !gearId.startsWith('manual:') &&
+          !widget.canReadGear)
+        _ReconnectTile(
+          label: l10n.stickersReconnect,
+          onTap: widget.onReconnect,
+        ),
+      if (activity.polyline != null)
+        for (final style in RouteStyle.values)
+          tile(ExtraKind.route, style.name, routeStyleName(l10n, style)),
+      if (activity.elevationJson != null)
+        tile(ExtraKind.elevation, '', l10n.chartElevation),
+      if (activity.splitsJson != null)
+        tile(ExtraKind.splits, '', l10n.chartSplits),
+    ];
+  }
+}
+
+String routeStyleName(AppLocalizations l10n, RouteStyle style) =>
+    switch (style) {
+      RouteStyle.neon => l10n.routeNeon,
+      RouteStyle.glow => l10n.routeGlow,
+      RouteStyle.dotted => l10n.routeDotted,
+    };
+
+class _ReconnectTile extends StatelessWidget {
+  const _ReconnectTile({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Material(
+      color: AppColors.neutral20,
+      borderRadius: BorderRadius.circular(AppRadius.thumb),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.thumb),
+        child: SizedBox(
+          width: 160,
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: Row(
+              children: [
+                const Icon(AppIcons.run, size: 22),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    maxLines: 3,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

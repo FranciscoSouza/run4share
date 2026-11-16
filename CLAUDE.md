@@ -201,8 +201,8 @@ What's left needs Francisco's accounts: see `docs/release-checklist.md`.
   on iPhone, Health Connect on Android (`lib/app/platform.dart`).
 - A test keeps `AppInfo.version` equal to pubspec's version.
 
-**Phase 8a status (Pro sticker pack, part 1):** code done, installed on
-Francisco's phone, waiting for his check. Not committed yet.
+**Phase 8a status (Pro sticker pack, part 1):** committed
+(`phase-8a-stickers`).
 - Editor "Stickers" tool (Pro): extra stickers as canvas layers above the
   theme sticker (`CanvasItem`s in `StoryCanvas`), each movable, sizable,
   rotatable, recolourable and removable; saved in the draft/creation
@@ -228,6 +228,21 @@ Label rules (Francisco, 15 Nov 2026):
   40/45/50/60, half 1:30/1:45/2:00, marathon 3/3:30/4.
 - Shoe sticker (8b) asks Strava's profile:read_all permission; manual
   activities type a shoe name and km.
+
+**Phase 8b status (Pro data stickers):** code done and tested; not yet
+installed (phone was disconnected) and not committed.
+- New extra-sticker kinds: shoe (name + lifetime distance), route (neon,
+  glow, dotted; drawn from the polyline, no map), elevation profile with
+  total climb, and splits bars (fastest highlighted, best pace).
+- Strava: scope now includes `profile:read_all` (gear); the session
+  stores granted scopes. Summary gives `map.summary_polyline` and
+  `gear_id`; the editor fetches detail splits (km and mi), the altitude
+  stream (downsampled to 120 points) and the gear, each best effort. A
+  Strava shoe without the permission shows "Reconnect Strava".
+- Schema 4: activities `polyline`, `gear_id`, `splits_json`,
+  `elevation_json`; new `gear` table. Manual activities can type a shoe
+  (stored as gear `manual:<name>`).
+- Demo data has routes, splits, elevation, a shoe and a bike.
 
 ## Decisions already taken (do not reopen without asking)
 

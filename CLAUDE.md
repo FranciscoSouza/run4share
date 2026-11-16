@@ -229,8 +229,9 @@ Label rules (Francisco, 15 Nov 2026):
 - Shoe sticker (8b) asks Strava's profile:read_all permission; manual
   activities type a shoe name and km.
 
-**Phase 8b status (Pro data stickers):** code done and tested; not yet
-installed (phone was disconnected) and not committed.
+**Phase 8b status (Pro data stickers):** committed
+(`phase-8b-data-stickers`), installed on Francisco's phone 16 Nov 2026,
+waiting for his check.
 - New extra-sticker kinds: shoe (name + lifetime distance), route (neon,
   glow, dotted; drawn from the polyline, no map), elevation profile with
   total climb, and splits bars (fastest highlighted, best pace).

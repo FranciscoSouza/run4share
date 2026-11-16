@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:dio/dio.dart';
 import 'package:run4share/app/clock.dart';
+import 'package:run4share/features/stickers/activity_streams.dart';
 import 'package:run4share/features/stickers/polyline.dart';
 import 'package:run4share/features/strava/strava_api.dart';
 import 'package:run4share/features/strava/strava_auth.dart';
@@ -91,20 +92,56 @@ class DemoStravaApi extends StravaApi {
     );
   }
 
+  /// Laboratory only: made-up streams shaped like Strava's, so the
+  /// charts can be tried without Strava access. Every fifth activity has
+  /// no heart-rate strap; activities without a route have no GPS streams.
   @override
-  Future<List<(double, double)>> elevation(int id) async {
+  Future<ActivityStreams> streams(int id) async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
-    final summary = demoActivities(_now()).firstWhere((a) => a.id == id);
-    const points = 200;
-    return [
-      for (var i = 0; i < points; i++)
-        (
-          summary.distance * i / (points - 1),
-          40 +
-              25 * math.sin(i / points * math.pi * 2 + id) +
-              8 * math.sin(i / points * math.pi * 9 + id * 2),
-        ),
-    ];
+    final a = demoActivities(_now()).firstWhere((a) => a.id == id);
+    final gps = a.polyline != null && a.distance > 0;
+    final hrm = id % 5 != 0;
+    final elapsed = a.movingTime + (a.movingTime > 1200 ? 60 : 0);
+    final pauseFrom = elapsed * 0.55;
+    final pauseTo = pauseFrom + elapsed - a.movingTime;
+    final average = a.movingTime > 0 ? a.distance / a.movingTime : 0.0;
+    final time = <int>[];
+    final distance = <double>[];
+    final altitude = <double>[];
+    final heart = <double>[];
+    final velocity = <double>[];
+    final moving = <bool>[];
+    var along = 0.0;
+    for (var t = 0; t <= elapsed; t += 5) {
+      final f = t / elapsed;
+      final paused = t >= pauseFrom && t < pauseTo;
+      final v = paused
+          ? 0.0
+          : average *
+              (1 + 0.08 * math.sin(f * math.pi * 6 + id) + 0.05 * f - 0.02);
+      along += v * 5;
+      time.add(t);
+      distance.add(along);
+      altitude.add(
+        40 +
+            25 * math.sin(f * math.pi * 2 + id) +
+            8 * math.sin(f * math.pi * 9 + id * 2),
+      );
+      velocity.add(v);
+      moving.add(!paused);
+      heart.add(
+        paused ? 118 : 128 + 34 * (1 - math.exp(-f * 6)) + 6 * math.sin(f * 40),
+      );
+    }
+    Map<String, Object> stream(List<Object> data) => {'data': data};
+    return ActivityStreams.fromStrava({
+      'time': stream(time),
+      if (gps) 'distance': stream(distance),
+      if (gps) 'altitude': stream(altitude),
+      if (gps) 'velocity_smooth': stream(velocity),
+      if (gps) 'moving': stream(moving),
+      if (hrm) 'heartrate': stream(heart),
+    });
   }
 
   @override

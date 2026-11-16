@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 
+import 'package:run4share/features/health/health_hub.dart';
+import 'package:run4share/features/stickers/activity_streams.dart';
 import 'package:run4share/features/stickers/polyline.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
@@ -70,4 +72,37 @@ List<StravaSplit> routeSplits(List<RoutePoint> route, double unit) {
     );
   }
   return splits;
+}
+
+/// A health-hub workout's time series: heart rate from its samples, and
+/// distance, altitude and speed from its timestamped route. Speed is the
+/// distance between consecutive points over the time between them; the
+/// chart step drops pauses and GPS jumps.
+ActivityStreams hubStreams(HubWorkout w) {
+  final start = w.startUtc;
+  double seconds(DateTime t) =>
+      t.toUtc().difference(start).inMilliseconds / 1000;
+  final distance = <(double, double)>[];
+  final altitude = <(double, double)>[];
+  final velocity = <(double, double)>[];
+  var along = 0.0;
+  for (var i = 0; i < w.route.length; i++) {
+    final p = w.route[i];
+    final t = seconds(p.time);
+    if (i > 0) {
+      final step = distanceBetween(w.route[i - 1], p);
+      along += step;
+      final dt = t - seconds(w.route[i - 1].time);
+      if (dt > 0) velocity.add((t, step / dt));
+    }
+    distance.add((t, along));
+    if (p.altitude case final a?) altitude.add((t, a));
+  }
+  return ActivityStreams.bucketed(
+    duration: w.movingTime.toDouble(),
+    distance: distance,
+    altitude: altitude,
+    velocity: velocity,
+    heartRate: [for (final (t, bpm) in w.heartRate) (seconds(t), bpm)],
+  );
 }

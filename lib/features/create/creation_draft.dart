@@ -167,6 +167,12 @@ enum ExtraKind {
 
   /// Per-km (or mile) splits (8b).
   splits,
+
+  /// Heart rate over time, from the activity's streams.
+  heartRate,
+
+  /// Pace over time, from the activity's streams.
+  pace,
 }
 
 /// One extra sticker on the image.

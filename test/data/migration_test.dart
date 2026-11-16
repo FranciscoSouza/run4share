@@ -46,6 +46,8 @@ void main() {
     expect(activities.single.polyline, isNull);
     expect(activities.single.gearId, isNull);
     expect(await db.select(db.gearTable).get(), isEmpty);
+    // Schema 5: chart streams, fetched later.
+    expect(activities.single.streamsJson, isNull);
     expect(await db.readPreference('units'), 'mi');
     expect(await db.select(db.creations).get(), isEmpty);
   });

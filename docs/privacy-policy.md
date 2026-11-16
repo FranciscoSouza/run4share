@@ -20,7 +20,9 @@ Everything below is stored only on your phone, inside the app.
 
 - **Activities.** Activities you add by hand, and activities copied from
   Strava if you connect it: name, sport, date and time, distance,
-  duration, pace or speed, heart rate, calories and elevation.
+  duration, pace or speed, heart rate, calories and elevation, and, for
+  the charts, how heart rate, pace and altitude changed during the
+  activity.
 - **Your images (My Creations).** The images you save or share, and the
   settings used to make them (which photo, how it was cropped, the
   sticker theme, position and colours), so you can edit them again.

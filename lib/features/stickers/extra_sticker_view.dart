@@ -9,6 +9,7 @@ import 'package:run4share/data/database.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/editor/story_canvas.dart';
 import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/stickers/chart_data.dart';
 import 'package:run4share/features/stickers/data_sticker_views.dart';
 import 'package:run4share/features/stickers/sticker_catalogue.dart';
 import 'package:run4share/l10n/l10n.dart';
@@ -20,15 +21,23 @@ const _shadow = [
 /// What the data stickers draw from: the activity, its shoe, the units.
 @immutable
 class StickerFacts {
-  const StickerFacts({
+  StickerFacts({
     required this.activity,
     this.units = Units.km,
     this.gear,
-  });
+  }) : charts = ActivityCharts.of(
+          streamsJson: activity.streamsJson,
+          elevationJson: activity.elevationJson,
+          units: units,
+        );
 
   final Activity activity;
   final Units units;
   final Gear? gear;
+
+  /// Heart rate, pace and elevation, worked out once from the cached
+  /// streams; widgets only draw them.
+  final ActivityCharts charts;
 
   StickerFacts withUnits(Units units) =>
       StickerFacts(activity: activity, units: units, gear: gear);
@@ -86,12 +95,20 @@ class ExtraStickerView extends StatelessWidget {
               ),
             null => const SizedBox.shrink(),
           },
-        ExtraKind.elevation => switch (activity.elevationJson) {
-            final json? => ElevationSticker(
-                json: json,
+        ExtraKind.elevation => switch (facts.charts.elevation) {
+            final chart? => ElevationSticker(
+                chart: chart,
                 colour: c.color,
-                climb: activity.elevationGain,
+                climb: elevationGainShown(chart, activity.elevationGain),
               ),
+            null => const SizedBox.shrink(),
+          },
+        ExtraKind.heartRate => switch (facts.charts.heartRate) {
+            final chart? => HeartRateSticker(chart: chart, colour: c.color),
+            null => const SizedBox.shrink(),
+          },
+        ExtraKind.pace => switch (facts.charts.pace) {
+            final chart? => PaceSticker(chart: chart, colour: c.color),
             null => const SizedBox.shrink(),
           },
         ExtraKind.splits => switch (activity.splitsJson) {

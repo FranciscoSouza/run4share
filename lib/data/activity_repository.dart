@@ -8,6 +8,7 @@ import 'package:run4share/data/database.dart';
 import 'package:run4share/features/activities/activity_format.dart';
 import 'package:run4share/features/health/health_hub.dart';
 import 'package:run4share/features/health/route_metrics.dart';
+import 'package:run4share/features/stickers/activity_streams.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
 /// Reads and writes activities, whatever their source.
@@ -71,6 +72,11 @@ class ActivityRepository {
       ActivitiesCompanion(elevationJson: Value(jsonEncode(points))),
     );
   }
+
+  Future<void> setStreams(int id, ActivityStreams streams) =>
+      (_db.update(_table)..where((a) => a.id.equals(id))).write(
+        ActivitiesCompanion(streamsJson: Value(streams.toJson())),
+      );
 
   Future<void> saveGear(StravaGear gear) =>
       _db.into(_db.gearTable).insertOnConflictUpdate(
@@ -146,6 +152,7 @@ class ActivityRepository {
           standard: routeSplits(w.route, 1609.344),
         );
       }
+      await setStreams(rowId, hubStreams(w));
     }
   }
 

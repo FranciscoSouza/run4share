@@ -60,6 +60,11 @@ class Activities extends Table {
   /// Elevation profile as JSON, downsampled: [[metres, altitude], ...].
   TextColumn get elevationJson => text().nullable()();
 
+  /// Time series for the charts (`ActivityStreams.toJson`): distance,
+  /// altitude, heart rate, speed and pauses. Null until fetched; an
+  /// activity without streams stores an empty set so it isn't re-asked.
+  TextColumn get streamsJson => text().nullable()();
+
   @override
   List<Set<Column>> get uniqueKeys => [
         {source, sourceId},
@@ -127,7 +132,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -147,6 +152,8 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(activities, activities.elevationJson);
             await m.createTable(gearTable);
           }
+          // 5: time series for the heart-rate, pace and elevation charts.
+          if (from < 5) await m.addColumn(activities, activities.streamsJson);
         },
       );
 

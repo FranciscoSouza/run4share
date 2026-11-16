@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:run4share/app/clock.dart';
 import 'package:run4share/features/lab/lab.dart';
+import 'package:run4share/features/stickers/activity_streams.dart';
 import 'package:run4share/features/strava/strava_auth.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/features/strava/strava_demo.dart';
@@ -49,23 +50,19 @@ class StravaApi {
     return StravaGear.fromJson(response.data!);
   }
 
-  /// The elevation profile: (metres along the route, altitude) pairs.
-  Future<List<(double, double)>> elevation(int id) async {
+  /// The activity's time series for the charts, in one request. Strava
+  /// leaves out streams it doesn't have (no heart-rate strap, no GPS), so
+  /// any of them may be missing; `time` is the axis of the others.
+  Future<ActivityStreams> streams(int id) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '$_base/activities/$id/streams',
-      queryParameters: {'keys': 'altitude,distance', 'key_by_type': true},
+      queryParameters: {
+        'keys': 'time,distance,altitude,heartrate,velocity_smooth,moving',
+        'key_by_type': true,
+      },
       options: Options(headers: {'Authorization': 'Bearer ${await _token()}'}),
     );
-    final data = response.data ?? const {};
-    List<double> series(String key) => [
-          for (final v in (data[key] as Map?)?['data'] as List? ?? const [])
-            (v as num).toDouble(),
-        ];
-    final distance = series('distance');
-    final altitude = series('altitude');
-    final n =
-        distance.length < altitude.length ? distance.length : altitude.length;
-    return [for (var i = 0; i < n; i++) (distance[i], altitude[i])];
+    return ActivityStreams.fromStrava(response.data ?? const {});
   }
 
   /// One activity in detail (adds calories).

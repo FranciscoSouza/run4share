@@ -10,8 +10,9 @@ import 'package:run4share/features/stickers/extra_sticker_view.dart';
 import 'package:run4share/features/stickers/sticker_catalogue.dart';
 import 'package:run4share/l10n/l10n.dart';
 
-/// The editor's Stickers picker (Pro): labels this activity earned, its
-/// start time, mood phrases, and stamps and seals.
+/// The editor's sticker pickers (Pro). Stickers: labels this activity
+/// earned, its start time, mood phrases, and stamps and seals. With
+/// [data], Your data instead: shoe, route, charts and splits.
 class StickersPanel extends StatefulWidget {
   const StickersPanel({
     required this.facts,
@@ -21,8 +22,12 @@ class StickersPanel extends StatefulWidget {
     required this.isPro,
     required this.onAdd,
     required this.onClose,
+    this.data = false,
     super.key,
   });
+
+  /// Shows the Your data stickers rather than the others.
+  final bool data;
 
   /// The activity and what its data stickers draw from.
   final StickerFacts facts;
@@ -82,7 +87,7 @@ class _StickersPanelState extends State<StickersPanel> {
               child: Row(
                 children: [
                   Text(
-                    l10n.editorStickers,
+                    widget.data ? l10n.stickersYourData : l10n.editorStickers,
                     style: theme.textTheme.headlineSmall,
                   ),
                   if (!widget.isPro) ...[
@@ -100,66 +105,70 @@ class _StickersPanelState extends State<StickersPanel> {
                 ],
               ),
             ),
-            _Section(title: l10n.stickersForActivity),
-            _Row(
-              children: [
-                for (final label in labels)
-                  tile(
-                    ExtraKind.label,
-                    labelValue(label),
-                    labelText(l10n, label),
+            if (widget.data) ...[
+              const SizedBox(height: AppSpacing.sm),
+              if (_dataTiles(context, tile) case final tiles
+                  when tiles.isNotEmpty)
+                _Row(children: tiles)
+              else
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.page,
                   ),
-                tile(ExtraKind.time, '', l10n.stickersTime),
-              ],
-            ),
-            _Section(title: l10n.stickersYourData),
-            if (_dataTiles(context, tile) case final tiles
-                when tiles.isNotEmpty)
-              _Row(children: tiles)
-            else
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.page,
+                  child: Text(
+                    l10n.stickersNoData,
+                    style: theme.textTheme.bodySmall,
+                  ),
                 ),
-                child: Text(
-                  l10n.stickersNoData,
-                  style: theme.textTheme.bodySmall,
-                ),
-              ),
-            _Section(title: l10n.stickersPhrases),
-            SizedBox(
-              height: 44,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.page,
-                ),
+            ] else ...[
+              _Section(title: l10n.stickersForActivity),
+              _Row(
                 children: [
-                  for (final mood in Mood.values)
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.sm),
-                      child: ChoiceChip(
-                        label: Text(moodName(l10n, mood)),
-                        selected: mood == _mood,
-                        onSelected: (_) => setState(() => _mood = mood),
-                      ),
+                  for (final label in labels)
+                    tile(
+                      ExtraKind.label,
+                      labelValue(label),
+                      labelText(l10n, label),
                     ),
+                  tile(ExtraKind.time, '', l10n.stickersTime),
                 ],
               ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            for (var i = 0; i < phrasesPerMood; i++)
-              _PhraseRow(
-                text: phraseText(l10n, phraseId(_mood, i)) ?? '',
-                onTap: () => widget.onAdd(ExtraKind.phrase, phraseId(_mood, i)),
+              _Section(title: l10n.stickersPhrases),
+              SizedBox(
+                height: 44,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.page,
+                  ),
+                  children: [
+                    for (final mood in Mood.values)
+                      Padding(
+                        padding: const EdgeInsets.only(right: AppSpacing.sm),
+                        child: ChoiceChip(
+                          label: Text(moodName(l10n, mood)),
+                          selected: mood == _mood,
+                          onSelected: (_) => setState(() => _mood = mood),
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            _Section(title: l10n.stickersStamps),
-            _Row(
-              children: [
-                for (final stamp in StampKind.values)
-                  tile(ExtraKind.stamp, stamp.name, stampText(l10n, stamp)),
-              ],
-            ),
+              const SizedBox(height: AppSpacing.sm),
+              for (var i = 0; i < phrasesPerMood; i++)
+                _PhraseRow(
+                  text: phraseText(l10n, phraseId(_mood, i)) ?? '',
+                  onTap: () =>
+                      widget.onAdd(ExtraKind.phrase, phraseId(_mood, i)),
+                ),
+              _Section(title: l10n.stickersStamps),
+              _Row(
+                children: [
+                  for (final stamp in StampKind.values)
+                    tile(ExtraKind.stamp, stamp.name, stampText(l10n, stamp)),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -168,7 +177,7 @@ class _StickersPanelState extends State<StickersPanel> {
 }
 
 extension on _StickersPanelState {
-  /// Shoe, route styles, elevation and splits: only what this activity
+  /// Shoe, route styles, charts and splits: only what this activity
   /// has. A Strava shoe without the gear permission offers to reconnect.
   List<Widget> _dataTiles(
     BuildContext context,
@@ -190,7 +199,11 @@ extension on _StickersPanelState {
       if (activity.polyline != null)
         for (final style in RouteStyle.values)
           tile(ExtraKind.route, style.name, routeStyleName(l10n, style)),
-      if (activity.elevationJson != null)
+      if (widget.facts.charts.heartRate != null)
+        tile(ExtraKind.heartRate, '', l10n.chartHeartRate),
+      if (widget.facts.charts.pace != null)
+        tile(ExtraKind.pace, '', l10n.chartPace),
+      if (widget.facts.charts.elevation != null)
         tile(ExtraKind.elevation, '', l10n.chartElevation),
       if (activity.splitsJson != null)
         tile(ExtraKind.splits, '', l10n.chartSplits),

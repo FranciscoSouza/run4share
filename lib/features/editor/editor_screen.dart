@@ -95,7 +95,9 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
         _selected = id;
         // Selecting hides the pickers; leaving a sticker closes its panels.
         if (id != null &&
-            (_panel == _Panel.themes || _panel == _Panel.stickers)) {
+            (_panel == _Panel.themes ||
+                _panel == _Panel.stickers ||
+                _panel == _Panel.data)) {
           _panel = null;
         }
         if (id == null && _tool != null) _panel = null;
@@ -295,6 +297,17 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                   onAdd: _addExtra,
                                   onClose: () => setState(() => _panel = null),
                                 ),
+                              _Panel.data => StickersPanel(
+                                  data: true,
+                                  facts: facts!,
+                                  canReadGear: ref.watch(canReadGearProvider),
+                                  onReconnect: () =>
+                                      context.push(AppRoutes.connectStrava),
+                                  history: const [],
+                                  isPro: ref.watch(isProProvider),
+                                  onAdd: _addExtra,
+                                  onClose: () => setState(() => _panel = null),
+                                ),
                               _Panel.textColour => TextColourPanel(
                                   selected: _selectedColour(draft),
                                   onChoose: (colour) {
@@ -326,6 +339,10 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                                     _panel = _Panel.stickers;
                                     _selected = null;
                                   }),
+                                  onData: () => setState(() {
+                                    _panel = _Panel.data;
+                                    _selected = null;
+                                  }),
                                 ),
                             },
                           ),
@@ -352,7 +369,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
 }
 
 /// What the bottom of the editor shows; null is the toolbar.
-enum _Panel { themes, stickers, textColour, background }
+enum _Panel { themes, stickers, data, textColour, background }
 
 class _BottomPanel extends StatelessWidget {
   const _BottomPanel({required this.child});
@@ -382,11 +399,13 @@ class _Toolbar extends StatelessWidget {
     required this.isPro,
     required this.onThemes,
     required this.onStickers,
+    required this.onData,
   });
 
   final bool isPro;
   final VoidCallback onThemes;
   final VoidCallback onStickers;
+  final VoidCallback onData;
 
   @override
   Widget build(BuildContext context) {
@@ -407,6 +426,13 @@ class _Toolbar extends StatelessWidget {
             label: l10n.editorStickers,
             pro: !isPro,
             onTap: onStickers,
+          ),
+          const SizedBox(width: AppSpacing.xl),
+          _Tool(
+            icon: AppIcons.chart,
+            label: l10n.stickersYourData,
+            pro: !isPro,
+            onTap: onData,
           ),
         ],
       ),

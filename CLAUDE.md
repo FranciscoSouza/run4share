@@ -25,7 +25,7 @@ or share to Instagram.
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
-charts (planned).
+charts.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -281,21 +281,33 @@ build). Not committed yet.
 - Device signing (Team ID, HealthKit capability on the App ID) waits for
   Francisco's Apple Developer membership.
 
-**Next after phase 10: real activity charts** (task from Francisco, 16 Nov
-2026; Stage 1 investigation reported, no code yet). Decisions:
-- New Pro extra stickers: heart rate (over time), pace (over time,
-  min/km or min/mi, inverted axis, gaps at pauses via the `moving`
-  stream, implausible velocities dropped, never interpolated across
-  pauses), and the existing elevation (over distance) gaining m/ft.
-- Data path: one Strava streams request (time, distance, altitude,
-  heartrate, velocity_smooth, moving) → typed series model with the
-  maths (no API or maths in widgets) → cached per activity (schema 5,
-  downsampled ~200 points by bucket averaging) → painters.
-- Same model fed from Health Connect (heart-rate samples, timestamped
-  route). Charts not offered when their stream is missing; no synthetic
-  readings except Laboratory demo mode (test builds only).
-- `editor_screen.dart` should need no changes (it already triggers
-  `fetchDetails` and passes `stickerFactsProvider`).
+**Phase 11 status (real activity charts):** committed
+(`phase-11-charts`); Francisco approved it on his phone, 16 Nov 2026.
+- New Pro extra stickers: heart rate (over time; avg on top, max and
+  duration under) and pace (over time, min/km or min/mi, faster drawn
+  higher, avg and best). Elevation (over distance) now shows m or ft.
+- Data path: `StravaApi.streams` (one request: time, distance,
+  altitude, heartrate, velocity_smooth, moving) → `ActivityStreams`
+  (`lib/features/stickers/activity_streams.dart`, 200 time slices,
+  bucket means) → cached as `activities.streams_json` (schema 5; an
+  empty answer is cached so it isn't re-asked; failures retry) →
+  `chart_data.dart` (pace = metres per unit / speed; paused slices,
+  speeds under 0.5 m/s and spikes beyond 2.5x the median are gaps;
+  heart rate outside 30-240 bpm dropped; fewer than 10 readings → chart
+  not offered) → `ActivityCharts` built in `StickerFacts` → one line
+  painter. `editor_screen.dart` unchanged.
+- Holes up to 30 s between real readings are bridged (sparse sources);
+  longer ones and pauses stay gaps.
+- Health Connect / Apple Health: `hubStreams` builds the same streams
+  from heart-rate samples and the timestamped route at sync time.
+- Older activities keep their elevation sticker from `elevation_json`;
+  `StravaApi.elevation` was replaced by `streams`.
+- Editor toolbar (Francisco, 16 Nov 2026): Theme, Stickers and Your
+  data (chart icon, Pro). Your data (shoe, route, charts, splits) moved
+  out of the Stickers panel into its own tool (`StickersPanel(data:
+  true)`); `editor_screen.dart` changed only for that tool.
+- Laboratory demo streams (test builds only): a pause in longer runs,
+  every 5th activity without heart rate, no GPS streams without a route.
 
 ## Decisions already taken (do not reopen without asking)
 

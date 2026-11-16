@@ -9,6 +9,7 @@ import 'package:run4share/data/database.dart';
 import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/editor/sticker_view.dart';
 import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/stickers/activity_streams.dart';
 import 'package:run4share/features/stickers/data_sticker_views.dart';
 import 'package:run4share/features/stickers/extra_sticker_view.dart';
 import 'package:run4share/features/stickers/polyline.dart';
@@ -51,6 +52,18 @@ final _activity = Activity(
   elevationJson: jsonEncode([
     for (var i = 0; i < 50; i++) [i * 200, 40 + (i % 7) * 3],
   ]),
+  // 2820 s at 280 s/km, heart rate rising 140 to 168.
+  streamsJson: ActivityStreams.fromStrava({
+    'time': {
+      'data': [for (var t = 0; t <= 2820; t++) t],
+    },
+    'velocity_smooth': {
+      'data': [for (var t = 0; t <= 2820; t++) 1000 / 280],
+    },
+    'heartrate': {
+      'data': [for (var t = 0; t <= 2820; t++) 140 + t ~/ 101],
+    },
+  }).toJson(),
 );
 
 const _gear = Gear(id: 'g1', name: 'Pegasus 41', distance: 412300);
@@ -72,6 +85,8 @@ final everySticker = <(ExtraKind, String)>[
   for (final style in RouteStyle.values) (ExtraKind.route, style.name),
   (ExtraKind.elevation, ''),
   (ExtraKind.splits, ''),
+  (ExtraKind.heartRate, ''),
+  (ExtraKind.pace, ''),
 ];
 
 void main() {
@@ -194,7 +209,18 @@ void main() {
     expect(find.text('Best 4:30 /km'), findsOneWidget);
 
     await show(ExtraKind.elevation);
-    expect(find.textContaining('+'), findsOneWidget);
+    expect(find.text('+126 m'), findsOneWidget, reason: '7 ramps of 18 m');
+    await show(ExtraKind.elevation, facts: _facts.withUnits(Units.mi));
+    expect(find.textContaining(' ft'), findsOneWidget);
+
+    await show(ExtraKind.heartRate);
+    expect(find.text('Max 167 bpm'), findsOneWidget);
+    expect(find.text('47:00'), findsOneWidget, reason: 'duration');
+
+    await show(ExtraKind.pace);
+    expect(find.text('Avg 4:40 /km'), findsOneWidget);
+    await show(ExtraKind.pace, facts: _facts.withUnits(Units.mi));
+    expect(find.text('Avg 7:31 /mi'), findsOneWidget);
 
     // Without the data, the sticker draws nothing rather than failing.
     final bare = StickerFacts(

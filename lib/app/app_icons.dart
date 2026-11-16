@@ -20,6 +20,7 @@ abstract final class AppIcons {
   static const IconData copy = LucideIcons.copy;
   static const IconData close = LucideIcons.x;
   static const IconData sticker = LucideIcons.sticker;
+  static const IconData chart = LucideIcons.chartSpline;
   static const IconData trophy = LucideIcons.trophy;
   static const IconData route = LucideIcons.route;
   static const IconData flag = LucideIcons.flag;

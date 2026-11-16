@@ -132,6 +132,12 @@ class $ActivitiesTable extends Activities
   late final GeneratedColumn<String> elevationJson = GeneratedColumn<String>(
       'elevation_json', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _streamsJsonMeta =
+      const VerificationMeta('streamsJson');
+  @override
+  late final GeneratedColumn<String> streamsJson = GeneratedColumn<String>(
+      'streams_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -153,7 +159,8 @@ class $ActivitiesTable extends Activities
         polyline,
         gearId,
         splitsJson,
-        elevationJson
+        elevationJson,
+        streamsJson
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -264,6 +271,12 @@ class $ActivitiesTable extends Activities
           elevationJson.isAcceptableOrUnknown(
               data['elevation_json']!, _elevationJsonMeta));
     }
+    if (data.containsKey('streams_json')) {
+      context.handle(
+          _streamsJsonMeta,
+          streamsJson.isAcceptableOrUnknown(
+              data['streams_json']!, _streamsJsonMeta));
+    }
     return context;
   }
 
@@ -318,6 +331,8 @@ class $ActivitiesTable extends Activities
           .read(DriftSqlType.string, data['${effectivePrefix}splits_json']),
       elevationJson: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}elevation_json']),
+      streamsJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}streams_json']),
     );
   }
 
@@ -372,7 +387,7 @@ class Activity extends DataClass implements Insertable<Activity> {
   /// The route, as an encoded polyline (Strava only).
   final String? polyline;
 
-  /// The shoe: a Strava gear ID, or "manual:<name>" for typed ones.
+  /// The shoe: a Strava gear ID, or `manual:<name>` for typed ones.
   final String? gearId;
 
   /// Per-kilometre splits as JSON: [[metres, seconds, climb], ...].
@@ -380,6 +395,11 @@ class Activity extends DataClass implements Insertable<Activity> {
 
   /// Elevation profile as JSON, downsampled: [[metres, altitude], ...].
   final String? elevationJson;
+
+  /// Time series for the charts (`ActivityStreams.toJson`): distance,
+  /// altitude, heart rate, speed and pauses. Null until fetched; an
+  /// activity without streams stores an empty set so it isn't re-asked.
+  final String? streamsJson;
   const Activity(
       {required this.id,
       required this.source,
@@ -400,7 +420,8 @@ class Activity extends DataClass implements Insertable<Activity> {
       this.polyline,
       this.gearId,
       this.splitsJson,
-      this.elevationJson});
+      this.elevationJson,
+      this.streamsJson});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -453,6 +474,9 @@ class Activity extends DataClass implements Insertable<Activity> {
     if (!nullToAbsent || elevationJson != null) {
       map['elevation_json'] = Variable<String>(elevationJson);
     }
+    if (!nullToAbsent || streamsJson != null) {
+      map['streams_json'] = Variable<String>(streamsJson);
+    }
     return map;
   }
 
@@ -503,6 +527,9 @@ class Activity extends DataClass implements Insertable<Activity> {
       elevationJson: elevationJson == null && nullToAbsent
           ? const Value.absent()
           : Value(elevationJson),
+      streamsJson: streamsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(streamsJson),
     );
   }
 
@@ -531,6 +558,7 @@ class Activity extends DataClass implements Insertable<Activity> {
       gearId: serializer.fromJson<String?>(json['gearId']),
       splitsJson: serializer.fromJson<String?>(json['splitsJson']),
       elevationJson: serializer.fromJson<String?>(json['elevationJson']),
+      streamsJson: serializer.fromJson<String?>(json['streamsJson']),
     );
   }
   @override
@@ -558,6 +586,7 @@ class Activity extends DataClass implements Insertable<Activity> {
       'gearId': serializer.toJson<String?>(gearId),
       'splitsJson': serializer.toJson<String?>(splitsJson),
       'elevationJson': serializer.toJson<String?>(elevationJson),
+      'streamsJson': serializer.toJson<String?>(streamsJson),
     };
   }
 
@@ -581,7 +610,8 @@ class Activity extends DataClass implements Insertable<Activity> {
           Value<String?> polyline = const Value.absent(),
           Value<String?> gearId = const Value.absent(),
           Value<String?> splitsJson = const Value.absent(),
-          Value<String?> elevationJson = const Value.absent()}) =>
+          Value<String?> elevationJson = const Value.absent(),
+          Value<String?> streamsJson = const Value.absent()}) =>
       Activity(
         id: id ?? this.id,
         source: source ?? this.source,
@@ -608,6 +638,7 @@ class Activity extends DataClass implements Insertable<Activity> {
         splitsJson: splitsJson.present ? splitsJson.value : this.splitsJson,
         elevationJson:
             elevationJson.present ? elevationJson.value : this.elevationJson,
+        streamsJson: streamsJson.present ? streamsJson.value : this.streamsJson,
       );
   Activity copyWithCompanion(ActivitiesCompanion data) {
     return Activity(
@@ -643,6 +674,8 @@ class Activity extends DataClass implements Insertable<Activity> {
       elevationJson: data.elevationJson.present
           ? data.elevationJson.value
           : this.elevationJson,
+      streamsJson:
+          data.streamsJson.present ? data.streamsJson.value : this.streamsJson,
     );
   }
 
@@ -668,33 +701,36 @@ class Activity extends DataClass implements Insertable<Activity> {
           ..write('polyline: $polyline, ')
           ..write('gearId: $gearId, ')
           ..write('splitsJson: $splitsJson, ')
-          ..write('elevationJson: $elevationJson')
+          ..write('elevationJson: $elevationJson, ')
+          ..write('streamsJson: $streamsJson')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      source,
-      sourceId,
-      name,
-      sportType,
-      startLocal,
-      startUtc,
-      distance,
-      movingTime,
-      elapsedTime,
-      averageSpeed,
-      averageHeartrate,
-      calories,
-      elevationGain,
-      prCount,
-      race,
-      polyline,
-      gearId,
-      splitsJson,
-      elevationJson);
+  int get hashCode => Object.hashAll([
+        id,
+        source,
+        sourceId,
+        name,
+        sportType,
+        startLocal,
+        startUtc,
+        distance,
+        movingTime,
+        elapsedTime,
+        averageSpeed,
+        averageHeartrate,
+        calories,
+        elevationGain,
+        prCount,
+        race,
+        polyline,
+        gearId,
+        splitsJson,
+        elevationJson,
+        streamsJson
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -718,7 +754,8 @@ class Activity extends DataClass implements Insertable<Activity> {
           other.polyline == this.polyline &&
           other.gearId == this.gearId &&
           other.splitsJson == this.splitsJson &&
-          other.elevationJson == this.elevationJson);
+          other.elevationJson == this.elevationJson &&
+          other.streamsJson == this.streamsJson);
 }
 
 class ActivitiesCompanion extends UpdateCompanion<Activity> {
@@ -742,6 +779,7 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
   final Value<String?> gearId;
   final Value<String?> splitsJson;
   final Value<String?> elevationJson;
+  final Value<String?> streamsJson;
   const ActivitiesCompanion({
     this.id = const Value.absent(),
     this.source = const Value.absent(),
@@ -763,6 +801,7 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     this.gearId = const Value.absent(),
     this.splitsJson = const Value.absent(),
     this.elevationJson = const Value.absent(),
+    this.streamsJson = const Value.absent(),
   });
   ActivitiesCompanion.insert({
     this.id = const Value.absent(),
@@ -785,6 +824,7 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     this.gearId = const Value.absent(),
     this.splitsJson = const Value.absent(),
     this.elevationJson = const Value.absent(),
+    this.streamsJson = const Value.absent(),
   })  : source = Value(source),
         name = Value(name),
         sportType = Value(sportType),
@@ -811,6 +851,7 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     Expression<String>? gearId,
     Expression<String>? splitsJson,
     Expression<String>? elevationJson,
+    Expression<String>? streamsJson,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -833,6 +874,7 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       if (gearId != null) 'gear_id': gearId,
       if (splitsJson != null) 'splits_json': splitsJson,
       if (elevationJson != null) 'elevation_json': elevationJson,
+      if (streamsJson != null) 'streams_json': streamsJson,
     });
   }
 
@@ -856,7 +898,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       Value<String?>? polyline,
       Value<String?>? gearId,
       Value<String?>? splitsJson,
-      Value<String?>? elevationJson}) {
+      Value<String?>? elevationJson,
+      Value<String?>? streamsJson}) {
     return ActivitiesCompanion(
       id: id ?? this.id,
       source: source ?? this.source,
@@ -878,6 +921,7 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       gearId: gearId ?? this.gearId,
       splitsJson: splitsJson ?? this.splitsJson,
       elevationJson: elevationJson ?? this.elevationJson,
+      streamsJson: streamsJson ?? this.streamsJson,
     );
   }
 
@@ -945,6 +989,9 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     if (elevationJson.present) {
       map['elevation_json'] = Variable<String>(elevationJson.value);
     }
+    if (streamsJson.present) {
+      map['streams_json'] = Variable<String>(streamsJson.value);
+    }
     return map;
   }
 
@@ -970,7 +1017,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
           ..write('polyline: $polyline, ')
           ..write('gearId: $gearId, ')
           ..write('splitsJson: $splitsJson, ')
-          ..write('elevationJson: $elevationJson')
+          ..write('elevationJson: $elevationJson, ')
+          ..write('streamsJson: $streamsJson')
           ..write(')'))
         .toString();
   }
@@ -1948,6 +1996,7 @@ typedef $$ActivitiesTableCreateCompanionBuilder = ActivitiesCompanion Function({
   Value<String?> gearId,
   Value<String?> splitsJson,
   Value<String?> elevationJson,
+  Value<String?> streamsJson,
 });
 typedef $$ActivitiesTableUpdateCompanionBuilder = ActivitiesCompanion Function({
   Value<int> id,
@@ -1970,6 +2019,7 @@ typedef $$ActivitiesTableUpdateCompanionBuilder = ActivitiesCompanion Function({
   Value<String?> gearId,
   Value<String?> splitsJson,
   Value<String?> elevationJson,
+  Value<String?> streamsJson,
 });
 
 class $$ActivitiesTableFilterComposer
@@ -2043,6 +2093,9 @@ class $$ActivitiesTableFilterComposer
 
   ColumnFilters<String> get elevationJson => $composableBuilder(
       column: $table.elevationJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get streamsJson => $composableBuilder(
+      column: $table.streamsJson, builder: (column) => ColumnFilters(column));
 }
 
 class $$ActivitiesTableOrderingComposer
@@ -2117,6 +2170,9 @@ class $$ActivitiesTableOrderingComposer
   ColumnOrderings<String> get elevationJson => $composableBuilder(
       column: $table.elevationJson,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get streamsJson => $composableBuilder(
+      column: $table.streamsJson, builder: (column) => ColumnOrderings(column));
 }
 
 class $$ActivitiesTableAnnotationComposer
@@ -2187,6 +2243,9 @@ class $$ActivitiesTableAnnotationComposer
 
   GeneratedColumn<String> get elevationJson => $composableBuilder(
       column: $table.elevationJson, builder: (column) => column);
+
+  GeneratedColumn<String> get streamsJson => $composableBuilder(
+      column: $table.streamsJson, builder: (column) => column);
 }
 
 class $$ActivitiesTableTableManager extends RootTableManager<
@@ -2232,6 +2291,7 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             Value<String?> gearId = const Value.absent(),
             Value<String?> splitsJson = const Value.absent(),
             Value<String?> elevationJson = const Value.absent(),
+            Value<String?> streamsJson = const Value.absent(),
           }) =>
               ActivitiesCompanion(
             id: id,
@@ -2254,6 +2314,7 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             gearId: gearId,
             splitsJson: splitsJson,
             elevationJson: elevationJson,
+            streamsJson: streamsJson,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -2276,6 +2337,7 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             Value<String?> gearId = const Value.absent(),
             Value<String?> splitsJson = const Value.absent(),
             Value<String?> elevationJson = const Value.absent(),
+            Value<String?> streamsJson = const Value.absent(),
           }) =>
               ActivitiesCompanion.insert(
             id: id,
@@ -2298,6 +2360,7 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             gearId: gearId,
             splitsJson: splitsJson,
             elevationJson: elevationJson,
+            streamsJson: streamsJson,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (

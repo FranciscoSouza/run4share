@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:run4share/features/stickers/activity_streams.dart';
 import 'package:run4share/features/strava/strava_api.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
@@ -45,10 +46,35 @@ class FakeStravaApi extends StravaApi {
     return StravaGear(id: id, name: 'Pegasus 41', distance: 412300);
   }
 
+  final streamsCalls = <int>[];
+
+  /// Strava's answer for every activity: 500 samples, one every 4 s.
+  Map<String, dynamic> streamsJson = {
+    'time': {
+      'data': [for (var i = 0; i < 500; i++) i * 4],
+    },
+    'distance': {
+      'data': [for (var i = 0; i < 500; i++) i * 10.0],
+    },
+    'altitude': {
+      'data': [for (var i = 0; i < 500; i++) 40.0 + i % 9],
+    },
+    'heartrate': {
+      'data': [for (var i = 0; i < 500; i++) 140 + i % 20],
+    },
+    'velocity_smooth': {
+      'data': [for (var i = 0; i < 500; i++) 2.5],
+    },
+    'moving': {
+      'data': [for (var i = 0; i < 500; i++) true],
+    },
+  };
+
   @override
-  Future<List<(double, double)>> elevation(int id) async => [
-        for (var i = 0; i < 500; i++) (i * 10.0, 40.0 + i % 9),
-      ];
+  Future<ActivityStreams> streams(int id) async {
+    streamsCalls.add(id);
+    return ActivityStreams.fromStrava(streamsJson);
+  }
 }
 
 /// [count] runs, one a day, newest first, IDs from [firstId] upwards.

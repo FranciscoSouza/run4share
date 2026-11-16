@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:run4share/app/clock.dart';
 import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/activities/strava_sync.dart';
+import 'package:run4share/features/stickers/activity_streams.dart';
 import 'package:run4share/features/strava/strava_api.dart';
 import 'package:run4share/features/strava/strava_config.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
@@ -175,7 +174,7 @@ void main() {
     expect((await repo().byId(first.id))?.calories, 321);
   });
 
-  test('details fill in splits, elevation and the shoe', () async {
+  test('details fill in splits, chart streams and the shoe', () async {
     container = ProviderContainer.test(
       overrides: [
         ...baseOverrides(
@@ -196,13 +195,28 @@ void main() {
     await sync().fetchDetails(first);
     final updated = (await repo().byId(first.id))!;
     expect(updated.splitsJson, contains('"km"'));
-    final elevation = jsonDecode(updated.elevationJson!) as List;
-    expect(elevation.length, lessThanOrEqualTo(120), reason: 'downsampled');
+    final streams = ActivityStreams.fromJson(updated.streamsJson)!;
+    expect(streams.duration, 1996);
+    expect(streams.heartRate.length, ActivityStreams.defaultBuckets);
+    expect(streams.velocity, everyElement(2.5));
     expect((await repo().gearById('g1'))?.name, 'Pegasus 41');
 
-    // Known gear is not fetched again.
+    // Known gear and cached streams are not fetched again.
     await sync().fetchDetails(updated);
     expect(api.gearCalls, ['g1']);
+    expect(api.streamsCalls, [int.parse(first.sourceId!)]);
+  });
+
+  test('no streams on Strava: stored as empty, not asked again', () async {
+    api.streamsJson = {};
+    await sync().sync();
+    final first = (await repo().watchAll().first).first;
+    await sync().fetchDetails(first);
+    final updated = (await repo().byId(first.id))!;
+    expect(updated.streamsJson, isNotNull);
+    expect(ActivityStreams.fromJson(updated.streamsJson)!.isEmpty, isTrue);
+    await sync().fetchDetails(updated);
+    expect(api.streamsCalls, hasLength(1));
   });
 
   test('without the gear permission the shoe is not fetched', () async {

@@ -8,6 +8,7 @@ import 'package:run4share/app/material.dart';
 import 'package:run4share/app/theme/app_text.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/settings/units.dart';
+import 'package:run4share/features/stickers/chart_data.dart';
 import 'package:run4share/features/stickers/polyline.dart';
 import 'package:run4share/l10n/l10n.dart';
 
@@ -206,109 +207,244 @@ class _RoutePainter extends CustomPainter {
       oldDelegate.colour != colour;
 }
 
-/// Elevation profile with the total climb.
-class ElevationSticker extends StatelessWidget {
-  const ElevationSticker({
-    required this.json,
+/// The header row every chart shares: name on the left, the headline
+/// figure next to it.
+class _ChartHeader extends StatelessWidget {
+  const _ChartHeader({
+    required this.name,
+    required this.value,
     required this.colour,
-    this.climb,
-    super.key,
   });
 
-  /// [[metres, altitude], ...] as stored.
-  final String json;
+  final String name;
+  final String value;
   final Color colour;
 
-  /// Metres climbed (Strava's total_elevation_gain), if known.
-  final double? climb;
+  @override
+  Widget build(BuildContext context) => Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(name.toUpperCase(), style: _label(30, colour)),
+          const SizedBox(width: 24),
+          Text(value, style: _value(64, colour)),
+        ],
+      );
+}
+
+/// Small figures under a chart: one at each end.
+class _ChartFooter extends StatelessWidget {
+  const _ChartFooter({
+    required this.left,
+    required this.right,
+    required this.colour,
+  });
+
+  final String left;
+  final String right;
+  final Color colour;
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final points = [
-      for (final p in jsonDecode(json) as List)
-        Offset(
-          ((p as List)[0] as num).toDouble(),
-          (p[1] as num).toDouble(),
+  Widget build(BuildContext context) => SizedBox(
+        width: _chartSize.width,
+        child: Row(
+          children: [
+            Text(left, style: _label(26, colour.withValues(alpha: 0.85))),
+            const Spacer(),
+            Text(right, style: _label(26, colour.withValues(alpha: 0.85))),
+          ],
         ),
-    ];
-    if (points.length < 2) return const SizedBox.shrink();
-    var gain = 0.0;
-    for (var i = 1; i < points.length; i++) {
-      gain += math.max(0, points[i].dy - points[i - 1].dy);
-    }
-    final shown = (climb ?? gain).round();
-    return Column(
+      );
+}
+
+const _chartSize = Size(860, 260);
+
+Widget _chart({
+  required Widget header,
+  required ChartSeries series,
+  required Color colour,
+  required double minSpan,
+  Widget? footer,
+  bool inverted = false,
+}) =>
+    Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.chartElevation.toUpperCase(), style: _label(30, colour)),
-            const SizedBox(width: 24),
-            Text('+$shown m', style: _value(64, colour)),
-          ],
-        ),
+        header,
         const SizedBox(height: 16),
         CustomPaint(
-          size: const Size(860, 260),
-          painter: _ElevationPainter(points, colour),
+          size: _chartSize,
+          painter: _LinePainter(
+            series,
+            colour,
+            minSpan: minSpan,
+            inverted: inverted,
+          ),
         ),
+        if (footer != null) ...[const SizedBox(height: 10), footer],
       ],
+    );
+
+/// Elevation over distance, with the total climb (m or ft).
+class ElevationSticker extends StatelessWidget {
+  const ElevationSticker({
+    required this.chart,
+    required this.colour,
+    required this.climb,
+    super.key,
+  });
+
+  final ElevationChart chart;
+  final Color colour;
+
+  /// In the chart's unit (m or ft).
+  final double climb;
+
+  @override
+  Widget build(BuildContext context) {
+    final unit = chart.units == Units.km ? 'm' : 'ft';
+    return _chart(
+      header: _ChartHeader(
+        name: context.l10n.chartElevation,
+        value: '+${climb.round()} $unit',
+        colour: colour,
+      ),
+      series: chart.series,
+      colour: colour,
+      // Flat routes stay flat-looking: at least 30 m (100 ft) of range.
+      minSpan: chart.units == Units.km ? 30 : 100,
     );
   }
 }
 
-class _ElevationPainter extends CustomPainter {
-  const _ElevationPainter(this.points, this.colour);
+/// Heart rate over the activity's time: average on top, the peak and
+/// the duration underneath.
+class HeartRateSticker extends StatelessWidget {
+  const HeartRateSticker({
+    required this.chart,
+    required this.colour,
+    super.key,
+  });
 
-  final List<Offset> points;
+  final HeartRateChart chart;
   final Color colour;
 
   @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return _chart(
+      header: _ChartHeader(
+        name: l10n.chartHeartRate,
+        value: l10n.chartAverage('${chart.average.round()} bpm'),
+        colour: colour,
+      ),
+      series: chart.series,
+      colour: colour,
+      minSpan: 20,
+      footer: _ChartFooter(
+        left: formatClock(chart.duration),
+        right: l10n.chartMax('${chart.max.round()} bpm'),
+        colour: colour,
+      ),
+    );
+  }
+}
+
+/// Pace over the activity's time, faster drawn higher; pauses are gaps.
+class PaceSticker extends StatelessWidget {
+  const PaceSticker({required this.chart, required this.colour, super.key});
+
+  final PaceChart chart;
+  final Color colour;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final unit = chart.units == Units.km ? '/km' : '/mi';
+    return _chart(
+      header: _ChartHeader(
+        name: l10n.chartPace,
+        value: l10n.chartAverage('${formatClock(chart.average)} $unit'),
+        colour: colour,
+      ),
+      series: chart.series,
+      colour: colour,
+      minSpan: 30,
+      inverted: true,
+      footer: _ChartFooter(
+        left: formatClock(chart.duration),
+        right: l10n.chartBest(formatClock(chart.best), unit),
+        colour: colour,
+      ),
+    );
+  }
+}
+
+/// A line with a soft fill under it, drawn segment by segment so gaps
+/// (pauses, missing readings) stay gaps.
+class _LinePainter extends CustomPainter {
+  const _LinePainter(
+    this.series,
+    this.colour, {
+    required this.minSpan,
+    this.inverted = false,
+  });
+
+  final ChartSeries series;
+  final Color colour;
+
+  /// Smallest vertical range, so small changes don't look dramatic.
+  final double minSpan;
+
+  /// Lower values on top (pace: faster is higher).
+  final bool inverted;
+
+  @override
   void paint(Canvas canvas, Size size) {
-    final minX = points.first.dx;
-    final maxX = points.last.dx;
-    final ys = points.map((p) => p.dy);
-    final minY = ys.reduce(math.min);
-    final maxY = ys.reduce(math.max);
-    final spanX = math.max(maxX - minX, 1);
-    // Flat routes stay flat-looking: at least 30 m of vertical range.
-    final spanY = math.max(maxY - minY, 30);
-    Offset at(Offset p) => Offset(
-          (p.dx - minX) / spanX * size.width,
-          size.height - (p.dy - minY) / spanY * size.height * 0.9,
-        );
-    final line = Path()..addPolygon([for (final p in points) at(p)], false);
-    final area = Path.from(line)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    canvas
-      ..drawPath(
-        area,
-        Paint()
-          ..shader = ui.Gradient.linear(
-            Offset.zero,
-            Offset(0, size.height),
-            [colour.withValues(alpha: 0.5), colour.withValues(alpha: 0.05)],
-          ),
-      )
-      ..drawPath(
-        line,
-        Paint()
-          ..color = colour
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 7
-          ..strokeJoin = StrokeJoin.round,
+    final spanX = math.max(series.maxX - series.minX, 1);
+    final spanY = math.max(series.maxY - series.minY, minSpan);
+    // Centre a short range rather than pinning it to the bottom.
+    final floor = series.minY - (spanY - (series.maxY - series.minY)) / 2;
+    Offset at(ChartPoint p) {
+      var t = (p.y - floor) / spanY;
+      if (inverted) t = 1 - t;
+      return Offset(
+        (p.x - series.minX) / spanX * size.width,
+        size.height - (0.05 + t * 0.9) * size.height,
       );
+    }
+
+    final fill = Paint()
+      ..shader = ui.Gradient.linear(
+        Offset.zero,
+        Offset(0, size.height),
+        [colour.withValues(alpha: 0.5), colour.withValues(alpha: 0.05)],
+      );
+    final stroke = Paint()
+      ..color = colour
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    for (final segment in series.segments) {
+      final points = [for (final p in segment) at(p)];
+      final line = Path()..addPolygon(points, false);
+      final area = Path.from(line)
+        ..lineTo(points.last.dx, size.height)
+        ..lineTo(points.first.dx, size.height)
+        ..close();
+      canvas
+        ..drawPath(area, fill)
+        ..drawPath(line, stroke);
+    }
   }
 
   @override
-  bool shouldRepaint(_ElevationPainter oldDelegate) =>
-      oldDelegate.points != points || oldDelegate.colour != colour;
+  bool shouldRepaint(_LinePainter oldDelegate) =>
+      oldDelegate.series != series ||
+      oldDelegate.colour != colour ||
+      oldDelegate.inverted != inverted;
 }
 
 /// One bar per km (or mile): taller is faster, the fastest is highlighted.

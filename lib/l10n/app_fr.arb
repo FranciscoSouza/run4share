@@ -249,7 +249,7 @@
   "stampDone": "Fait",
   "stampNoExcuses": "Sans excuses",
   "stickersYourData": "Vos données",
-  "stickersNoData": "Le tracé, les chaussures et les graphiques viennent des activités Strava. Ajoutez des chaussures dans le formulaire de l’activité.",
+  "stickersNoData": "Le tracé, les chaussures et les graphiques viennent des séances Strava et des apps de santé. Ajoutez des chaussures dans le formulaire de l’activité.",
   "stickersReconnect": "Reconnectez Strava pour afficher vos chaussures",
   "stickerShoeTotal": "Total",
   "routeNeon": "Néon",
@@ -266,5 +266,9 @@
   "hubNotInstalled": "Health Connect n’est pas installé sur ce téléphone.",
   "hubUpdate": "Health Connect doit être mis à jour.",
   "hubDenied": "run4share a besoin d’une autorisation pour lire vos séances dans {source}.",
-  "hubEmptyApple": "Aucune séance trouvée. Vérifiez l’accès de run4share dans l’app Santé : Profil › Apps › run4share."
+  "hubEmptyApple": "Aucune séance trouvée. Vérifiez l’accès de run4share dans l’app Santé : Profil › Apps › run4share.",
+  "chartHeartRate": "Fréquence cardiaque",
+  "chartPace": "Allure",
+  "chartMax": "Max {value}",
+  "chartAverage": "Moy. {value}"
 }

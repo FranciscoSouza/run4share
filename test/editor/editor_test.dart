@@ -15,6 +15,7 @@ import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/pro/pro_screen.dart';
 import 'package:run4share/features/share/share_screen.dart';
+import 'package:run4share/features/stickers/activity_streams.dart';
 
 import '../helpers/pump_app.dart';
 import '../photos/fake_photo_library.dart';
@@ -36,17 +37,23 @@ void main() {
     await settle(tester);
   }
 
-  Future<void> openEditor(WidgetTester tester, {bool pro = false}) async {
+  Future<void> openEditor(
+    WidgetTester tester, {
+    bool pro = false,
+    ActivityStreams? streams,
+  }) async {
     db = testDatabase();
     late int id;
     await tester.runAsync(() async {
-      id = await ActivityRepository(db).saveManual(
+      final repo = ActivityRepository(db);
+      id = await repo.saveManual(
         name: 'Lunch Run',
         sportType: 'Run',
         startLocal: DateTime.utc(2026, 11, 12, 12, 31),
         movingTime: 1994,
         distance: 5020,
       );
+      if (streams != null) await repo.setStreams(id, streams);
     });
     await tester.pumpApp(
       overrides: [
@@ -186,6 +193,29 @@ void main() {
     await settle(tester);
   }
 
+  Future<void> openData(WidgetTester tester) async {
+    await tester.tap(find.byTooltip('Hide themes'));
+    await settle(tester);
+    await tester.tap(find.text('Your data'));
+    await settle(tester);
+  }
+
+  testWidgets('Your data is its own tool; Stickers no longer lists it', (
+    tester,
+  ) async {
+    await openEditor(tester);
+    await openStickers(tester);
+    expect(find.text('YOUR DATA', skipOffstage: false), findsNothing);
+    await tester.tap(find.byTooltip('Close'));
+    await settle(tester);
+
+    await tester.tap(find.text('Your data'));
+    await settle(tester);
+    // A manual run without a route, shoe or streams.
+    expect(find.text('Your data'), findsOneWidget, reason: 'panel title');
+    expect(find.text('Stickers'), findsNothing, reason: 'toolbar hidden');
+  });
+
   testWidgets('Stickers without Pro lead to the Pro screen', (tester) async {
     await openEditor(tester);
     await openStickers(tester);
@@ -235,5 +265,79 @@ void main() {
     await tester.tap(find.text('Tired, but not done.'));
     await settle(tester);
     expect(draft().extras.single.value, 'tired.1');
+  });
+
+  testWidgets('chart stickers appear only for the streams the activity has', (
+    tester,
+  ) async {
+    await openEditor(tester, pro: true);
+    await openData(tester);
+    for (final chart in ['Heart rate', 'Pace', 'Elevation']) {
+      expect(
+        find.bySemanticsLabel(chart, skipOffstage: false),
+        findsNothing,
+        reason: 'a manual run has no streams',
+      );
+    }
+  });
+
+  testWidgets('with heart rate and speed: both charts, real figures', (
+    tester,
+  ) async {
+    // 1994 s at 1000/300 m/s (5:00 /km), heart rate 150, no altitude.
+    final streams = ActivityStreams.fromStrava({
+      'time': {
+        'data': [for (var t = 0; t <= 1994; t++) t],
+      },
+      'velocity_smooth': {
+        'data': [for (var t = 0; t <= 1994; t++) 1000 / 300],
+      },
+      'heartrate': {
+        'data': [for (var t = 0; t <= 1994; t++) 150],
+      },
+    });
+    await openEditor(tester, pro: true, streams: streams);
+    await openData(tester);
+    expect(
+      find.bySemanticsLabel('Elevation', skipOffstage: false),
+      findsNothing,
+    );
+
+    final heart = find.bySemanticsLabel('Heart rate', skipOffstage: false);
+    await tester.ensureVisible(heart);
+    await settle(tester);
+    await tester.tap(heart);
+    await settle(tester);
+    expect(draft().extras.single.kind, ExtraKind.heartRate);
+    expect(find.text('Avg 150 bpm'), findsWidgets);
+
+    await tester.tap(find.text('Your data'));
+    await settle(tester);
+    final pace = find.bySemanticsLabel('Pace', skipOffstage: false);
+    await tester.ensureVisible(pace);
+    await settle(tester);
+    await tester.tap(pace);
+    await settle(tester);
+    expect(draft().extras.last.kind, ExtraKind.pace);
+    expect(find.text('Avg 5:00 /km'), findsWidgets);
+  });
+
+  testWidgets('Your data without Pro leads to the Pro screen', (tester) async {
+    await openEditor(
+      tester,
+      streams: ActivityStreams.fromStrava({
+        'time': {
+          'data': [for (var t = 0; t <= 1994; t++) t],
+        },
+        'heartrate': {
+          'data': [for (var t = 0; t <= 1994; t++) 150],
+        },
+      }),
+    );
+    await openData(tester);
+    await tester.tap(find.bySemanticsLabel('Heart rate'));
+    await settle(tester);
+    expect(find.byType(ProScreen), findsOneWidget);
+    expect(draft().extras, isEmpty);
   });
 }

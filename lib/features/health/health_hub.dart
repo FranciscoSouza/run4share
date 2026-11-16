@@ -29,6 +29,7 @@ class HubWorkout {
     this.calories,
     this.averageHeartrate,
     this.route = const [],
+    this.heartRate = const [],
   });
 
   /// Health Connect's record ID.
@@ -49,6 +50,9 @@ class HubWorkout {
   final double? calories;
   final double? averageHeartrate;
   final List<RoutePoint> route;
+
+  /// Heart-rate readings (time, beats per minute), for the chart.
+  final List<(DateTime, double)> heartRate;
 }
 
 /// The phone's health hub (Health Connect), behind an interface so tests
@@ -189,11 +193,12 @@ class DeviceHealthHub implements HealthHub {
       final to = p.dateTo;
       bool inside(HealthDataPoint q) =>
           !q.dateFrom.isBefore(from) && !q.dateTo.isAfter(to);
-      final beats = [
+      final samples = [
         for (final q in heart.where(inside))
           if (q.value case NumericHealthValue(:final numericValue))
-            numericValue.toDouble(),
+            (q.dateFrom, numericValue.toDouble()),
       ];
+      final beats = [for (final (_, bpm) in samples) bpm];
       final route = [
         for (final q in routes.where(
           (q) =>
@@ -227,6 +232,7 @@ class DeviceHealthHub implements HealthHub {
         averageHeartrate:
             beats.isEmpty ? null : beats.reduce((a, b) => a + b) / beats.length,
         route: route,
+        heartRate: samples,
       );
     }
 

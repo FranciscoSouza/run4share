@@ -149,7 +149,7 @@ class StravaSync extends Notifier<SyncState> {
   }
 
   /// Fills in what the list doesn't have, for the stickers: calories and
-  /// splits (detail), the elevation profile (streams) and the shoe
+  /// splits (detail), the time series for the charts (streams) and the shoe
   /// (gear, if the user allowed it). Each part is best effort; stickers
   /// needing a missing part simply aren't offered.
   Future<void> fetchDetails(Activity activity) async {
@@ -177,12 +177,13 @@ class StravaSync extends Notifier<SyncState> {
       }
     }
 
-    if (activity.elevationJson == null && activity.polyline != null) {
+    // Once per activity: an empty answer is stored too. On failure
+    // (offline, rate limit) nothing is stored and the next visit retries.
+    if (activity.streamsJson == null) {
       try {
-        final profile = await _api.elevation(id);
-        if (profile.isNotEmpty) await _repo.setElevation(activity.id, profile);
+        await _repo.setStreams(activity.id, await _api.streams(id));
       } on Object catch (error) {
-        debugPrint('Strava elevation failed: $error');
+        debugPrint('Strava streams failed: $error');
       }
     }
 

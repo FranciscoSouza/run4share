@@ -293,5 +293,7 @@
   "onboardingArtLabel2": "Ein Foto mit Strecke, Distanz und Pace",
   "onboardingArtLabel3": "Dieselben Werte als ganzes Bild und als einzelner Sticker",
   "onboardingArtLabel4": "Pro-Theme Kassenbon, Rekord-Label und Herzfrequenz-Diagramm",
-  "settingsShowIntro": "Einführung erneut zeigen"
+  "settingsShowIntro": "Einführung erneut zeigen",
+  "chartMin": "Min. {value}",
+  "chartSlowest": "Langsamste {value}"
 }

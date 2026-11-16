@@ -293,5 +293,7 @@
   "onboardingArtLabel2": "Une photo avec le tracé, la distance et l’allure",
   "onboardingArtLabel3": "Les mêmes stats en image complète et en sticker seul",
   "onboardingArtLabel4": "Thème Pro ticket de caisse, étiquette Record et graphique de fréquence cardiaque",
-  "settingsShowIntro": "Revoir l’introduction"
+  "settingsShowIntro": "Revoir l’introduction",
+  "chartMin": "Min {value}",
+  "chartSlowest": "Plus lent {value}"
 }

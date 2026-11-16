@@ -293,3 +293,5 @@ onboardingArtLabel2,,,"A photo with the route, distance and pace","Foto com o pe
 onboardingArtLabel3,,,The same stats as a full image and as a sticker alone,Os mesmos números como imagem completa e como sticker sozinho,Los mismos datos como imagen completa y como sticker solo,Les mêmes stats en image complète et en sticker seul,Dieselben Werte als ganzes Bild und als einzelner Sticker
 onboardingArtLabel4,,,"Pro receipt theme, a Record label and a heart-rate chart","Tema Pro de recibo, etiqueta de Recorde e gráfico de frequência cardíaca","Tema Pro de recibo, etiqueta de Récord y gráfico de frecuencia cardiaca","Thème Pro ticket de caisse, étiquette Record et graphique de fréquence cardiaque","Pro-Theme Kassenbon, Rekord-Label und Herzfrequenz-Diagramm"
 settingsShowIntro,Settings,,Show introduction again,Ver a introdução de novo,Ver la introducción de nuevo,Revoir l’introduction,Einführung erneut zeigen
+chartMin,,Keep {value} as is.,Min {value},Mín. {value},Mín. {value},Min {value},Min. {value}
+chartSlowest,,Keep {value} as is.,Slowest {value},Mais lento {value},Más lento {value},Plus lent {value},Langsamste {value}

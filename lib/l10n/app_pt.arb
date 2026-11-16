@@ -293,5 +293,7 @@
   "onboardingArtLabel2": "Foto com o percurso, a distância e o ritmo",
   "onboardingArtLabel3": "Os mesmos números como imagem completa e como sticker sozinho",
   "onboardingArtLabel4": "Tema Pro de recibo, etiqueta de Recorde e gráfico de frequência cardíaca",
-  "settingsShowIntro": "Ver a introdução de novo"
+  "settingsShowIntro": "Ver a introdução de novo",
+  "chartMin": "Mín. {value}",
+  "chartSlowest": "Mais lento {value}"
 }

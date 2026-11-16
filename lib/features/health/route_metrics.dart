@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:run4share/features/health/health_hub.dart';
 import 'package:run4share/features/stickers/activity_streams.dart';
+import 'package:run4share/features/stickers/chart_data.dart';
 import 'package:run4share/features/stickers/polyline.dart';
 import 'package:run4share/features/strava/strava_models.dart';
 
@@ -93,7 +94,9 @@ ActivityStreams hubStreams(HubWorkout w) {
       final step = distanceBetween(w.route[i - 1], p);
       along += step;
       final dt = t - seconds(w.route[i - 1].time);
-      if (dt > 0) velocity.add((t, step / dt));
+      // No pause flag here: standing still (under 0.5 m/s) is a pause,
+      // and is left out so it can't drag the moving slices down.
+      if (dt > 0 && step / dt >= minMovingSpeed) velocity.add((t, step / dt));
     }
     distance.add((t, along));
     if (p.altitude case final a?) altitude.add((t, a));

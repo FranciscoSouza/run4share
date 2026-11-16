@@ -234,30 +234,34 @@ class _ChartHeader extends StatelessWidget {
 
 /// Small figures under a chart: one at each end.
 class _ChartFooter extends StatelessWidget {
-  const _ChartFooter({
-    required this.left,
-    required this.right,
-    required this.colour,
-  });
+  const _ChartFooter({required this.left, required this.colour});
 
   final String left;
-  final String right;
   final Color colour;
 
   @override
   Widget build(BuildContext context) => SizedBox(
         width: _chartSize.width,
-        child: Row(
-          children: [
-            Text(left, style: _label(26, colour.withValues(alpha: 0.85))),
-            const Spacer(),
-            Text(right, style: _label(26, colour.withValues(alpha: 0.85))),
-          ],
-        ),
+        child: Text(left, style: _label(26, colour.withValues(alpha: 0.85))),
       );
 }
 
 const _chartSize = Size(860, 260);
+
+/// Room above and below the line for the extremes' labels.
+const _markBand = 46.0;
+
+/// A figure written on the line, at one of its extremes.
+@immutable
+class _Mark {
+  const _Mark(this.point, this.text, {required this.top});
+
+  final ChartPoint point;
+  final String text;
+
+  /// Written above the point (the line's visual top) or below it.
+  final bool top;
+}
 
 Widget _chart({
   required Widget header,
@@ -266,6 +270,7 @@ Widget _chart({
   required double minSpan,
   Widget? footer,
   bool inverted = false,
+  List<_Mark> marks = const [],
 }) =>
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,12 +279,17 @@ Widget _chart({
         header,
         const SizedBox(height: 16),
         CustomPaint(
-          size: _chartSize,
+          size: Size(
+            _chartSize.width,
+            _chartSize.height + (marks.isEmpty ? 0 : _markBand * 2),
+          ),
           painter: _LinePainter(
             series,
             colour,
             minSpan: minSpan,
             inverted: inverted,
+            marks: marks,
+            markStyle: _label(26, colour),
           ),
         ),
         if (footer != null) ...[const SizedBox(height: 10), footer],
@@ -318,8 +328,8 @@ class ElevationSticker extends StatelessWidget {
   }
 }
 
-/// Heart rate over the activity's time: average on top, the peak and
-/// the duration underneath.
+/// Heart rate over the activity's time: average on top, the peak and the
+/// lowest reading written on the line, the duration underneath.
 class HeartRateSticker extends StatelessWidget {
   const HeartRateSticker({
     required this.chart,
@@ -344,14 +354,26 @@ class HeartRateSticker extends StatelessWidget {
       minSpan: 20,
       footer: _ChartFooter(
         left: formatClock(chart.duration),
-        right: l10n.chartMax('${chart.max.round()} bpm'),
         colour: colour,
       ),
+      marks: [
+        _Mark(
+          chart.series.highest,
+          l10n.chartMax('${chart.max.round()} bpm'),
+          top: true,
+        ),
+        _Mark(
+          chart.series.lowest,
+          l10n.chartMin('${chart.min.round()} bpm'),
+          top: false,
+        ),
+      ],
     );
   }
 }
 
 /// Pace over the activity's time, faster drawn higher; pauses are gaps.
+/// The fastest and slowest moments are written on the line.
 class PaceSticker extends StatelessWidget {
   const PaceSticker({required this.chart, required this.colour, super.key});
 
@@ -374,9 +396,21 @@ class PaceSticker extends StatelessWidget {
       inverted: true,
       footer: _ChartFooter(
         left: formatClock(chart.duration),
-        right: l10n.chartBest(formatClock(chart.best), unit),
         colour: colour,
       ),
+      // Inverted axis: the fastest point is the line's top.
+      marks: [
+        _Mark(
+          chart.series.lowest,
+          l10n.chartBest(formatClock(chart.best), unit),
+          top: true,
+        ),
+        _Mark(
+          chart.series.highest,
+          l10n.chartSlowest('${formatClock(chart.slowest)} $unit'),
+          top: false,
+        ),
+      ],
     );
   }
 }
@@ -389,10 +423,16 @@ class _LinePainter extends CustomPainter {
     this.colour, {
     required this.minSpan,
     this.inverted = false,
+    this.marks = const [],
+    this.markStyle,
   });
 
   final ChartSeries series;
   final Color colour;
+
+  /// Extremes written on the line; they get a band above and below it.
+  final List<_Mark> marks;
+  final TextStyle? markStyle;
 
   /// Smallest vertical range, so small changes don't look dramatic.
   final double minSpan;
@@ -406,12 +446,15 @@ class _LinePainter extends CustomPainter {
     final spanY = math.max(series.maxY - series.minY, minSpan);
     // Centre a short range rather than pinning it to the bottom.
     final floor = series.minY - (spanY - (series.maxY - series.minY)) / 2;
+    final band = marks.isEmpty ? 0.0 : _markBand;
+    final top = band;
+    final bottom = size.height - band;
     Offset at(ChartPoint p) {
       var t = (p.y - floor) / spanY;
       if (inverted) t = 1 - t;
       return Offset(
         (p.x - series.minX) / spanX * size.width,
-        size.height - (0.05 + t * 0.9) * size.height,
+        bottom - (0.05 + t * 0.9) * (bottom - top),
       );
     }
 
@@ -438,13 +481,29 @@ class _LinePainter extends CustomPainter {
         ..drawPath(area, fill)
         ..drawPath(line, stroke);
     }
+    for (final mark in marks) {
+      final o = at(mark.point);
+      canvas
+        ..drawCircle(o, 13, Paint()..color = const Color(0x40000000))
+        ..drawCircle(o, 10, Paint()..color = colour);
+      final text = TextPainter(
+        text: TextSpan(text: mark.text, style: markStyle),
+        textDirection: TextDirection.ltr,
+        maxLines: 1,
+      )..layout();
+      final x = (o.dx - text.width / 2).clamp(0.0, size.width - text.width);
+      final y = (mark.top ? o.dy - 18 - text.height : o.dy + 18)
+          .clamp(0.0, size.height - text.height);
+      text.paint(canvas, Offset(x, y));
+    }
   }
 
   @override
   bool shouldRepaint(_LinePainter oldDelegate) =>
       oldDelegate.series != series ||
       oldDelegate.colour != colour ||
-      oldDelegate.inverted != inverted;
+      oldDelegate.inverted != inverted ||
+      oldDelegate.marks != marks;
 }
 
 /// One bar per km (or mile): taller is faster, the fastest is highlighted.

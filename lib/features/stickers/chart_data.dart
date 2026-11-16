@@ -51,6 +51,22 @@ class ChartSeries {
   final double maxY;
 
   int get pointCount => segments.fold(0, (n, s) => n + s.length);
+
+  /// Where the line is highest (the first, if it's there more than once).
+  ChartPoint get highest => _extreme((a, b) => b.y > a.y);
+
+  /// Where the line is lowest.
+  ChartPoint get lowest => _extreme((a, b) => b.y < a.y);
+
+  ChartPoint _extreme(bool Function(ChartPoint best, ChartPoint p) better) {
+    var best = segments.first.first;
+    for (final segment in segments) {
+      for (final p in segment) {
+        if (better(best, p)) best = p;
+      }
+    }
+    return best;
+  }
 }
 
 /// Fewer real readings than this and the chart isn't offered.
@@ -98,6 +114,9 @@ class HeartRateChart {
   final double average;
   final double max;
   final double duration;
+
+  /// The lowest plausible reading drawn.
+  double get min => series.minY;
 }
 
 /// Plausible readings only: a strap losing contact reads 0 or wild values.
@@ -152,12 +171,15 @@ class PaceChart {
 
   /// Fastest slice, seconds per unit.
   final double best;
+
+  /// Slowest moving slice drawn, seconds per unit.
+  double get slowest => series.maxY;
   final Units units;
   final double duration;
 }
 
 /// Slower than this (about 33 min/km) isn't moving: a pause or GPS drift.
-const _minSpeed = 0.5;
+const minMovingSpeed = 0.5;
 
 /// Slices further than this factor from the median pace are GPS spikes.
 const _spikeFactor = 2.5;
@@ -175,7 +197,7 @@ PaceChart? paceChart(ActivityStreams streams, Units units) {
     for (var i = 0; i < v.length; i++)
       switch (v[i]) {
         final speed?
-            when speed >= _minSpeed &&
+            when speed >= minMovingSpeed &&
                 (moving.length != v.length || moving[i] != false) =>
           ChartPoint(streams.timeAt(i, v.length), unit / speed),
         _ => null,

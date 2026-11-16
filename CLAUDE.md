@@ -25,7 +25,7 @@ or share to Instagram.
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
-charts → 12 Pro themes → 13 Pro templates → 14 onboarding.
+charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -358,6 +358,19 @@ Francisco approved it 16 Nov 2026. His four photos are still to come.
   overflowing sticker text in the editor or the exported PNG.
 - `tool/preview/onboarding_preview_test.dart` renders the pages
   (PREVIEW_LANGS, PREVIEW_TEXT_SCALE).
+
+**Phase 15 status (chart extremes):** committed
+(`phase-15-chart-extremes`) 16 Nov 2026, before Francisco's phone check
+(he asked to move on to Home templates). First idea from
+`docs/onboarding.md`'s later list (Francisco didn't pick; Claude took
+the first). Home templates followed as phase 16 (`docs/home_templates.md`).
+- Heart rate: "Max" at the peak, "Min" at the lowest reading. Pace:
+  "Best" at the fastest point, "Slowest" at the slowest. Painted on the
+  line with a dot, in bands above and below it; the footer keeps only
+  the duration (max/best moved onto the line).
+- Fix found here: speed readings while stopped (Strava `moving` false;
+  health hubs under 0.5 m/s) are left out before averaging, so slices
+  around a pause no longer show a fake slow spike.
 
 ## Decisions already taken (do not reopen without asking)
 

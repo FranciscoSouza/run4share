@@ -137,12 +137,20 @@ class ActivityStreams {
     }
 
     final moving = data('moving');
+    bool paused(int i) => i < moving.length && moving[i] == false;
+    // Speed while stopped would drag the slices around a pause towards
+    // zero (a fake "slowest" moment): only moving readings count.
+    final velocity = data('velocity_smooth');
     return ActivityStreams.bucketed(
       duration: time.last,
       distance: series('distance'),
       altitude: series('altitude'),
       heartRate: series('heartrate'),
-      velocity: series('velocity_smooth'),
+      velocity: [
+        for (var i = 0; i < math.min(time.length, velocity.length); i++)
+          if (velocity[i] is num && !paused(i))
+            (time[i], (velocity[i] as num).toDouble()),
+      ],
       moving: [
         for (var i = 0; i < math.min(time.length, moving.length); i++)
           if (moving[i] is bool) (time[i], moving[i] as bool),

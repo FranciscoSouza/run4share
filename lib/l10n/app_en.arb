@@ -494,5 +494,21 @@
         "type": "int"
       }
     }
+  },
+  "chartMin": "Min {value}",
+  "chartSlowest": "Slowest {value}",
+  "@chartMin": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "@chartSlowest": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
   }
 }

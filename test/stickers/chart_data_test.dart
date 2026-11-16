@@ -131,6 +131,34 @@ void main() {
       expect(chart.best, closeTo(1000 / 3, 0.01), reason: 'no 0:25 /km');
     });
 
+    test('stopped readings never make a fake slowest moment', () {
+      // Paused 500-700 s at 0 m/s, flagged by Strava; 100 slices of 12 s
+      // put moving and paused seconds in the same slices at the edges.
+      final s = ActivityStreams.fromStrava(
+        strava(
+          speed: (t) => t >= 500 && t < 700 ? 0 : 3,
+          moving: (t) => t < 500 || t >= 700,
+        ),
+        buckets: 100,
+      );
+      final chart = paceChart(s, Units.km)!;
+      expect(chart.slowest, closeTo(1000 / 3, 0.01));
+      expect(chart.best, closeTo(1000 / 3, 0.01));
+    });
+
+    test('the extremes are where the line peaks and dips', () {
+      // 3 m/s, then a slow stretch at 2 m/s, then a fast one at 4 m/s.
+      final s = ActivityStreams.fromStrava(
+        strava(speed: (t) => t < 400 ? 3 : (t < 800 ? 2 : 4)),
+        buckets: 12,
+      );
+      final chart = paceChart(s, Units.km)!;
+      expect(chart.slowest, 500, reason: '8:20 /km');
+      expect(chart.best, 250, reason: '4:10 /km');
+      expect(chart.series.highest.x, inInclusiveRange(400, 800));
+      expect(chart.series.lowest.x, greaterThanOrEqualTo(800));
+    });
+
     test('no speed stream (treadmill without a pod): no pace chart', () {
       final s = ActivityStreams.fromStrava(strava(heart: (_) => 150));
       expect(paceChart(s, Units.km), isNull);
@@ -149,6 +177,18 @@ void main() {
       expect(chart.average, closeTo(150.9, 0.1));
       expect(chart.series.segments, hasLength(2));
       expect(chart.series.minY, greaterThanOrEqualTo(30));
+    });
+
+    test('max and min, with where they happened', () {
+      final s = ActivityStreams.fromStrava(
+        strava(heart: (t) => t < 200 ? 120 : (t > 1000 ? 175 : 150)),
+        buckets: 12,
+      );
+      final chart = heartRateChart(s)!;
+      expect(chart.max, 175);
+      expect(chart.min, 120);
+      expect(chart.series.highest.x, greaterThan(1000));
+      expect(chart.series.lowest.x, lessThan(200));
     });
 
     test('too few readings: not offered', () {

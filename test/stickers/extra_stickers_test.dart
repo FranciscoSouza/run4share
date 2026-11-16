@@ -214,7 +214,8 @@ void main() {
     expect(find.textContaining(' ft'), findsOneWidget);
 
     await show(ExtraKind.heartRate);
-    expect(find.text('Max 167 bpm'), findsOneWidget);
+    // Max and min are painted on the line (see chart_data_test).
+    expect(find.textContaining(RegExp(r'^Avg 15\d bpm$')), findsOneWidget);
     expect(find.text('47:00'), findsOneWidget, reason: 'duration');
 
     await show(ExtraKind.pace);

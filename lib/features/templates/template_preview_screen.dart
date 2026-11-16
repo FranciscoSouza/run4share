@@ -7,9 +7,11 @@ import 'package:run4share/app/theme/app_colors.dart';
 import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/features/editor/sticker_theme.dart';
 import 'package:run4share/features/editor/theme_messages.dart';
+import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/templates/template_canvas.dart';
 import 'package:run4share/l10n/l10n.dart';
 import 'package:run4share/shared/widgets/buttons.dart';
+import 'package:run4share/shared/widgets/pro_badge.dart';
 
 /// What a Popular template looks like, and the three steps to use it.
 class TemplatePreviewScreen extends ConsumerWidget {
@@ -30,8 +32,25 @@ class TemplatePreviewScreen extends ConsumerWidget {
     if (template == null) return Scaffold(appBar: AppBar(leading: back));
 
     final steps = [l10n.templateStep1, l10n.templateStep2, l10n.templateStep3];
+    // Anyone can look; using a Pro template needs Pro.
+    final locked = themeLocked(
+      template.theme,
+      isPro: ref.watch(isProProvider),
+    );
     return Scaffold(
-      appBar: AppBar(leading: back, title: Text(template.name)),
+      appBar: AppBar(
+        leading: back,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(child: Text(template.name)),
+            if (locked) ...[
+              const SizedBox(width: AppSpacing.sm),
+              const ProBadge(),
+            ],
+          ],
+        ),
+      ),
       body: SafeArea(
         top: false,
         child: Column(
@@ -112,8 +131,11 @@ class TemplatePreviewScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: AppButton(
                 label: l10n.templateUse,
-                onPressed: () =>
-                    context.push(AppRoutes.templateActivity(template.id)),
+                onPressed: () => context.push(
+                  locked
+                      ? AppRoutes.pro
+                      : AppRoutes.templateActivity(template.id),
+                ),
               ),
             ),
           ],

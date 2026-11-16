@@ -177,6 +177,9 @@ class StoryTemplate {
   final List<Color> colours;
 
   StickerTheme get theme => themeById(themeId)!;
+
+  /// Pro when its theme is.
+  bool get pro => theme.pro;
 }
 
 const storyTemplates = <StoryTemplate>[
@@ -207,6 +210,28 @@ const storyTemplates = <StoryTemplate>[
     themeId: 'poster',
     format: ShareFormat.story,
     colours: [Color(0xFF6B4E7A), Color(0xFFC07A5A), Color(0xFF2A2235)],
+  ),
+  // Phase 13: one per Pro theme; Pro like their theme.
+  StoryTemplate(
+    id: 'race-day',
+    name: 'Race Day',
+    themeId: 'race-bib',
+    format: ShareFormat.story,
+    colours: [Color(0xFF2F6F8F), Color(0xFF7FB3C8), Color(0xFF23343F)],
+  ),
+  StoryTemplate(
+    id: 'run-receipt',
+    name: 'Run Receipt',
+    themeId: 'receipt',
+    format: ShareFormat.story,
+    colours: [Color(0xFF8A9A5B), Color(0xFFD9C38A), Color(0xFF4A4A35)],
+  ),
+  StoryTemplate(
+    id: 'final-score',
+    name: 'Final Score',
+    themeId: 'scoreboard',
+    format: ShareFormat.story,
+    colours: [Color(0xFF1F2A44), Color(0xFF3B4C7A), Color(0xFF0E1220)],
   ),
 ];
 

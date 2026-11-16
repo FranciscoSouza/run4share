@@ -25,7 +25,7 @@ or share to Instagram.
 6 settings/languages → 7 hardening/release → 8a Pro stickers (labels,
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
-charts → 12 Pro themes.
+charts → 12 Pro themes → 13 Pro templates.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -323,11 +323,18 @@ Francisco moved on 16 Nov 2026 without reporting problems.
 - Carousel shows a PRO badge on Pro themes without Pro (shared
   `ProBadge` in `lib/shared/widgets/`); tapping one opens the Pro screen.
   `editor_screen.dart` changed only for that badge.
-- No Popular templates for them (templates question unanswered; kept
-  as is).
+- Templates for them came in phase 13.
 - A test draws every theme for a 4-hour marathon with a long name in
   every language; `tool/preview/theme_preview_test.dart` renders the Pro
   themes to PNGs with the real fonts for a visual check.
+
+**Phase 13 status (Pro templates):** committed
+(`phase-13-pro-templates`) 16 Nov 2026.
+- Three Popular templates, 9:16, after the four free ones: Race Day
+  (Race Bib), Run Receipt (Receipt), Final Score (Scoreboard). A
+  template is Pro when its theme is (`StoryTemplate.pro`).
+- Without Pro: PRO badge on the Home tile and in the preview title; the
+  preview is open to everyone, "Use this template" opens the Pro screen.
 
 ## Decisions already taken (do not reopen without asking)
 

@@ -58,11 +58,14 @@ Connecting Strava is optional. When you connect:
   credentials, asks Strava for access tokens, and passes them straight
   back to your phone. It does not store or log them.
 - The app then reads your activities directly from Strava and keeps
-  copies on your phone, as described above.
+  copies on your phone, as described above. If an activity has photos on
+  Strava, the app shows small versions of them on the activity, and when
+  you pick one it downloads it to your phone to use in your image. It
+  never uploads anything to Strava.
 
 When you disconnect Strava in Settings, run4share asks Strava to revoke
-its access and deletes every activity it copied from Strava from your
-phone. Activities you added by hand stay.
+its access and deletes every activity and photo it copied from Strava
+from your phone. Activities you added by hand stay.
 
 Your use of Strava is covered by Strava's own privacy policy:
 https://www.strava.com/legal/privacy

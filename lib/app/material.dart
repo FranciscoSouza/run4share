@@ -6,8 +6,15 @@
 /// pages with `flutter/material`, so mixing the two would split the theme
 /// and localisations. Every file imports Material through here; moving to
 /// `material_ui` later is a change to this one line.
+///
+/// The activity form's duration wheels come from Cupertino, deprecated the
+/// same way, so they are exported here too.
 library;
 
+// Deliberate: see the library comment above.
+// ignore: deprecated_member_use
+export 'package:flutter/cupertino.dart'
+    show CupertinoTimerPicker, CupertinoTimerPickerMode;
 // Deliberate: see the library comment above.
 // ignore: deprecated_member_use
 export 'package:flutter/material.dart';

@@ -133,7 +133,7 @@
   "formFootnote": "Pace is worked out from distance and duration. Empty fields are left off your stickers.",
   "formSave": "Save activity",
   "formDurationHint": "0:33:14",
-  "formDurationInvalid": "Enter a time like 0:33:14",
+  "formDurationInvalid": "Choose a duration",
   "formNumberInvalid": "Enter a number",
   "formHeartRateInvalid": "Between 30 and 250",
   "typeRun": "Run",
@@ -542,5 +542,15 @@
   "effectHighContrast": "High contrast",
   "shareCopy": "Copy",
   "shareCopied": "Sticker copied. Paste it into your story.",
-  "shareCopyFailed": "Couldn't copy the sticker."
+  "shareCopyFailed": "Couldn't copy the sticker.",
+  "stravaPhotoLoading": "Getting the photo from Strava…",
+  "stravaPhotoFailed": "Couldn't get this photo from Strava.",
+  "stravaPhotoLabel": "Strava photo {index}",
+  "@stravaPhotoLabel": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  }
 }

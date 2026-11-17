@@ -15,6 +15,7 @@ import 'package:run4share/features/health/health_hub.dart';
 import 'package:run4share/features/home/home_screen.dart';
 import 'package:run4share/features/lab/lab.dart';
 import 'package:run4share/features/onboarding/onboarding.dart';
+import 'package:run4share/features/photos/strava_photos.dart';
 import 'package:run4share/features/pro/pro_store.dart';
 import 'package:run4share/features/share/share_actions.dart';
 import 'package:run4share/features/strava/strava_config.dart';
@@ -58,6 +59,9 @@ List<Override> baseOverrides({
       appDatabaseProvider.overrideWithValue(db ?? testDatabase()),
       creationsFolderProvider.overrideWithValue(
         () async => folder ?? Directory.systemTemp.createTempSync('creations'),
+      ),
+      stravaPhotosFolderProvider.overrideWithValue(
+        () async => Directory.systemTemp.createTempSync('strava_photos'),
       ),
       shareActionsProvider.overrideWithValue(share ?? FakeShareActions()),
       systemActionsProvider.overrideWithValue(system ?? FakeSystemActions()),

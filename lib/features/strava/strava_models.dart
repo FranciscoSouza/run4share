@@ -80,6 +80,9 @@ abstract class StravaActivity with _$StravaActivity {
     /// The shoe or bike used, e.g. "g12345".
     String? gearId,
 
+    /// Photos on the activity (Strava's own and Instagram's).
+    @Default(0) int totalPhotoCount,
+
     /// Only in the detail: one split per kilometre, and per mile.
     @Default([]) List<StravaSplit> splitsMetric,
     @Default([]) List<StravaSplit> splitsStandard,
@@ -128,4 +131,14 @@ abstract class StravaGear with _$StravaGear {
 
   factory StravaGear.fromJson(Map<String, dynamic> json) =>
       _$StravaGearFromJson(json);
+}
+
+/// A photo on a Strava activity, at the size it was asked for.
+@immutable
+class StravaPhoto {
+  const StravaPhoto({required this.id, required this.url});
+
+  /// Strava's unique_id: stable across sizes.
+  final String id;
+  final String url;
 }

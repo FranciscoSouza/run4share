@@ -99,7 +99,7 @@
   "formFootnote": "El ritmo se calcula a partir de la distancia y la duración. Los campos vacíos no aparecen en tus stickers.",
   "formSave": "Guardar actividad",
   "formDurationHint": "0:33:14",
-  "formDurationInvalid": "Escribe un tiempo como 0:33:14",
+  "formDurationInvalid": "Elige una duración",
   "formNumberInvalid": "Escribe un número",
   "formHeartRateInvalid": "Entre 30 y 250",
   "typeRun": "Carrera",
@@ -310,5 +310,8 @@
   "effectHighContrast": "Alto contraste",
   "shareCopy": "Copiar",
   "shareCopied": "Sticker copiado. Pégalo en tu historia.",
-  "shareCopyFailed": "No se pudo copiar el sticker."
+  "shareCopyFailed": "No se pudo copiar el sticker.",
+  "stravaPhotoLoading": "Trayendo la foto de Strava…",
+  "stravaPhotoFailed": "No se pudo traer esta foto de Strava.",
+  "stravaPhotoLabel": "Foto de Strava {index}"
 }

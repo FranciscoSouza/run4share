@@ -138,6 +138,18 @@ class $ActivitiesTable extends Activities
   late final GeneratedColumn<String> streamsJson = GeneratedColumn<String>(
       'streams_json', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _photoCountMeta =
+      const VerificationMeta('photoCount');
+  @override
+  late final GeneratedColumn<int> photoCount = GeneratedColumn<int>(
+      'photo_count', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _photosJsonMeta =
+      const VerificationMeta('photosJson');
+  @override
+  late final GeneratedColumn<String> photosJson = GeneratedColumn<String>(
+      'photos_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -160,7 +172,9 @@ class $ActivitiesTable extends Activities
         gearId,
         splitsJson,
         elevationJson,
-        streamsJson
+        streamsJson,
+        photoCount,
+        photosJson
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -277,6 +291,18 @@ class $ActivitiesTable extends Activities
           streamsJson.isAcceptableOrUnknown(
               data['streams_json']!, _streamsJsonMeta));
     }
+    if (data.containsKey('photo_count')) {
+      context.handle(
+          _photoCountMeta,
+          photoCount.isAcceptableOrUnknown(
+              data['photo_count']!, _photoCountMeta));
+    }
+    if (data.containsKey('photos_json')) {
+      context.handle(
+          _photosJsonMeta,
+          photosJson.isAcceptableOrUnknown(
+              data['photos_json']!, _photosJsonMeta));
+    }
     return context;
   }
 
@@ -333,6 +359,10 @@ class $ActivitiesTable extends Activities
           .read(DriftSqlType.string, data['${effectivePrefix}elevation_json']),
       streamsJson: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}streams_json']),
+      photoCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}photo_count']),
+      photosJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}photos_json']),
     );
   }
 
@@ -400,6 +430,13 @@ class Activity extends DataClass implements Insertable<Activity> {
   /// altitude, heart rate, speed and pauses. Null until fetched; an
   /// activity without streams stores an empty set so it isn't re-asked.
   final String? streamsJson;
+
+  /// Photos on the activity, per Strava's list (0 or null: none).
+  final int? photoCount;
+
+  /// Thumbnails as JSON: {"count": n, "photos": [{"id": ..., "url": ...}]}.
+  /// Fetched after a sync; refetched when the count changes.
+  final String? photosJson;
   const Activity(
       {required this.id,
       required this.source,
@@ -421,7 +458,9 @@ class Activity extends DataClass implements Insertable<Activity> {
       this.gearId,
       this.splitsJson,
       this.elevationJson,
-      this.streamsJson});
+      this.streamsJson,
+      this.photoCount,
+      this.photosJson});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -477,6 +516,12 @@ class Activity extends DataClass implements Insertable<Activity> {
     if (!nullToAbsent || streamsJson != null) {
       map['streams_json'] = Variable<String>(streamsJson);
     }
+    if (!nullToAbsent || photoCount != null) {
+      map['photo_count'] = Variable<int>(photoCount);
+    }
+    if (!nullToAbsent || photosJson != null) {
+      map['photos_json'] = Variable<String>(photosJson);
+    }
     return map;
   }
 
@@ -530,6 +575,12 @@ class Activity extends DataClass implements Insertable<Activity> {
       streamsJson: streamsJson == null && nullToAbsent
           ? const Value.absent()
           : Value(streamsJson),
+      photoCount: photoCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(photoCount),
+      photosJson: photosJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(photosJson),
     );
   }
 
@@ -559,6 +610,8 @@ class Activity extends DataClass implements Insertable<Activity> {
       splitsJson: serializer.fromJson<String?>(json['splitsJson']),
       elevationJson: serializer.fromJson<String?>(json['elevationJson']),
       streamsJson: serializer.fromJson<String?>(json['streamsJson']),
+      photoCount: serializer.fromJson<int?>(json['photoCount']),
+      photosJson: serializer.fromJson<String?>(json['photosJson']),
     );
   }
   @override
@@ -587,6 +640,8 @@ class Activity extends DataClass implements Insertable<Activity> {
       'splitsJson': serializer.toJson<String?>(splitsJson),
       'elevationJson': serializer.toJson<String?>(elevationJson),
       'streamsJson': serializer.toJson<String?>(streamsJson),
+      'photoCount': serializer.toJson<int?>(photoCount),
+      'photosJson': serializer.toJson<String?>(photosJson),
     };
   }
 
@@ -611,7 +666,9 @@ class Activity extends DataClass implements Insertable<Activity> {
           Value<String?> gearId = const Value.absent(),
           Value<String?> splitsJson = const Value.absent(),
           Value<String?> elevationJson = const Value.absent(),
-          Value<String?> streamsJson = const Value.absent()}) =>
+          Value<String?> streamsJson = const Value.absent(),
+          Value<int?> photoCount = const Value.absent(),
+          Value<String?> photosJson = const Value.absent()}) =>
       Activity(
         id: id ?? this.id,
         source: source ?? this.source,
@@ -639,6 +696,8 @@ class Activity extends DataClass implements Insertable<Activity> {
         elevationJson:
             elevationJson.present ? elevationJson.value : this.elevationJson,
         streamsJson: streamsJson.present ? streamsJson.value : this.streamsJson,
+        photoCount: photoCount.present ? photoCount.value : this.photoCount,
+        photosJson: photosJson.present ? photosJson.value : this.photosJson,
       );
   Activity copyWithCompanion(ActivitiesCompanion data) {
     return Activity(
@@ -676,6 +735,10 @@ class Activity extends DataClass implements Insertable<Activity> {
           : this.elevationJson,
       streamsJson:
           data.streamsJson.present ? data.streamsJson.value : this.streamsJson,
+      photoCount:
+          data.photoCount.present ? data.photoCount.value : this.photoCount,
+      photosJson:
+          data.photosJson.present ? data.photosJson.value : this.photosJson,
     );
   }
 
@@ -702,7 +765,9 @@ class Activity extends DataClass implements Insertable<Activity> {
           ..write('gearId: $gearId, ')
           ..write('splitsJson: $splitsJson, ')
           ..write('elevationJson: $elevationJson, ')
-          ..write('streamsJson: $streamsJson')
+          ..write('streamsJson: $streamsJson, ')
+          ..write('photoCount: $photoCount, ')
+          ..write('photosJson: $photosJson')
           ..write(')'))
         .toString();
   }
@@ -729,7 +794,9 @@ class Activity extends DataClass implements Insertable<Activity> {
         gearId,
         splitsJson,
         elevationJson,
-        streamsJson
+        streamsJson,
+        photoCount,
+        photosJson
       ]);
   @override
   bool operator ==(Object other) =>
@@ -755,7 +822,9 @@ class Activity extends DataClass implements Insertable<Activity> {
           other.gearId == this.gearId &&
           other.splitsJson == this.splitsJson &&
           other.elevationJson == this.elevationJson &&
-          other.streamsJson == this.streamsJson);
+          other.streamsJson == this.streamsJson &&
+          other.photoCount == this.photoCount &&
+          other.photosJson == this.photosJson);
 }
 
 class ActivitiesCompanion extends UpdateCompanion<Activity> {
@@ -780,6 +849,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
   final Value<String?> splitsJson;
   final Value<String?> elevationJson;
   final Value<String?> streamsJson;
+  final Value<int?> photoCount;
+  final Value<String?> photosJson;
   const ActivitiesCompanion({
     this.id = const Value.absent(),
     this.source = const Value.absent(),
@@ -802,6 +873,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     this.splitsJson = const Value.absent(),
     this.elevationJson = const Value.absent(),
     this.streamsJson = const Value.absent(),
+    this.photoCount = const Value.absent(),
+    this.photosJson = const Value.absent(),
   });
   ActivitiesCompanion.insert({
     this.id = const Value.absent(),
@@ -825,6 +898,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     this.splitsJson = const Value.absent(),
     this.elevationJson = const Value.absent(),
     this.streamsJson = const Value.absent(),
+    this.photoCount = const Value.absent(),
+    this.photosJson = const Value.absent(),
   })  : source = Value(source),
         name = Value(name),
         sportType = Value(sportType),
@@ -852,6 +927,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     Expression<String>? splitsJson,
     Expression<String>? elevationJson,
     Expression<String>? streamsJson,
+    Expression<int>? photoCount,
+    Expression<String>? photosJson,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -875,6 +952,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       if (splitsJson != null) 'splits_json': splitsJson,
       if (elevationJson != null) 'elevation_json': elevationJson,
       if (streamsJson != null) 'streams_json': streamsJson,
+      if (photoCount != null) 'photo_count': photoCount,
+      if (photosJson != null) 'photos_json': photosJson,
     });
   }
 
@@ -899,7 +978,9 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       Value<String?>? gearId,
       Value<String?>? splitsJson,
       Value<String?>? elevationJson,
-      Value<String?>? streamsJson}) {
+      Value<String?>? streamsJson,
+      Value<int?>? photoCount,
+      Value<String?>? photosJson}) {
     return ActivitiesCompanion(
       id: id ?? this.id,
       source: source ?? this.source,
@@ -922,6 +1003,8 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
       splitsJson: splitsJson ?? this.splitsJson,
       elevationJson: elevationJson ?? this.elevationJson,
       streamsJson: streamsJson ?? this.streamsJson,
+      photoCount: photoCount ?? this.photoCount,
+      photosJson: photosJson ?? this.photosJson,
     );
   }
 
@@ -992,6 +1075,12 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
     if (streamsJson.present) {
       map['streams_json'] = Variable<String>(streamsJson.value);
     }
+    if (photoCount.present) {
+      map['photo_count'] = Variable<int>(photoCount.value);
+    }
+    if (photosJson.present) {
+      map['photos_json'] = Variable<String>(photosJson.value);
+    }
     return map;
   }
 
@@ -1018,7 +1107,9 @@ class ActivitiesCompanion extends UpdateCompanion<Activity> {
           ..write('gearId: $gearId, ')
           ..write('splitsJson: $splitsJson, ')
           ..write('elevationJson: $elevationJson, ')
-          ..write('streamsJson: $streamsJson')
+          ..write('streamsJson: $streamsJson, ')
+          ..write('photoCount: $photoCount, ')
+          ..write('photosJson: $photosJson')
           ..write(')'))
         .toString();
   }
@@ -1997,6 +2088,8 @@ typedef $$ActivitiesTableCreateCompanionBuilder = ActivitiesCompanion Function({
   Value<String?> splitsJson,
   Value<String?> elevationJson,
   Value<String?> streamsJson,
+  Value<int?> photoCount,
+  Value<String?> photosJson,
 });
 typedef $$ActivitiesTableUpdateCompanionBuilder = ActivitiesCompanion Function({
   Value<int> id,
@@ -2020,6 +2113,8 @@ typedef $$ActivitiesTableUpdateCompanionBuilder = ActivitiesCompanion Function({
   Value<String?> splitsJson,
   Value<String?> elevationJson,
   Value<String?> streamsJson,
+  Value<int?> photoCount,
+  Value<String?> photosJson,
 });
 
 class $$ActivitiesTableFilterComposer
@@ -2096,6 +2191,12 @@ class $$ActivitiesTableFilterComposer
 
   ColumnFilters<String> get streamsJson => $composableBuilder(
       column: $table.streamsJson, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get photoCount => $composableBuilder(
+      column: $table.photoCount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get photosJson => $composableBuilder(
+      column: $table.photosJson, builder: (column) => ColumnFilters(column));
 }
 
 class $$ActivitiesTableOrderingComposer
@@ -2173,6 +2274,12 @@ class $$ActivitiesTableOrderingComposer
 
   ColumnOrderings<String> get streamsJson => $composableBuilder(
       column: $table.streamsJson, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get photoCount => $composableBuilder(
+      column: $table.photoCount, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get photosJson => $composableBuilder(
+      column: $table.photosJson, builder: (column) => ColumnOrderings(column));
 }
 
 class $$ActivitiesTableAnnotationComposer
@@ -2246,6 +2353,12 @@ class $$ActivitiesTableAnnotationComposer
 
   GeneratedColumn<String> get streamsJson => $composableBuilder(
       column: $table.streamsJson, builder: (column) => column);
+
+  GeneratedColumn<int> get photoCount => $composableBuilder(
+      column: $table.photoCount, builder: (column) => column);
+
+  GeneratedColumn<String> get photosJson => $composableBuilder(
+      column: $table.photosJson, builder: (column) => column);
 }
 
 class $$ActivitiesTableTableManager extends RootTableManager<
@@ -2292,6 +2405,8 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             Value<String?> splitsJson = const Value.absent(),
             Value<String?> elevationJson = const Value.absent(),
             Value<String?> streamsJson = const Value.absent(),
+            Value<int?> photoCount = const Value.absent(),
+            Value<String?> photosJson = const Value.absent(),
           }) =>
               ActivitiesCompanion(
             id: id,
@@ -2315,6 +2430,8 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             splitsJson: splitsJson,
             elevationJson: elevationJson,
             streamsJson: streamsJson,
+            photoCount: photoCount,
+            photosJson: photosJson,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -2338,6 +2455,8 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             Value<String?> splitsJson = const Value.absent(),
             Value<String?> elevationJson = const Value.absent(),
             Value<String?> streamsJson = const Value.absent(),
+            Value<int?> photoCount = const Value.absent(),
+            Value<String?> photosJson = const Value.absent(),
           }) =>
               ActivitiesCompanion.insert(
             id: id,
@@ -2361,6 +2480,8 @@ class $$ActivitiesTableTableManager extends RootTableManager<
             splitsJson: splitsJson,
             elevationJson: elevationJson,
             streamsJson: streamsJson,
+            photoCount: photoCount,
+            photosJson: photosJson,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (

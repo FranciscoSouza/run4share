@@ -46,6 +46,18 @@ class FakeStravaApi extends StravaApi {
     return StravaGear(id: id, name: 'Pegasus 41', distance: 412300);
   }
 
+  /// photos(id, size): calls made, and two photos per activity.
+  final photoCalls = <(int, int)>[];
+
+  @override
+  Future<List<StravaPhoto>> photos(int id, {required int size}) async {
+    photoCalls.add((id, size));
+    return [
+      for (var i = 1; i <= 2; i++)
+        StravaPhoto(id: 'p$id-$i', url: 'https://photos.test/$id-$i-$size.jpg'),
+    ];
+  }
+
   final streamsCalls = <int>[];
 
   /// Strava's answer for every activity: 500 samples, one every 4 s.

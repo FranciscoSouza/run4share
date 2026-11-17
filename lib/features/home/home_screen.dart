@@ -18,6 +18,7 @@ import 'package:run4share/features/create/creation_draft.dart';
 import 'package:run4share/features/health/connect_health.dart';
 import 'package:run4share/features/health/health_connect_sync.dart';
 import 'package:run4share/features/home/featured_templates.dart';
+import 'package:run4share/features/home/strava_photo_strip.dart';
 import 'package:run4share/features/settings/units.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
 import 'package:run4share/l10n/l10n.dart';
@@ -435,6 +436,11 @@ class _ActivityTile extends ConsumerWidget {
           ref.read(templateChoiceProvider.notifier).choose(null);
           unawaited(context.push(AppRoutes.choosePhoto(activity.id)));
         },
+        // Strava photos on the activity, to use one as the background.
+        footer: activity.source == ActivitySource.strava &&
+                photosOf(activity).isNotEmpty
+            ? StravaPhotoStrip(activity: activity)
+            : null,
         trailing: manual
             ? PopupMenuButton<_ActivityAction>(
                 icon: const Icon(AppIcons.more),

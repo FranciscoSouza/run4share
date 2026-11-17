@@ -99,7 +99,7 @@
   "formFootnote": "Das Tempo wird aus Distanz und Dauer berechnet. Leere Felder erscheinen nicht auf deinen Stickern.",
   "formSave": "Aktivität speichern",
   "formDurationHint": "0:33:14",
-  "formDurationInvalid": "Gib eine Zeit wie 0:33:14 ein",
+  "formDurationInvalid": "Wähle eine Dauer",
   "formNumberInvalid": "Gib eine Zahl ein",
   "formHeartRateInvalid": "Zwischen 30 und 250",
   "typeRun": "Lauf",
@@ -310,5 +310,8 @@
   "effectHighContrast": "Hoher Kontrast",
   "shareCopy": "Kopieren",
   "shareCopied": "Sticker kopiert. Füge ihn in deine Story ein.",
-  "shareCopyFailed": "Sticker konnte nicht kopiert werden."
+  "shareCopyFailed": "Sticker konnte nicht kopiert werden.",
+  "stravaPhotoLoading": "Foto wird von Strava geladen…",
+  "stravaPhotoFailed": "Dieses Foto konnte nicht von Strava geladen werden.",
+  "stravaPhotoLabel": "Strava-Foto {index}"
 }

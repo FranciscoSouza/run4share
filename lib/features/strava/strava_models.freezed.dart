@@ -571,6 +571,9 @@ mixin _$StravaActivity {
   /// The shoe or bike used, e.g. "g12345".
   String? get gearId;
 
+  /// Photos on the activity (Strava's own and Instagram's).
+  int get totalPhotoCount;
+
   /// Only in the detail: one split per kilometre, and per mile.
   List<StravaSplit> get splitsMetric;
   List<StravaSplit> get splitsStandard;
@@ -622,6 +625,8 @@ mixin _$StravaActivity {
                 other.polyline == _this.polyline) &&
             (identical(other.gearId, _this.gearId) ||
                 other.gearId == _this.gearId) &&
+            (identical(other.totalPhotoCount, _this.totalPhotoCount) ||
+                other.totalPhotoCount == _this.totalPhotoCount) &&
             const DeepCollectionEquality()
                 .equals(other.splitsMetric, _this.splitsMetric) &&
             const DeepCollectionEquality()
@@ -632,32 +637,34 @@ mixin _$StravaActivity {
   @override
   int get hashCode {
     final _this = this as StravaActivity;
-    return Object.hash(
-        runtimeType,
-        _this.id,
-        _this.name,
-        _this.sportType,
-        _this.startDate,
-        _this.startDateLocal,
-        _this.distance,
-        _this.movingTime,
-        _this.elapsedTime,
-        _this.averageSpeed,
-        _this.averageHeartrate,
-        _this.totalElevationGain,
-        _this.calories,
-        _this.prCount,
-        _this.workoutType,
-        _this.polyline,
-        _this.gearId,
-        const DeepCollectionEquality().hash(_this.splitsMetric),
-        const DeepCollectionEquality().hash(_this.splitsStandard));
+    return Object.hashAll([
+      runtimeType,
+      _this.id,
+      _this.name,
+      _this.sportType,
+      _this.startDate,
+      _this.startDateLocal,
+      _this.distance,
+      _this.movingTime,
+      _this.elapsedTime,
+      _this.averageSpeed,
+      _this.averageHeartrate,
+      _this.totalElevationGain,
+      _this.calories,
+      _this.prCount,
+      _this.workoutType,
+      _this.polyline,
+      _this.gearId,
+      _this.totalPhotoCount,
+      const DeepCollectionEquality().hash(_this.splitsMetric),
+      const DeepCollectionEquality().hash(_this.splitsStandard)
+    ]);
   }
 
   @override
   String toString() {
     final _this = this as StravaActivity;
-    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain}, calories: ${_this.calories}, prCount: ${_this.prCount}, workoutType: ${_this.workoutType}, polyline: ${_this.polyline}, gearId: ${_this.gearId}, splitsMetric: ${_this.splitsMetric}, splitsStandard: ${_this.splitsStandard})';
+    return 'StravaActivity(id: ${_this.id}, name: ${_this.name}, sportType: ${_this.sportType}, startDate: ${_this.startDate}, startDateLocal: ${_this.startDateLocal}, distance: ${_this.distance}, movingTime: ${_this.movingTime}, elapsedTime: ${_this.elapsedTime}, averageSpeed: ${_this.averageSpeed}, averageHeartrate: ${_this.averageHeartrate}, totalElevationGain: ${_this.totalElevationGain}, calories: ${_this.calories}, prCount: ${_this.prCount}, workoutType: ${_this.workoutType}, polyline: ${_this.polyline}, gearId: ${_this.gearId}, totalPhotoCount: ${_this.totalPhotoCount}, splitsMetric: ${_this.splitsMetric}, splitsStandard: ${_this.splitsStandard})';
   }
 }
 
@@ -684,6 +691,7 @@ abstract mixin class $StravaActivityCopyWith<$Res> {
       int? workoutType,
       @JsonKey(readValue: _summaryPolyline) String? polyline,
       String? gearId,
+      int totalPhotoCount,
       List<StravaSplit> splitsMetric,
       List<StravaSplit> splitsStandard});
 }
@@ -717,6 +725,7 @@ class _$StravaActivityCopyWithImpl<$Res>
     Object? workoutType = freezed,
     Object? polyline = freezed,
     Object? gearId = freezed,
+    Object? totalPhotoCount = null,
     Object? splitsMetric = null,
     Object? splitsStandard = null,
   }) {
@@ -785,6 +794,10 @@ class _$StravaActivityCopyWithImpl<$Res>
           ? _self.gearId
           : gearId // ignore: cast_nullable_to_non_nullable
               as String?,
+      totalPhotoCount: null == totalPhotoCount
+          ? _self.totalPhotoCount
+          : totalPhotoCount // ignore: cast_nullable_to_non_nullable
+              as int,
       splitsMetric: null == splitsMetric
           ? _self.splitsMetric
           : splitsMetric // ignore: cast_nullable_to_non_nullable
@@ -907,6 +920,7 @@ extension StravaActivityPatterns on StravaActivity {
             int? workoutType,
             @JsonKey(readValue: _summaryPolyline) String? polyline,
             String? gearId,
+            int totalPhotoCount,
             List<StravaSplit> splitsMetric,
             List<StravaSplit> splitsStandard)?
         $default, {
@@ -932,6 +946,7 @@ extension StravaActivityPatterns on StravaActivity {
             _that.workoutType,
             _that.polyline,
             _that.gearId,
+            _that.totalPhotoCount,
             _that.splitsMetric,
             _that.splitsStandard);
       case _:
@@ -971,6 +986,7 @@ extension StravaActivityPatterns on StravaActivity {
             int? workoutType,
             @JsonKey(readValue: _summaryPolyline) String? polyline,
             String? gearId,
+            int totalPhotoCount,
             List<StravaSplit> splitsMetric,
             List<StravaSplit> splitsStandard)
         $default,
@@ -995,6 +1011,7 @@ extension StravaActivityPatterns on StravaActivity {
             _that.workoutType,
             _that.polyline,
             _that.gearId,
+            _that.totalPhotoCount,
             _that.splitsMetric,
             _that.splitsStandard);
       case _:
@@ -1033,6 +1050,7 @@ extension StravaActivityPatterns on StravaActivity {
             int? workoutType,
             @JsonKey(readValue: _summaryPolyline) String? polyline,
             String? gearId,
+            int totalPhotoCount,
             List<StravaSplit> splitsMetric,
             List<StravaSplit> splitsStandard)?
         $default,
@@ -1057,6 +1075,7 @@ extension StravaActivityPatterns on StravaActivity {
             _that.workoutType,
             _that.polyline,
             _that.gearId,
+            _that.totalPhotoCount,
             _that.splitsMetric,
             _that.splitsStandard);
       case _:
@@ -1085,6 +1104,7 @@ class _StravaActivity extends StravaActivity {
       this.workoutType,
       @JsonKey(readValue: _summaryPolyline) this.polyline,
       this.gearId,
+      this.totalPhotoCount = 0,
       List<StravaSplit> splitsMetric = const [],
       List<StravaSplit> splitsStandard = const []})
       : _splitsMetric = splitsMetric,
@@ -1151,6 +1171,11 @@ class _StravaActivity extends StravaActivity {
   /// The shoe or bike used, e.g. "g12345".
   @override
   final String? gearId;
+
+  /// Photos on the activity (Strava's own and Instagram's).
+  @override
+  @JsonKey()
+  final int totalPhotoCount;
 
   /// Only in the detail: one split per kilometre, and per mile.
   final List<StravaSplit> _splitsMetric;
@@ -1221,6 +1246,8 @@ class _StravaActivity extends StravaActivity {
             (identical(other.polyline, polyline) ||
                 other.polyline == polyline) &&
             (identical(other.gearId, gearId) || other.gearId == gearId) &&
+            (identical(other.totalPhotoCount, totalPhotoCount) ||
+                other.totalPhotoCount == totalPhotoCount) &&
             const DeepCollectionEquality()
                 .equals(other.splitsMetric, _splitsMetric) &&
             const DeepCollectionEquality()
@@ -1230,31 +1257,33 @@ class _StravaActivity extends StravaActivity {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode {
-    return Object.hash(
-        runtimeType,
-        id,
-        name,
-        sportType,
-        startDate,
-        startDateLocal,
-        distance,
-        movingTime,
-        elapsedTime,
-        averageSpeed,
-        averageHeartrate,
-        totalElevationGain,
-        calories,
-        prCount,
-        workoutType,
-        polyline,
-        gearId,
-        const DeepCollectionEquality().hash(_splitsMetric),
-        const DeepCollectionEquality().hash(_splitsStandard));
+    return Object.hashAll([
+      runtimeType,
+      id,
+      name,
+      sportType,
+      startDate,
+      startDateLocal,
+      distance,
+      movingTime,
+      elapsedTime,
+      averageSpeed,
+      averageHeartrate,
+      totalElevationGain,
+      calories,
+      prCount,
+      workoutType,
+      polyline,
+      gearId,
+      totalPhotoCount,
+      const DeepCollectionEquality().hash(_splitsMetric),
+      const DeepCollectionEquality().hash(_splitsStandard)
+    ]);
   }
 
   @override
   String toString() {
-    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain, calories: $calories, prCount: $prCount, workoutType: $workoutType, polyline: $polyline, gearId: $gearId, splitsMetric: $splitsMetric, splitsStandard: $splitsStandard)';
+    return 'StravaActivity(id: $id, name: $name, sportType: $sportType, startDate: $startDate, startDateLocal: $startDateLocal, distance: $distance, movingTime: $movingTime, elapsedTime: $elapsedTime, averageSpeed: $averageSpeed, averageHeartrate: $averageHeartrate, totalElevationGain: $totalElevationGain, calories: $calories, prCount: $prCount, workoutType: $workoutType, polyline: $polyline, gearId: $gearId, totalPhotoCount: $totalPhotoCount, splitsMetric: $splitsMetric, splitsStandard: $splitsStandard)';
   }
 }
 
@@ -1283,6 +1312,7 @@ abstract mixin class _$StravaActivityCopyWith<$Res>
       int? workoutType,
       @JsonKey(readValue: _summaryPolyline) String? polyline,
       String? gearId,
+      int totalPhotoCount,
       List<StravaSplit> splitsMetric,
       List<StravaSplit> splitsStandard});
 }
@@ -1316,6 +1346,7 @@ class __$StravaActivityCopyWithImpl<$Res>
     Object? workoutType = freezed,
     Object? polyline = freezed,
     Object? gearId = freezed,
+    Object? totalPhotoCount = null,
     Object? splitsMetric = null,
     Object? splitsStandard = null,
   }) {
@@ -1384,6 +1415,10 @@ class __$StravaActivityCopyWithImpl<$Res>
           ? _self.gearId
           : gearId // ignore: cast_nullable_to_non_nullable
               as String?,
+      totalPhotoCount: null == totalPhotoCount
+          ? _self.totalPhotoCount
+          : totalPhotoCount // ignore: cast_nullable_to_non_nullable
+              as int,
       splitsMetric: null == splitsMetric
           ? _self._splitsMetric
           : splitsMetric // ignore: cast_nullable_to_non_nullable

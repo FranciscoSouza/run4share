@@ -32,6 +32,11 @@ abstract final class AppRoutes {
   static String choosePhoto(int activityId) => '/create/$activityId/photo';
   static String crop(int activityId, String photoId) =>
       '/create/$activityId/photo/${Uri.encodeComponent(photoId)}';
+
+  /// The crop step for a photo that didn't come from the gallery picker
+  /// (a Strava photo from an activity card); Back returns to Home.
+  static String cropPicked(int activityId, String photoId) =>
+      '/create/$activityId/crop/${Uri.encodeComponent(photoId)}';
   static const editor = '/create/editor';
   static const share = '/create/share';
   static String saved(int creationId) => '/saved/$creationId';
@@ -156,6 +161,14 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/create/:activityId/crop/:photoId',
+        parentNavigatorKey: _rootKey,
+        builder: (context, state) => CropScreen(
+          activityId: int.tryParse(state.pathParameters['activityId']!) ?? 0,
+          photoId: state.pathParameters['photoId']!,
+        ),
       ),
       GoRoute(
         path: '/create/:activityId/photo',

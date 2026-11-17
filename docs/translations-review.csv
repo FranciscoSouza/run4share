@@ -98,7 +98,7 @@ formHeartRate,Add / edit activity form,,Avg heart rate,FC média,FC media,FC moy
 formFootnote,Add / edit activity form,,Pace is worked out from distance and duration. Empty fields are left off your stickers.,O ritmo é calculado a partir da distância e da duração. Campos vazios ficam fora dos seus stickers.,El ritmo se calcula a partir de la distancia y la duración. Los campos vacíos no aparecen en tus stickers.,L’allure est calculée à partir de la distance et de la durée. Les champs vides n’apparaissent pas sur vos stickers.,Das Tempo wird aus Distanz und Dauer berechnet. Leere Felder erscheinen nicht auf deinen Stickern.
 formSave,Add / edit activity form,,Save activity,Salvar atividade,Guardar actividad,Enregistrer l’activité,Aktivität speichern
 formDurationHint,Add / edit activity form,,0:33:14,0:33:14,0:33:14,0:33:14,0:33:14
-formDurationInvalid,Add / edit activity form,,Enter a time like 0:33:14,Digite um tempo como 0:33:14,Escribe un tiempo como 0:33:14,Saisissez une durée comme 0:33:14,Gib eine Zeit wie 0:33:14 ein
+formDurationInvalid,Add / edit activity form,,Choose a duration,Escolha a duração,Elige una duración,Choisis une durée,Wähle eine Dauer
 formNumberInvalid,Add / edit activity form,,Enter a number,Digite um número,Escribe un número,Saisissez un nombre,Gib eine Zahl ein
 formHeartRateInvalid,Add / edit activity form,,Between 30 and 250,Entre 30 e 250,Entre 30 y 250,Entre 30 et 250,Zwischen 30 und 250
 typeRun,"Activity types (also on stickers, in capitals)",,Run,Corrida,Carrera,Course,Lauf
@@ -310,3 +310,6 @@ effectHighContrast,,,High contrast,Alto contraste,Alto contraste,Contraste élev
 shareCopy,Share screen,,Copy,Copiar,Copiar,Copier,Kopieren
 shareCopied,Share screen,,Sticker copied. Paste it into your story.,Sticker copiado. Cole no seu story.,Sticker copiado. Pégalo en tu historia.,Sticker copié. Colle-le dans ta story.,Sticker kopiert. Füge ihn in deine Story ein.
 shareCopyFailed,Share screen,,Couldn't copy the sticker.,Não foi possível copiar o sticker.,No se pudo copiar el sticker.,Impossible de copier le sticker.,Sticker konnte nicht kopiert werden.
+stravaPhotoLoading,Strava connection messages,,Getting the photo from Strava…,Buscando a foto no Strava…,Trayendo la foto de Strava…,Récupération de la photo sur Strava…,Foto wird von Strava geladen…
+stravaPhotoFailed,Strava connection messages,,Couldn't get this photo from Strava.,Não foi possível buscar esta foto no Strava.,No se pudo traer esta foto de Strava.,Impossible de récupérer cette photo sur Strava.,Dieses Foto konnte nicht von Strava geladen werden.
+stravaPhotoLabel,Strava connection messages,Keep {index} as is.,Strava photo {index},Foto do Strava {index},Foto de Strava {index},Photo Strava {index},Strava-Foto {index}

@@ -48,6 +48,9 @@ void main() {
     expect(await db.select(db.gearTable).get(), isEmpty);
     // Schema 5: chart streams, fetched later.
     expect(activities.single.streamsJson, isNull);
+    // Schema 6: Strava photos, fetched after a sync.
+    expect(activities.single.photoCount, isNull);
+    expect(activities.single.photosJson, isNull);
     expect(await db.readPreference('units'), 'mi');
     expect(await db.select(db.creations).get(), isEmpty);
   });

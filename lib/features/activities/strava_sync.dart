@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:run4share/app/clock.dart';
 import 'package:run4share/data/activity_repository.dart';
 import 'package:run4share/data/database.dart';
+import 'package:run4share/features/photos/strava_photos.dart';
 import 'package:run4share/features/strava/strava_api.dart';
 import 'package:run4share/features/strava/strava_config.dart';
 import 'package:run4share/features/strava/strava_connection.dart';
@@ -123,6 +126,8 @@ class StravaSync extends Notifier<SyncState> {
         lastSyncedAt: now,
         reachedEnd: reachedEnd,
       );
+      // Photos follow in the background; the list doesn't wait for them.
+      unawaited(fetchPhotoLists());
     } on Object catch (error, stack) {
       debugPrint('Strava sync failed: $error\n$stack');
       state = state.copyWith(syncing: false, failed: true);
@@ -142,6 +147,7 @@ class StravaSync extends Notifier<SyncState> {
       final reachedEnd = batch.length < pageSize;
       await _db.writePreference(_reachedEndKey, '$reachedEnd');
       state = state.copyWith(loadingOlder: false, reachedEnd: reachedEnd);
+      unawaited(fetchPhotoLists());
     } on Object catch (error, stack) {
       debugPrint('Loading older Strava activities failed: $error\n$stack');
       state = state.copyWith(loadingOlder: false, failed: true);
@@ -199,9 +205,33 @@ class StravaSync extends Notifier<SyncState> {
     }
   }
 
+  /// Thumbnail size: enough for the cards, light to download.
+  static const thumbnailSize = 600;
+
+  /// After a sync: thumbnails for activities with photos, one request
+  /// each, at most 10 per run (Strava's limits are shared by every user).
+  Future<void> fetchPhotoLists() async {
+    for (final activity in await _repo.missingPhotos()) {
+      final id = int.tryParse(activity.sourceId ?? '');
+      if (id == null) continue;
+      try {
+        final photos = await _api.photos(id, size: thumbnailSize);
+        await _repo.setPhotos(
+          activity.id,
+          photos,
+          count: activity.photoCount ?? photos.length,
+        );
+      } on Object catch (error) {
+        debugPrint('Strava photos failed: $error');
+        return;
+      }
+    }
+  }
+
   /// Forgets everything synced, after Strava is disconnected.
   Future<void> reset() async {
     await _repo.deleteSource(ActivitySource.strava);
+    await ref.read(stravaPhotoStoreProvider).clear();
     await _db.writePreference(_lastSyncedKey, null);
     await _db.writePreference(_reachedEndKey, null);
     state = const SyncState();

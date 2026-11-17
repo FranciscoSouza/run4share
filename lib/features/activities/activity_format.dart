@@ -77,6 +77,10 @@ class ActivityFormat {
   String speed(double metresPerSecond) =>
       _oneDecimal.format(metresPerSecond * 3600 / metresPerUnit);
 
+  /// "Thu 12 Nov 2026".
+  String day(DateTime start) =>
+      DateFormat('EEE d MMM y', _locale).format(start);
+
   /// "Thu 12 Nov · 12:31".
   String when(DateTime start) {
     final day = DateFormat('EEE d MMM', _locale).format(start);

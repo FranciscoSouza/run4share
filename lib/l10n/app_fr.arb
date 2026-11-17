@@ -99,7 +99,7 @@
   "formFootnote": "L’allure est calculée à partir de la distance et de la durée. Les champs vides n’apparaissent pas sur vos stickers.",
   "formSave": "Enregistrer l’activité",
   "formDurationHint": "0:33:14",
-  "formDurationInvalid": "Saisissez une durée comme 0:33:14",
+  "formDurationInvalid": "Choisis une durée",
   "formNumberInvalid": "Saisissez un nombre",
   "formHeartRateInvalid": "Entre 30 et 250",
   "typeRun": "Course",
@@ -310,5 +310,8 @@
   "effectHighContrast": "Contraste élevé",
   "shareCopy": "Copier",
   "shareCopied": "Sticker copié. Colle-le dans ta story.",
-  "shareCopyFailed": "Impossible de copier le sticker."
+  "shareCopyFailed": "Impossible de copier le sticker.",
+  "stravaPhotoLoading": "Récupération de la photo sur Strava…",
+  "stravaPhotoFailed": "Impossible de récupérer cette photo sur Strava.",
+  "stravaPhotoLabel": "Photo Strava {index}"
 }

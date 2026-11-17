@@ -65,6 +65,27 @@ class StravaApi {
     return ActivityStreams.fromStrava(response.data ?? const {});
   }
 
+  /// The activity's photos, each at [size] px on its longest side. Videos
+  /// and photos still processing (no URL yet) are left out.
+  Future<List<StravaPhoto>> photos(int id, {required int size}) async {
+    final response = await _dio.get<List<dynamic>>(
+      '$_base/activities/$id/photos',
+      queryParameters: {'size': size, 'photo_sources': true},
+      options: Options(headers: {'Authorization': 'Bearer ${await _token()}'}),
+    );
+    return [
+      for (final p in response.data ?? const [])
+        if (p is Map &&
+            p['unique_id'] is String &&
+            (p['urls'] as Map?)?['$size'] is String &&
+            p['video_url'] == null)
+          StravaPhoto(
+            id: p['unique_id'] as String,
+            url: (p['urls'] as Map)['$size'] as String,
+          ),
+    ];
+  }
+
   /// One activity in detail (adds calories).
   Future<StravaActivity> activity(int id) async {
     final response = await _dio.get<Map<String, dynamic>>(

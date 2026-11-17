@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:run4share/app/app_icons.dart';
 import 'package:run4share/app/clock.dart';
 import 'package:run4share/app/material.dart';
 import 'package:run4share/data/activity_repository.dart';
@@ -9,6 +10,18 @@ import '../helpers/pump_app.dart';
 import '../strava/fakes.dart';
 
 Finder field(String name) => find.byKey(ValueKey('activity.$name'));
+
+/// Opens the duration wheels, sets them to [value] and taps Done.
+Future<void> setDuration(WidgetTester tester, Duration value) async {
+  await tester.tap(find.byKey(const ValueKey('activity.duration')));
+  await tester.pumpAndSettle();
+  final wheels = tester.widget<CupertinoTimerPicker>(
+    find.byKey(const ValueKey('activity.durationWheels')),
+  );
+  wheels.onTimerDurationChanged(value);
+  await tester.tap(find.text('Done'));
+  await tester.pumpAndSettle();
+}
 
 void main() {
   group('parsing', () {
@@ -63,13 +76,22 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Add activity'), findsOneWidget);
 
+    // The date opens the calendar only: no typing switch, no clock after.
+    await tester.tap(find.byIcon(AppIcons.calendar));
+    await tester.pumpAndSettle();
+    expect(find.byType(CalendarDatePicker), findsOneWidget);
+    expect(find.byIcon(Icons.edit_outlined), findsNothing);
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TimePickerDialog), findsNothing);
+
     // Duration is required.
     await tester.tap(find.text('Save activity'));
     await tester.pumpAndSettle();
-    expect(find.text('Enter a time like 0:33:14'), findsOneWidget);
+    expect(find.text('Choose a duration'), findsOneWidget);
 
     await tester.enterText(field('name'), 'Treadmill Run');
-    await tester.enterText(field('duration'), '0:33:14');
+    await setDuration(tester, const Duration(minutes: 33, seconds: 14));
     await tester.enterText(field('distance'), '5,02');
     await tester.enterText(field('bpm'), '152');
     await tester.tap(find.text('Save activity'));
@@ -144,7 +166,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Workout'));
-    await tester.enterText(field('duration'), '30:18');
+    await setDuration(tester, const Duration(minutes: 30, seconds: 18));
     await tester.enterText(field('calories'), '189');
     await tester.tap(find.text('Save activity'));
     await tester.pumpAndSettle();
@@ -160,7 +182,7 @@ void main() {
     await tester.tap(find.text('Add activity manually'));
     await tester.pumpAndSettle();
 
-    await tester.enterText(field('duration'), '30:00');
+    await setDuration(tester, const Duration(minutes: 30));
     await tester.enterText(field('shoe'), 'Pegasus 41');
     await tester.enterText(field('shoeKm'), '412');
     await tester.tap(find.text('Save activity'));
@@ -184,7 +206,7 @@ void main() {
     await tester.tap(find.text('Add activity manually'));
     await tester.pumpAndSettle();
 
-    await tester.enterText(field('duration'), '20:00');
+    await setDuration(tester, const Duration(minutes: 20));
     await tester.enterText(field('bpm'), '400');
     await tester.tap(find.text('Save activity'));
     await tester.pumpAndSettle();

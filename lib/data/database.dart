@@ -65,6 +65,13 @@ class Activities extends Table {
   /// activity without streams stores an empty set so it isn't re-asked.
   TextColumn get streamsJson => text().nullable()();
 
+  /// Photos on the activity, per Strava's list (0 or null: none).
+  IntColumn get photoCount => integer().nullable()();
+
+  /// Thumbnails as JSON: {"count": n, "photos": [{"id": ..., "url": ...}]}.
+  /// Fetched after a sync; refetched when the count changes.
+  TextColumn get photosJson => text().nullable()();
+
   @override
   List<Set<Column>> get uniqueKeys => [
         {source, sourceId},
@@ -132,7 +139,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -154,6 +161,11 @@ class AppDatabase extends _$AppDatabase {
           }
           // 5: time series for the heart-rate, pace and elevation charts.
           if (from < 5) await m.addColumn(activities, activities.streamsJson);
+          // 6: Strava photos as thumbnails on the activity cards.
+          if (from < 6) {
+            await m.addColumn(activities, activities.photoCount);
+            await m.addColumn(activities, activities.photosJson);
+          }
         },
       );
 

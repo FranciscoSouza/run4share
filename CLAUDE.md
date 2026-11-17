@@ -26,7 +26,7 @@ or share to Instagram.
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
 charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes → 16 Home templates → 17 photo effects + copy sticker → 18 release
-prep.
+prep → 19 form pickers + Strava photos.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -470,6 +470,44 @@ paste into Instagram/TikTok wasn't reported.
   renderer is installed; regenerating would need the people removed
   first.
 - Test: every listed picture is in the asset bundle.
+
+**Strava live (17 Nov 2026):** real Strava works on Francisco's phone.
+Strava API app client ID 188239, callback domain `localhost`; only its
+owner can connect until Strava reviews it. Token Worker deployed at
+`https://run4share-strava.run4share.workers.dev` (Cloudflare account
+Francisco created; workers.dev subdomain `run4share`); client ID and
+secret are Worker secrets. Node 22 is in `~/.local/node` (wrangler via
+`PATH=~/.local/node/bin:$PATH npx wrangler@4`). `config/strava.json`
+has the client ID and Worker URL (gitignored). Francisco pasted the
+secret in chat: regenerating it later only means `wrangler secret put
+STRAVA_CLIENT_SECRET` again.
+
+**Phase 19 status (form pickers + Strava photos):** committed on
+`phase-19-form-strava-photos` (17 Nov 2026); Francisco approved it on his
+phone.
+- Manual form (Francisco, 17 Nov 2026): the date opens the calendar
+  only (no typing switch, no time; the time of day stays: now for a new
+  activity, the stored one when editing) and shows "Thu 12 Nov 2026";
+  the duration is tap-only and opens hour/minute/second wheels
+  (`CupertinoTimerPicker`, exported through `lib/app/material.dart`
+  like Material) in a sheet with Done.
+- Strava photos: the list's `total_photo_count` is stored (schema 6:
+  `photo_count`, `photos_json`). After each sync (and loading older),
+  `fetchPhotoLists` asks `/activities/{id}/photos?size=600` for at most
+  10 activities that have photos and none cached (or a changed count):
+  one request per activity, ever. Cards show all thumbnails in a
+  scrolling row (`StravaPhotoStrip`, the card's footer). Tapping one
+  fetches it at 2048 px (one more request), saves it in the app's
+  documents (`strava_photos/`, not the cache, so Edit again works) as
+  photo ID `strava:<unique_id>`, and opens the crop step through a new
+  top-level route (`AppRoutes.cropPicked`), so Back goes Home, not to
+  the gallery picker. `WithStravaPhotos` wraps the phone's library and
+  serves `strava:` IDs from that folder; crop, editor, export and Edit
+  again need no change. Disconnecting Strava deletes the folder (API
+  terms). Privacy policy draft says so.
+- Gotchas: the store looks up the Strava API lazily (building it while
+  Settings builds threw); folder deletion is synchronous (async file IO
+  never finishes in widget tests).
 
 ## Decisions already taken (do not reopen without asking)
 

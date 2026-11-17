@@ -162,29 +162,38 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
     };
   }
 
+  /// The calendar only (no typing, no clock, Francisco 17 Nov 2026): the
+  /// time of day stays as it was (now, for a new activity).
   Future<void> _pickStart() async {
     final now = ref.read(clockProvider)();
     final date = await showDatePicker(
       context: context,
-      initialDate: _start,
+      initialDate: _start.isAfter(now) ? now : _start,
       firstDate: DateTime(2000),
       lastDate: now,
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
     );
     if (date == null || !mounted) return;
-    final time = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay(hour: _start.hour, minute: _start.minute),
-    );
-    if (!mounted) return;
     setState(() {
       _start = DateTime.utc(
         date.year,
         date.month,
         date.day,
-        time?.hour ?? _start.hour,
-        time?.minute ?? _start.minute,
+        _start.hour,
+        _start.minute,
       );
     });
+  }
+
+  /// Hours, minutes and seconds on wheels, in a sheet.
+  Future<void> _pickDuration() async {
+    FocusScope.of(context).unfocus();
+    final picked = await showDurationSheet(
+      context,
+      initial: Duration(seconds: parseDuration(_duration.text) ?? 0),
+    );
+    if (picked == null || !mounted) return;
+    setState(() => _duration.text = _format().duration(picked.inSeconds));
   }
 
   Future<void> _save() async {
@@ -297,7 +306,7 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
                                   children: [
                                     _Label(l10n.formDate),
                                     _DateField(
-                                      text: format.when(_start),
+                                      text: format.day(_start),
                                       onTap: _pickStart,
                                     ),
                                   ],
@@ -309,18 +318,20 @@ class _ActivityFormState extends ConsumerState<ActivityFormScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     _Label(l10n.formDuration),
+                                    // Tap-only: the wheels set it.
                                     TextFormField(
                                       key: const ValueKey('activity.duration'),
                                       controller: _duration,
-                                      keyboardType: TextInputType.datetime,
-                                      textInputAction: TextInputAction.next,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.allow(
-                                          RegExp('[0-9:]'),
-                                        ),
-                                      ],
+                                      readOnly: true,
+                                      showCursor: false,
+                                      enableInteractiveSelection: false,
+                                      onTap: _pickDuration,
                                       decoration: InputDecoration(
                                         hintText: l10n.formDurationHint,
+                                        suffixIcon: const Icon(
+                                          AppIcons.timer,
+                                          size: 20,
+                                        ),
                                       ),
                                       validator: (text) =>
                                           parseDuration(text ?? '') == null
@@ -547,4 +558,57 @@ class _OptionalNumber extends StatelessWidget {
       ],
     );
   }
+}
+
+/// A sheet with hour, minute and second wheels and Done; null if
+/// dismissed. Returns at least one second.
+Future<Duration?> showDurationSheet(
+  BuildContext context, {
+  required Duration initial,
+}) {
+  var value = initial;
+  return showModalBottomSheet<Duration>(
+    context: context,
+    showDragHandle: true,
+    builder: (context) {
+      final l10n = context.l10n;
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              l10n.formDuration,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            SizedBox(
+              height: 216,
+              child: CupertinoTimerPicker(
+                key: const ValueKey('activity.durationWheels'),
+                initialTimerDuration: initial,
+                onTimerDurationChanged: (d) => value = d,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.page,
+                AppSpacing.sm,
+                AppSpacing.page,
+                AppSpacing.md,
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: AppButton(
+                  label: l10n.actionDone,
+                  onPressed: () => Navigator.pop(
+                    context,
+                    value.inSeconds > 0 ? value : null,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

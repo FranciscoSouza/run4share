@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:run4share/features/photos/strava_photos.dart';
 
 enum PhotoAccess {
   /// Every photo.
@@ -165,5 +166,8 @@ class DevicePhotoLibrary implements PhotoLibrary {
 }
 
 final photoLibraryProvider = Provider<PhotoLibrary>(
-  (ref) => DevicePhotoLibrary(),
+  (ref) => WithStravaPhotos(
+    DevicePhotoLibrary(),
+    ref.watch(stravaPhotoStoreProvider),
+  ),
 );

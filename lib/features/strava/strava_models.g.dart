@@ -47,6 +47,7 @@ _StravaActivity _$StravaActivityFromJson(Map<String, dynamic> json) =>
       workoutType: (json['workout_type'] as num?)?.toInt(),
       polyline: _summaryPolyline(json, 'polyline') as String?,
       gearId: json['gear_id'] as String?,
+      totalPhotoCount: (json['total_photo_count'] as num?)?.toInt() ?? 0,
       splitsMetric: (json['splits_metric'] as List<dynamic>?)
               ?.map((e) => StravaSplit.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -75,6 +76,7 @@ Map<String, dynamic> _$StravaActivityToJson(_StravaActivity instance) =>
       'workout_type': instance.workoutType,
       'polyline': instance.polyline,
       'gear_id': instance.gearId,
+      'total_photo_count': instance.totalPhotoCount,
       'splits_metric': instance.splitsMetric.map((e) => e.toJson()).toList(),
       'splits_standard':
           instance.splitsStandard.map((e) => e.toJson()).toList(),

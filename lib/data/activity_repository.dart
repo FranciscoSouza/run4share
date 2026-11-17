@@ -71,6 +71,41 @@ class ActivityRepository {
     );
   }
 
+  /// Strava activities with photos whose thumbnails aren't cached, or
+  /// whose photo count changed since; newest first.
+  Future<List<Activity>> missingPhotos({int limit = 10}) async {
+    final candidates = await (_db.select(_table)
+          ..where(
+            (a) =>
+                a.source.equalsValue(ActivitySource.strava) &
+                a.photoCount.isBiggerThanValue(0),
+          )
+          ..orderBy([(a) => OrderingTerm.desc(a.startLocal)]))
+        .get();
+    return [
+      for (final a in candidates)
+        if (photosOf(a).length != a.photoCount || a.photosJson == null) a,
+    ].take(limit).toList();
+  }
+
+  Future<void> setPhotos(
+    int id,
+    List<StravaPhoto> photos, {
+    required int count,
+  }) =>
+      (_db.update(_table)..where((a) => a.id.equals(id))).write(
+        ActivitiesCompanion(
+          photosJson: Value(
+            jsonEncode({
+              'count': count,
+              'photos': [
+                for (final p in photos) {'id': p.id, 'url': p.url},
+              ],
+            }),
+          ),
+        ),
+      );
+
   Future<void> setStreams(int id, ActivityStreams streams) =>
       (_db.update(_table)..where((a) => a.id.equals(id))).write(
         ActivitiesCompanion(streamsJson: Value(streams.toJson())),
@@ -213,6 +248,7 @@ class ActivityRepository {
               race: Value(a.isRace),
               polyline: Value(a.polyline),
               gearId: Value(a.gearId),
+              photoCount: Value(a.totalPhotoCount),
             ),
             onConflict: DoUpdate(
               (old) => ActivitiesCompanion(
@@ -230,6 +266,7 @@ class ActivityRepository {
                 race: Value(a.isRace),
                 polyline: Value(a.polyline),
                 gearId: Value(a.gearId),
+                photoCount: Value(a.totalPhotoCount),
                 // The list has no calories; keep any fetched from detail.
                 calories: a.calories == null
                     ? const Value.absent()
@@ -366,4 +403,22 @@ String encodeSplits({
           [s.distance, s.movingTime, s.elevationDifference],
       ];
   return jsonEncode({'km': rows(metric), 'mi': rows(standard)});
+}
+
+/// The cached thumbnails of an activity; empty if none or not fetched.
+List<StravaPhoto> photosOf(Activity activity) {
+  final json = activity.photosJson;
+  if (json == null) return const [];
+  try {
+    final data = jsonDecode(json) as Map<String, dynamic>;
+    return [
+      for (final p in data['photos'] as List? ?? const [])
+        StravaPhoto(
+          id: (p as Map)['id'] as String,
+          url: p['url'] as String,
+        ),
+    ];
+  } on Object {
+    return const [];
+  }
 }

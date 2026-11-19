@@ -70,7 +70,7 @@ void main() {
         ...baseOverrides(db: db),
         clockProvider.overrideWithValue(() => testNow),
         photoLibraryProvider.overrideWithValue(
-          FakePhotoLibrary(current: PhotoAccess.granted),
+          FakePhotoLibrary(),
         ),
         proAtLaunchProvider.overrideWithValue(pro),
       ],

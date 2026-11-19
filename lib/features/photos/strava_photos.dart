@@ -8,7 +8,6 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/photos/photo_library.dart';
-import 'package:run4share/features/photos/picked_photos.dart';
 import 'package:run4share/features/strava/strava_api.dart';
 
 /// Photo IDs for pictures taken from Strava: `strava:<unique_id>`.
@@ -93,75 +92,39 @@ final stravaPhotoStoreProvider = Provider<StravaPhotoStore>(
   ),
 );
 
-/// The phone's library, plus photos kept in the app's own storage:
-/// Strava photos picked from an activity card (`strava:` IDs) and photos
-/// chosen in Android's system picker (`picked:` IDs). Crop, editor,
-/// export and "edit again" need no other change.
+/// The picked photos, plus Strava photos chosen from an activity card
+/// (`strava:` IDs, served from their own folder). Crop, editor, export and
+/// "Edit again" need no other change.
 class WithStravaPhotos implements PhotoLibrary {
-  WithStravaPhotos(this._gallery, this._strava, this._picked);
+  WithStravaPhotos(this._photos, this._strava);
 
-  final PhotoLibrary _gallery;
+  final PhotoLibrary _photos;
   final StravaPhotoStore _strava;
-  final PickedPhotoStore _picked;
 
   bool _isStrava(String id) => id.startsWith(stravaPhotoPrefix);
-  bool _isPicked(String id) => id.startsWith(pickedPhotoPrefix);
 
-  // A downloaded Strava photo is at most 2048 px, within every size the
-  // app asks for, so it's served as it is. A picked one is up to 3072 px
-  // (the export size) and is scaled down when less is asked for.
+  @override
+  Future<String?> pick() => _photos.pick();
+
+  // A downloaded Strava photo is at most 2048 px; scaled down when less is
+  // asked for.
   @override
   Future<Uint8List?> preview(String photoId, {required int maxSide}) async {
-    if (_isStrava(photoId)) return await _strava.bytes(photoId);
-    if (_isPicked(photoId)) {
-      final bytes = await _picked.bytes(photoId);
-      return bytes == null ? null : await fitWithin(bytes, maxSide);
+    if (!_isStrava(photoId)) {
+      return await _photos.preview(photoId, maxSide: maxSide);
     }
-    return await _gallery.preview(photoId, maxSide: maxSide);
+    final bytes = await _strava.bytes(photoId);
+    return bytes == null ? null : await fitWithin(bytes, maxSide);
   }
 
   @override
   Future<Uint8List?> thumbnail(String photoId, {required int size}) async {
-    if (_isStrava(photoId)) return await _strava.bytes(photoId);
-    if (_isPicked(photoId)) {
-      final bytes = await _picked.bytes(photoId);
-      return bytes == null ? null : await fitWithin(bytes, size);
+    if (!_isStrava(photoId)) {
+      return await _photos.thumbnail(photoId, size: size);
     }
-    return await _gallery.thumbnail(photoId, size: size);
+    final bytes = await _strava.bytes(photoId);
+    return bytes == null ? null : await fitWithin(bytes, size);
   }
-
-  @override
-  bool get usesSystemPicker => _gallery.usesSystemPicker;
-
-  /// Keeps the chosen photo in the app's storage, as a `picked:` ID.
-  @override
-  Future<String?> pickWithSystemPicker() async {
-    final cachePath = await _gallery.pickWithSystemPicker();
-    return cachePath == null ? null : await _picked.keep(cachePath);
-  }
-
-  @override
-  Future<PhotoAccess> access() => _gallery.access();
-
-  @override
-  Future<PhotoAccess> requestAccess() => _gallery.requestAccess();
-
-  @override
-  Future<void> openSettings() => _gallery.openSettings();
-
-  @override
-  Future<void> manageLimitedAccess() => _gallery.manageLimitedAccess();
-
-  @override
-  Future<List<PhotoAlbum>> albums() => _gallery.albums();
-
-  @override
-  Future<List<String>> photos(
-    PhotoAlbum album, {
-    required int page,
-    required int pageSize,
-  }) =>
-      _gallery.photos(album, page: page, pageSize: pageSize);
 }
 
 /// [bytes] as they are when no side is over [maxSide]; else scaled down

@@ -40,8 +40,6 @@
 	<string>run4share never writes to Apple Health.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>run4share saves the images you make to your Photos.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>run4share needs your photos so you can pick the one that goes with your workout. Your photos stay on your phone.</string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

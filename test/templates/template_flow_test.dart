@@ -54,7 +54,7 @@ void main() {
         ...baseOverrides(db: db),
         clockProvider.overrideWithValue(() => testNow),
         photoLibraryProvider.overrideWithValue(
-          FakePhotoLibrary(current: PhotoAccess.granted),
+          FakePhotoLibrary(),
         ),
       ],
     );
@@ -94,7 +94,7 @@ void main() {
 
     await tester.tap(find.text('Lunch Run'));
     await settle(tester);
-    await tester.tap(find.bySemanticsLabel('Photo 1'));
+    // The system picker (faked) returns a photo by itself.
     await settle(tester, rounds: 20);
     await tester.tap(find.text('Next'));
     await settle(tester, rounds: 15);
@@ -127,7 +127,7 @@ void main() {
         ...baseOverrides(db: db),
         clockProvider.overrideWithValue(() => testNow),
         photoLibraryProvider.overrideWithValue(
-          FakePhotoLibrary(current: PhotoAccess.granted),
+          FakePhotoLibrary(),
         ),
         proAtLaunchProvider.overrideWithValue(pro),
       ],
@@ -168,7 +168,7 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('Lunch Run'));
     await settle(tester);
-    await tester.tap(find.bySemanticsLabel('Photo 1'));
+    // The system picker (faked) returns a photo by itself.
     await settle(tester, rounds: 20);
     await tester.tap(find.text('Next'));
     await settle(tester, rounds: 15);

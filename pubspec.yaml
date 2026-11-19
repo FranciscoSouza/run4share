@@ -24,6 +24,7 @@ dependencies:
   gal: ^3.0.1
   go_router: ^17.5.0
   health: ^13.3.2
+  image_picker: ^1.2.4
   in_app_purchase: ^3.3.1
   in_app_review: ^2.0.12
   intl: any
@@ -31,7 +32,6 @@ dependencies:
   lucide_icons_flutter: ^4.0.3
   path: ^1.9.1
   path_provider: ^2.1.6
-  photo_manager: ^3.12.0
   share_plus: ^13.3.1
   url_launcher: ^6.3.3
 

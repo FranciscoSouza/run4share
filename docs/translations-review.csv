@@ -35,15 +35,12 @@ unitKm,Settings: units,,km,km,km,km,km
 unitMi,Settings: units,,mi,mi,mi,mi,mi
 settingsLanguage,Settings,,Language,Idioma,Idioma,Langue,Sprache
 settingsLanguageSubtitle,Settings,Keep {language} as is.,Follows your phone · {language},Segue o celular · {language},Sigue a tu teléfono · {language},Suit votre téléphone · {language},Folgt deinem Handy · {language}
-settingsPhotoAccess,Settings,,Photo access,Acesso às fotos,Acceso a fotos,Accès aux photos,Fotozugriff
-settingsPhotoAccessSubtitle,Settings,,Managed in phone settings,Gerenciado nos ajustes do celular,Se gestiona en los ajustes del teléfono,Géré dans les réglages du téléphone,In den Handy-Einstellungen verwaltet
 settingsRate,Settings,,Rate run4share,Avaliar o run4share,Valora run4share,Noter run4share,run4share bewerten
 settingsRateSubtitle,Settings,,On the App Store or Google Play,Na App Store ou no Google Play,En App Store o Google Play,Sur l’App Store ou Google Play,Im App Store oder bei Google Play
 settingsInvite,Settings,,Invite a friend,Convidar um amigo,Invita a un amigo,Inviter un ami,Freund einladen
 settingsInviteSubtitle,Settings,,Send your invite link,Envie seu link de convite,Envía tu enlace de invitación,Envoyez votre lien d’invitation,Sende deinen Einladungslink
 settingsPrivacy,Settings,,Privacy policy,Política de privacidade,Política de privacidad,Politique de confidentialité,Datenschutzerklärung
 settingsVersion,Settings,Keep {version} as is.,run4share {version},run4share {version},run4share {version},run4share {version},run4share {version}
-actionRetry,Buttons used in several places,,Try again,Tentar de novo,Reintentar,Réessayer,Erneut versuchen
 connectTitle,Connect Strava screen,,Connect your Strava,Conecte seu Strava,Conecta tu Strava,Connectez votre Strava,Verbinde dein Strava
 connectBody,Connect Strava screen,,Pull your latest workouts and turn them into images worth sharing.,Traga seus treinos mais recentes e transforme-os em imagens para compartilhar.,Trae tus últimos entrenamientos y conviértelos en imágenes para compartir.,Récupérez vos dernières séances et transformez-les en images à partager.,Hol dir deine neuesten Workouts und mach daraus Bilder zum Teilen.
 connectReadsActivities,Connect Strava screen,,Reads your activities,Lê suas atividades,Lee tus actividades,Lit vos activités,Liest deine Aktivitäten
@@ -106,20 +103,7 @@ typeRide,"Activity types (also on stickers, in capitals)",,Ride,Pedal,Bici,Vélo
 typeHike,"Activity types (also on stickers, in capitals)",,Hike,Trilha,Senderismo,Randonnée,Wanderung
 typeWalk,"Activity types (also on stickers, in capitals)",,Walk,Caminhada,Caminata,Marche,Spaziergang
 typeWorkout,"Activity types (also on stickers, in capitals)",,Workout,Treino,Entreno,Entraînement,Workout
-photoAccessTitle,Choosing a photo,,Add a photo from your library,Adicione uma foto da sua galeria,Añade una foto de tu galería,Ajoutez une photo de votre galerie,Füge ein Foto aus deiner Mediathek hinzu
-photoAccessBody,Choosing a photo,,run4share needs access to your photos so you can pick the one that goes with this workout. Your photos stay on your phone.,O run4share precisa de acesso às suas fotos para você escolher a que combina com este treino. Suas fotos ficam no seu celular.,run4share necesita acceso a tus fotos para que elijas la que va con este entrenamiento. Tus fotos se quedan en tu teléfono.,run4share a besoin d’accéder à vos photos pour que vous choisissiez celle qui va avec cette séance. Vos photos restent sur votre téléphone.,"run4share braucht Zugriff auf deine Fotos, damit du das passende zu diesem Workout auswählen kannst. Deine Fotos bleiben auf deinem Handy."
-actionContinue,Buttons used in several places,,Continue,Continuar,Continuar,Continuer,Weiter
 actionNotNow,Buttons used in several places,,Not now,Agora não,Ahora no,Plus tard,Nicht jetzt
-photoAccessOffTitle,Choosing a photo,,Photo access is off,O acesso às fotos está desligado,El acceso a fotos está desactivado,L’accès aux photos est désactivé,Fotozugriff ist aus
-photoAccessOffBody,Choosing a photo,,Turn on photo access for run4share in your phone settings to choose a photo.,Ative o acesso às fotos para o run4share nos ajustes do celular para escolher uma foto.,Activa el acceso a fotos para run4share en los ajustes del teléfono para elegir una foto.,Activez l’accès aux photos pour run4share dans les réglages du téléphone pour choisir une photo.,"Erlaube run4share in den Handy-Einstellungen den Fotozugriff, um ein Foto auszuwählen."
-actionOpenSettings,Buttons used in several places,,Open Settings,Abrir ajustes,Abrir ajustes,Ouvrir les réglages,Einstellungen öffnen
-actionBackToActivities,Buttons used in several places,,Back to activities,Voltar às atividades,Volver a actividades,Retour aux activités,Zurück zu Aktivitäten
-photosRecents,Choosing a photo: grid,,Recents,Recentes,Recientes,Récents,Neueste
-photosChooseOne,Choosing a photo: grid,,choose one photo,escolha uma foto,elige una foto,choisissez une photo,wähle ein Foto
-photosEmpty,Choosing a photo: grid,,No photos here yet.,Ainda não há fotos aqui.,Aún no hay fotos aquí.,Pas encore de photos ici.,Hier gibt es noch keine Fotos.
-photosLimited,Choosing a photo: grid,,run4share can see only the photos you picked.,O run4share só vê as fotos que você escolheu.,run4share solo ve las fotos que elegiste.,run4share ne voit que les photos que vous avez choisies.,"run4share sieht nur die Fotos, die du ausgewählt hast."
-actionManage,Buttons used in several places,,Manage,Gerenciar,Gestionar,Gérer,Verwalten
-photoNumber,Choosing a photo,Keep {number} as is.,Photo {number},Foto {number},Foto {number},Photo {number},Foto {number}
 cropTitle,Format and crop screen,,Format,Formato,Formato,Format,Format
 actionNext,Buttons used in several places,,Next,Avançar,Siguiente,Suivant,Weiter
 cropHint,Format and crop screen,,Drag and pinch the photo to adjust the crop,Arraste e faça pinça na foto para ajustar o corte,Arrastra y pellizca la foto para ajustar el recorte,Faites glisser et pincez la photo pour ajuster le cadrage,"Ziehe und zoome das Foto, um den Ausschnitt anzupassen"

@@ -1,196 +1,131 @@
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:photo_manager/photo_manager.dart';
-import 'package:run4share/features/photos/picked_photos.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:run4share/features/photos/strava_photos.dart';
 
-enum PhotoAccess {
-  /// Every photo.
-  granted,
+/// Photo IDs for photos chosen in the system picker: `photo:<uuid>`, a
+/// copy in the app's storage (`<documents>/photos/<uuid>.jpg`).
+const pickedPhotoPrefix = 'photo:';
 
-  /// Only photos the user picked (iOS limited, Android 14+ partial).
-  limited,
+/// Where picked photos are kept: the app's own storage, not the cache, so
+/// the crop, the full-size export and "Edit again" work without any
+/// access to the photo library.
+typedef PhotosFolder = Future<Directory> Function();
 
-  /// No access: not asked yet, denied, or restricted.
-  denied,
+Future<Directory> appPhotosFolder() async {
+  final docs = await getApplicationDocumentsDirectory();
+  return await Directory(p.join(docs.path, 'photos')).create(recursive: true);
 }
 
-@immutable
-class PhotoAlbum {
-  const PhotoAlbum({
-    required this.id,
-    required this.name,
-    required this.count,
-    this.isAll = false,
-  });
+final photosFolderProvider = Provider<PhotosFolder>((ref) => appPhotosFolder);
 
-  final String id;
-  final String name;
-  final int count;
-
-  /// The system's "all photos" album (Recents / Recent).
-  final bool isAll;
-}
-
-/// The phone's photo library, behind an interface so tests can fake it.
+/// The photos run4share works with, behind an interface so tests can fake
+/// it. Photos are chosen in the system picker (Android Photo Picker,
+/// iPhone PHPicker), which needs no photo-library permission (Google
+/// Play's Photo and Video Permissions policy).
 abstract interface class PhotoLibrary {
-  /// Current access, without asking.
-  Future<PhotoAccess> access();
+  /// Opens the system picker and keeps a copy of the chosen photo; its ID,
+  /// or null if the user backed out.
+  Future<String?> pick();
 
-  /// Shows the system permission prompt (when the OS still allows it).
-  Future<PhotoAccess> requestAccess();
-
-  Future<void> openSettings();
-
-  /// Lets the user change which photos are shared under limited access.
-  Future<void> manageLimitedAccess();
-
-  /// Albums with at least one photo; the "all photos" album first.
-  Future<List<PhotoAlbum>> albums();
-
-  /// Photo IDs in [album], newest first.
-  Future<List<String>> photos(
-    PhotoAlbum album, {
-    required int page,
-    required int pageSize,
-  });
-
-  /// A square-cropped thumbnail for the grid.
+  /// A thumbnail no bigger than [size] on its longest side.
   Future<Uint8List?> thumbnail(String photoId, {required int size});
 
-  /// A JPEG no bigger than [maxSide] on its longest side, upright.
+  /// The photo no bigger than [maxSide] on its longest side, upright.
   Future<Uint8List?> preview(String photoId, {required int maxSide});
+}
 
-  /// Android: photos are chosen in the system photo picker, which needs
-  /// no permission (Google Play's photo policy); iOS keeps the grid.
-  bool get usesSystemPicker;
+/// The kept copy of [photoId] in [folder], or null if it isn't a picked
+/// photo.
+File? pickedPhotoFile(Directory folder, String photoId) {
+  if (!photoId.startsWith(pickedPhotoPrefix)) return null;
+  // basename: an ID can't point outside the folder.
+  final name = p.basename(photoId.substring(pickedPhotoPrefix.length));
+  return File(p.join(folder.path, '$name.jpg'));
+}
 
-  /// Opens the system photo picker; the chosen photo's ID, or null if
-  /// the user backed out.
-  Future<String?> pickWithSystemPicker();
+/// Deletes kept copies that no creation uses (at start-up, and after a
+/// creation is deleted). Photos being edited and not saved yet don't
+/// survive a restart anyway.
+Future<void> forgetUnusedPhotoCopies(
+  Directory folder,
+  Set<String> used,
+) async {
+  if (!folder.existsSync()) return;
+  final keep = {
+    for (final id in used)
+      if (pickedPhotoFile(folder, id) case final file?) p.basename(file.path),
+  };
+  for (final entry in folder.listSync()) {
+    if (entry is File && !keep.contains(p.basename(entry.path))) {
+      entry.deleteSync();
+    }
+  }
 }
 
 class DevicePhotoLibrary implements PhotoLibrary {
-  static const _system = MethodChannel('run4share/system');
+  DevicePhotoLibrary(this._folder, [ImagePicker? picker])
+      : _picker = picker ?? ImagePicker();
+
+  final PhotosFolder _folder;
+  final ImagePicker _picker;
+
+  static final _random = Random.secure();
+
+  static String _uuid() => [
+        for (var i = 0; i < 16; i++)
+          _random.nextInt(256).toRadixString(16).padLeft(2, '0'),
+      ].join();
 
   @override
-  bool get usesSystemPicker => Platform.isAndroid;
-
-  /// The picker's file in the cache (MainActivity), or null.
-  @override
-  Future<String?> pickWithSystemPicker() =>
-      _system.invokeMethod<String>('pickImage');
-
-  static const _option = PermissionRequestOption(
-    androidPermission: AndroidPermission(
-      type: RequestType.image,
-      mediaLocation: false,
-    ),
-  );
-
-  final _albums = <String, AssetPathEntity>{};
-  final _assets = <String, AssetEntity>{};
-
-  PhotoAccess _map(PermissionState state) => switch (state) {
-        PermissionState.authorized => PhotoAccess.granted,
-        PermissionState.limited => PhotoAccess.limited,
-        _ => PhotoAccess.denied,
-      };
-
-  @override
-  Future<PhotoAccess> access() async =>
-      _map(await PhotoManager.getPermissionState(requestOption: _option));
-
-  @override
-  Future<PhotoAccess> requestAccess() async =>
-      _map(await PhotoManager.requestPermissionExtend(requestOption: _option));
-
-  @override
-  Future<void> openSettings() => PhotoManager.openSetting();
-
-  @override
-  Future<void> manageLimitedAccess() =>
-      PhotoManager.presentLimited(type: RequestType.image);
-
-  @override
-  Future<List<PhotoAlbum>> albums() async {
-    final paths = await PhotoManager.getAssetPathList(
-      type: RequestType.image,
-      filterOption: FilterOptionGroup(
-        orders: [const OrderOption()],
-      ),
+  Future<String?> pick() async {
+    final picked = await _picker.pickImage(
+      source: ImageSource.gallery,
+      // Above the 3072 px export, so nothing the app outputs loses detail;
+      // also makes iPhone HEIC come back as JPEG.
+      maxWidth: 4096,
+      maxHeight: 4096,
+      imageQuality: 95,
+      // Full metadata would need photo-library permission on iPhone.
+      requestFullMetadata: false,
     );
-    final albums = <PhotoAlbum>[];
-    for (final path in paths) {
-      final count = await path.assetCountAsync;
-      if (count == 0) continue;
-      _albums[path.id] = path;
-      albums.add(
-        PhotoAlbum(
-          id: path.id,
-          name: path.name,
-          count: count,
-          isAll: path.isAll,
-        ),
-      );
-    }
-    albums.sort((a, b) => (b.isAll ? 1 : 0) - (a.isAll ? 1 : 0));
-    return albums;
+    if (picked == null) return null;
+    final id = '$pickedPhotoPrefix${_uuid()}';
+    final file = pickedPhotoFile(await _folder(), id)!;
+    await file.writeAsBytes(await picked.readAsBytes(), flush: true);
+    return id;
   }
 
+  Future<Uint8List?> _bytes(String photoId) async {
+    final file = pickedPhotoFile(await _folder(), photoId);
+    // Anything else (an asset ID from before phase 20) is a missing photo.
+    if (file == null || !file.existsSync()) return null;
+    return await file.readAsBytes();
+  }
+
+  // Flutter's decoder applies the EXIF orientation, so what comes back is
+  // upright.
   @override
-  Future<List<String>> photos(
-    PhotoAlbum album, {
-    required int page,
-    required int pageSize,
-  }) async {
-    final path = _albums[album.id];
-    if (path == null) return const [];
-    final assets = await path.getAssetListPaged(page: page, size: pageSize);
-    for (final asset in assets) {
-      _assets[asset.id] = asset;
-    }
-    return [for (final asset in assets) asset.id];
-  }
-
-  Future<AssetEntity?> _asset(String id) async {
-    final cached = _assets[id];
-    if (cached != null) return cached;
-    final asset = await AssetEntity.fromId(id);
-    if (asset != null) _assets[id] = asset;
-    return asset;
+  Future<Uint8List?> preview(String photoId, {required int maxSide}) async {
+    final bytes = await _bytes(photoId);
+    return bytes == null ? null : await fitWithin(bytes, maxSide);
   }
 
   @override
   Future<Uint8List?> thumbnail(String photoId, {required int size}) async {
-    final asset = await _asset(photoId);
-    return await asset?.thumbnailDataWithSize(
-      ThumbnailSize.square(size),
-      quality: 80,
-    );
-  }
-
-  @override
-  Future<Uint8List?> preview(String photoId, {required int maxSide}) async {
-    final asset = await _asset(photoId);
-    if (asset == null) return null;
-    final w = asset.orientatedWidth;
-    final h = asset.orientatedHeight;
-    final scale = w <= 0 || h <= 0 ? 1.0 : maxSide / (w > h ? w : h);
-    final size = scale >= 1
-        ? ThumbnailSize(w, h)
-        : ThumbnailSize((w * scale).round(), (h * scale).round());
-    return await asset.thumbnailDataWithSize(size, quality: 90);
+    final bytes = await _bytes(photoId);
+    return bytes == null ? null : await fitWithin(bytes, size);
   }
 }
 
 final photoLibraryProvider = Provider<PhotoLibrary>(
   (ref) => WithStravaPhotos(
-    DevicePhotoLibrary(),
+    DevicePhotoLibrary(ref.watch(photosFolderProvider)),
     ref.watch(stravaPhotoStoreProvider),
-    ref.watch(pickedPhotoStoreProvider),
   ),
 );

@@ -7,7 +7,7 @@
 > it before release. Update it whenever the app starts doing something
 > new with data.
 
-_Last updated: [DATE]_
+_Last updated: 20 November 2026_
 
 run4share turns your workouts into images you can share. This page
 explains what the app does with your information. In short: **your data
@@ -38,14 +38,14 @@ run4share does not send any of this to its developers or anyone else.
 
 ## Photos
 
-On Android, you choose a photo in the phone's own photo picker:
-run4share gets only the photo you pick, and needs no access to your
-library. On iPhone, run4share asks for access to your photo library so
-you can pick a photo; you can share only selected photos, and change
-this at any time in your phone's settings. Either way, the photo you
-pick is copied into run4share's own storage so you can edit the image
-again later, and is never uploaded. When you save an image, run4share
-adds it to your Photos, in a "run4share" album.
+You choose a photo in your phone's own photo picker (on Android and on
+iPhone): run4share gets only the photo you pick and has no access to the
+rest of your library, so it never asks for photo permission. It keeps a
+copy of that photo inside the app only so you can edit the image again
+later; the copy is deleted when you delete the images made with it, and
+is never uploaded. When you save an image, run4share adds it to your
+Photos, in a "run4share" album (on iPhone it asks once for permission to
+add photos).
 
 ## Strava
 
@@ -144,4 +144,4 @@ date, and the app will point to it.
 
 ## Contact
 
-[NAME OR COMPANY], [EMAIL ADDRESS]
+Run4Share, run4share.app@gmail.com

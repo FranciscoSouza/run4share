@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:run4share/data/database.dart';
 import 'package:run4share/features/create/creation_draft.dart';
+import 'package:run4share/features/photos/photo_library.dart';
 
 /// Where creation images live: a folder only run4share can see.
 typedef CreationsFolder = Future<Directory> Function();
@@ -21,10 +22,14 @@ Future<Directory> appCreationsFolder() async {
 
 /// My Creations: image files plus their settings in the database.
 class CreationRepository {
-  CreationRepository(this._db, this._folder);
+  CreationRepository(this._db, this._folder, [this._photos]);
 
   final AppDatabase _db;
   final CreationsFolder _folder;
+
+  /// Where picked photos are kept; their copies go when no creation uses
+  /// them any more.
+  final PhotosFolder? _photos;
 
   /// Newest first.
   Stream<List<Creation>> watchAll() => (_db.select(
@@ -75,6 +80,28 @@ class CreationRepository {
       _db.creations,
     )..where((c) => c.id.equals(creation.id)))
         .go();
+    // Its photo copy too, unless another creation uses the same photo.
+    final photoId = settingsOf(creation)?.photoId;
+    final photos = _photos;
+    if (photoId == null || photos == null) return;
+    if ((await usedPhotoIds()).contains(photoId)) return;
+    final copy = pickedPhotoFile(await photos(), photoId);
+    // Synchronous: one file, and it finishes in widget tests.
+    if (copy != null && copy.existsSync()) copy.deleteSync();
+  }
+
+  /// The photo of every stored creation.
+  Future<Set<String>> usedPhotoIds() async => {
+        for (final c in await _db.select(_db.creations).get())
+          if (settingsOf(c)?.photoId case final id?) id,
+      };
+
+  /// One-off clean-up at start-up: copies of photos no creation uses
+  /// (picked but never saved, or left from deleted creations).
+  Future<void> forgetUnusedPhotos() async {
+    final photos = _photos;
+    if (photos == null) return;
+    await forgetUnusedPhotoCopies(await photos(), await usedPhotoIds());
   }
 
   CreationDraft? settingsOf(Creation creation) {
@@ -96,6 +123,7 @@ final creationRepositoryProvider = Provider<CreationRepository>(
   (ref) => CreationRepository(
     ref.watch(appDatabaseProvider),
     ref.watch(creationsFolderProvider),
+    ref.watch(photosFolderProvider),
   ),
 );
 

@@ -26,15 +26,14 @@ signed with the upload key (SHA-256 `DE:8D:3E:29:…:B0:D7`, matching
 
 ## 3. Privacy policy
 
-- Review `docs/privacy-policy.md` and give Claude your public name and a
-  support email for the contact line, and the publication date for
-  `[DATE]` (or fill them yourself). It is a draft, not legal advice: have
-  it checked for the GDPR (EU) and LGPD (Brazil) if you can.
+- Contact and date filled in (20 Nov 2026): **Run4Share,
+  run4share.app@gmail.com**, last updated 20 November 2026. It is a
+  draft, not legal advice: have it checked for the GDPR (EU) and LGPD
+  (Brazil) if you can.
 - After editing the Markdown: `python3 tool/policy/build_policy.py`
   rebuilds `docs/privacy/index.html` (the review note stays out of it).
-- **Turn on GitHub Pages once:** github.com/FranciscoSouza/run4share ›
-  Settings › Pages › Source: *Deploy from a branch*, Branch: `main`,
-  folder `/docs` › Save. After a minute or two the policy is at
+- GitHub Pages is on (Francisco, 20 Nov 2026: `main`, `/docs`). Once
+  `docs/privacy/` is on `main`, the policy is at
   **https://franciscosouza.github.io/run4share/privacy/**: the URL for
   Google Play, the Health Connect declaration and Strava's review. The
   app already points there (Settings › Privacy policy opens it in an

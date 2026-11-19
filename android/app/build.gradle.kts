@@ -17,7 +17,8 @@ val keyProperties = Properties().apply {
 
 android {
     namespace = "com.run4share.run4share"
-    compileSdk = flutter.compileSdkVersion
+    // Android 16, explicitly (Google Play's target level).
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -31,7 +32,7 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // Health Connect (the health plugin) needs Android 8 / API 26+.
         minSdk = maxOf(flutter.minSdkVersion, 26)
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION
         // is added automatically by Flutter. (https://developer.android.com/studio/build/configure-apk-splits#configure-APK-versions)
         // You can force using the value of versionCode by specifying the `-P force-version-code-ignoring-abi=true`
@@ -70,9 +71,4 @@ kotlin {
 
 flutter {
     source = "../.."
-}
-
-dependencies {
-    // EXIF orientation for photos picked on Android 8 (MainActivity).
-    implementation("androidx.exifinterface:exifinterface:1.4.1")
 }

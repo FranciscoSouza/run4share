@@ -535,19 +535,8 @@ phone.
   name + what line beside a 40 px "Use this template" button), about
   40 % of the screen.
 - Play readiness (Francisco, 18 Nov 2026; personal Play account):
-  - **System photo picker on Android** (Google Play's Photo and Video
-    Permissions policy): `MainActivity` registers
-    `ActivityResultContracts.PickVisualMedia` (channel `pickImage`),
-    decodes upright at most 3072 px (ImageDecoder; Android 8 uses
-    BitmapFactory + EXIF via androidx.exifinterface) into the cache;
-    `PickedPhotoStore` keeps it in documents/picked_photos as
-    `picked:<file>`, served (scaled with `fitWithin`) by
-    `WithStravaPhotos`. The photo step opens the picker straight away
-    and replaces itself with `AppRoutes.cropPicked`; backing out pops.
-    READ_MEDIA_* / READ_EXTERNAL_STORAGE are removed from the merged
-    manifest (`tools:node="remove"`); only WRITE_EXTERNAL_STORAGE (max
-    SDK 28, saving on old phones) remains. Settings hides Photo access
-    on Android. iOS keeps photo_manager's grid.
+  - Photo picker: first done natively for Android here (phase 20a);
+    replaced in phase 20 (Play policy) by image_picker, see below.
   - Privacy policy hosted on GitHub Pages (Francisco must turn Pages on:
     main /docs): `docs/privacy/index.html` built from the Markdown by
     `tool/policy/build_policy.py`, public at
@@ -565,6 +554,37 @@ phone.
 - Portrait only: `SystemChrome.setPreferredOrientations` in `main()`,
   Android activity `screenOrientation="portrait"`, iOS Info.plist
   portrait (iPad portrait + upside-down, `UIRequiresFullScreen`).
+
+**Phase 20 status (Play policy):** committed on `phase-20-play-policy`
+and merged to `main` (20 Nov 2026), from `docs/play_policy_fixes.md`. Francisco's
+Play developer account is created and verified, and the app is created
+in Play Console (20 Nov 2026). Publisher contact: Run4Share,
+run4share.app@gmail.com (privacy policy and store page); GitHub Pages is
+on (`main`, `/docs`). `docs/google-play.md` is Francisco's full Play
+guide (it supersedes section 5 of the release checklist).
+- Photos come from the system picker on both platforms (`image_picker`:
+  Android Photo Picker, iPhone PHPicker; `requestFullMetadata: false`,
+  so no iPhone permission). `photo_manager`, the in-app grid, the
+  "Photo access" explainer and "access is off" screens, Settings ›
+  Photo access and their 16 strings are gone. The photo step opens the
+  picker straight away and replaces itself with the crop step
+  (`AppRoutes.cropPicked`); backing out pops.
+- The pick is copied to `<documents>/photos/<uuid>.jpg` (capped at 4096
+  px, JPEG 95: above the 3072 export, and turns HEIC into JPEG; Flutter's
+  decoder applies EXIF orientation), ID `photo:<uuid>`
+  (`pickedPhotoFile`). Deleting a creation deletes its copy unless
+  another creation uses it; `main()` sweeps unused copies at start-up
+  (`CreationRepository.forgetUnusedPhotos`).
+- Old photo_manager asset IDs (test data only): photo_manager removed
+  entirely (Francisco); they read as missing, so Edit again says the
+  original photo is gone.
+- Manifest: READ_MEDIA_* and READ_EXTERNAL_STORAGE kept out with
+  `tools:node="remove"`; WRITE_EXTERNAL_STORAGE max SDK 28 stays (gal).
+  iOS: `NSPhotoLibraryUsageDescription` removed (Info.plist and the five
+  InfoPlist.strings); `NSPhotoLibraryAddUsageDescription` stays.
+- `compileSdk = 36`, `targetSdk = 36` explicitly. Release bundle checked:
+  targetSdkVersion 36, versionCode 1 / versionName 1.0.0, no READ_MEDIA_*
+  and no AD_ID.
 
 ## Decisions already taken (do not reopen without asking)
 

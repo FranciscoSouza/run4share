@@ -43,7 +43,7 @@ void main() {
   Future<void> pump(WidgetTester tester) async {
     db = testDatabase();
     share = FakeShareActions();
-    photos = FakePhotoLibrary(current: PhotoAccess.granted);
+    photos = FakePhotoLibrary();
     await tester.runAsync(() async {
       activityId = await ActivityRepository(db).saveManual(
         name: 'Lunch Run',

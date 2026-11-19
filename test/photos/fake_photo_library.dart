@@ -7,71 +7,22 @@ final Uint8List testPhoto = img.encodePng(
   img.Image(width: 400, height: 300)..clear(img.ColorRgb8(200, 120, 60)),
 );
 
-/// Photo library with [photoCount] photos in "Recents" and a second album.
+/// The system picker, faked: [pick] returns [next] (null: backed out),
+/// and every photo is [testPhoto] unless listed in [missing].
 class FakePhotoLibrary implements PhotoLibrary {
-  FakePhotoLibrary({
-    this.current = PhotoAccess.denied,
-    this.onRequest = PhotoAccess.granted,
-    this.photoCount = 7,
-  });
+  FakePhotoLibrary({this.next = 'photo:test-1'});
 
-  /// Android's system picker instead of the grid; off by default so the
-  /// grid flow (iOS) keeps its tests.
-  @override
-  bool usesSystemPicker = false;
+  /// What the picker returns on the next [pick].
+  String? next;
+  int picks = 0;
 
-  /// What the system picker returns: a cache path, or null (backed out).
-  String? systemPick;
-  int systemPicks = 0;
-
-  @override
-  Future<String?> pickWithSystemPicker() async {
-    systemPicks++;
-    return systemPick;
-  }
-
-  PhotoAccess current;
-
-  /// What the system prompt answers.
-  PhotoAccess onRequest;
-  final int photoCount;
-  int requests = 0;
-  int settingsOpened = 0;
-
-  /// Photo IDs that are gone from the phone.
+  /// Photos that are gone (a deleted copy, an old asset ID).
   final missing = <String>{};
 
   @override
-  Future<PhotoAccess> access() async => current;
-
-  @override
-  Future<PhotoAccess> requestAccess() async {
-    requests++;
-    return current = onRequest;
-  }
-
-  @override
-  Future<void> openSettings() async => settingsOpened++;
-
-  @override
-  Future<void> manageLimitedAccess() async {}
-
-  @override
-  Future<List<PhotoAlbum>> albums() async => [
-        PhotoAlbum(id: 'all', name: 'Recent', count: photoCount, isAll: true),
-        const PhotoAlbum(id: 'runs', name: 'Runs', count: 2),
-      ];
-
-  @override
-  Future<List<String>> photos(
-    PhotoAlbum album, {
-    required int page,
-    required int pageSize,
-  }) async {
-    final ids = album.id == 'runs'
-        ? ['run-a', 'run-b']
-        : [for (var i = 0; i < photoCount; i++) 'photo-$i'];
-    return ids.skip(page * pageSize).take(pageSize).toList();
+  Future<String?> pick() async {
+    picks++;
+    return next;
   }
 
   @override

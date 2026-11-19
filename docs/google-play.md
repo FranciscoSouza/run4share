@@ -90,7 +90,7 @@ How to capture:
 
 ## 6. App content: every questionnaire and its answer
 
-**Privacy policy:** the public URL of `docs/privacy-policy.md`, served through GitHub Pages so it's a normal web page. Fill in `[DATE]` and the contact first.
+**Privacy policy:** https://franciscosouza.github.io/run4share/privacy/ (GitHub Pages; built from `docs/privacy-policy.md` by `tool/policy/build_policy.py`). Contact and date are filled in (Run4Share, run4share.app@gmail.com, 20 November 2026).
 
 **App access:** "All functionality is available without special access."
 - Instructions for reviewers: *No sign-in is needed. Tap + on Home to add an activity by hand, then pick any photo. Strava and Health Connect are optional sources. Pro is an in-app purchase; nothing is locked behind an account.*

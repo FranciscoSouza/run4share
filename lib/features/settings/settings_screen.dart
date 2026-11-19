@@ -12,7 +12,6 @@ import 'package:run4share/app/theme/app_spacing.dart';
 import 'package:run4share/features/health/connect_health.dart';
 import 'package:run4share/features/health/health_connect_sync.dart';
 import 'package:run4share/features/lab/lab.dart';
-import 'package:run4share/features/photos/photo_library.dart';
 import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/pro/pro_store.dart';
 import 'package:run4share/features/settings/language.dart';
@@ -146,14 +145,6 @@ class SettingsScreen extends ConsumerWidget {
                       : l10n.languageName,
                   onTap: () => _chooseLanguage(context, ref),
                 ),
-                // Android uses the system picker: no photo access to manage.
-                if (!ref.read(photoLibraryProvider).usesSystemPicker)
-                  GroupedListTile(
-                    icon: AppIcons.image,
-                    title: l10n.settingsPhotoAccess,
-                    subtitle: l10n.settingsPhotoAccessSubtitle,
-                    onTap: () => ref.read(photoLibraryProvider).openSettings(),
-                  ),
               ],
             ),
             SectionLabel(l10n.settingsSectionAbout),

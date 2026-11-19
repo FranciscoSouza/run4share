@@ -68,6 +68,13 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
     });
 
+    testWidgets('the header stays pinned while Home scrolls', (tester) async {
+      await tester.pumpApp();
+      await tester.showOnHome(find.text('Add activity manually'));
+      expect(find.byTooltip('Settings'), findsOneWidget);
+      expect(find.text('Connect Strava'), findsOneWidget);
+    });
+
     testWidgets('gear opens Settings and back returns to the tab', (
       tester,
     ) async {

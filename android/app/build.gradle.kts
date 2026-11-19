@@ -71,3 +71,8 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // EXIF orientation for photos picked on Android 8 (MainActivity).
+    implementation("androidx.exifinterface:exifinterface:1.4.1")
+}

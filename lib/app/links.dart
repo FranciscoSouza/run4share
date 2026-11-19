@@ -5,10 +5,11 @@ abstract final class AppLinks {
     'https://play.google.com/store/apps/details?id=com.run4share.app',
   );
 
-  /// Draft privacy policy in the repository (docs/privacy-policy.md).
-  /// Replace with the hosted page once there is one.
+  /// The privacy policy on GitHub Pages: docs/privacy/index.html, built
+  /// from docs/privacy-policy.md by tool/policy/build_policy.py. The same
+  /// URL goes to Google Play, Health Connect and Strava.
   static final Uri privacyPolicy = Uri.parse(
-    'https://github.com/FranciscoSouza/run4share/blob/main/docs/privacy-policy.md',
+    'https://franciscosouza.github.io/run4share/privacy/',
   );
 
   /// "Send feedback instead": a new GitHub issue, pre-titled.

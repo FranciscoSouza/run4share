@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:run4share/app/app.dart';
 import 'package:run4share/app/error_view.dart';
@@ -14,6 +15,9 @@ import 'package:run4share/features/strava/strava_session_store.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   installErrorHandlers();
+  // Portrait only (Francisco, 18 Nov 2026); also set natively, so the
+  // splash doesn't rotate either.
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   final db = AppDatabase();
   // Read before the first frame so the app starts with saved settings.
   final units =

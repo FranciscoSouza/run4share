@@ -61,6 +61,12 @@ class _PhotoStepScreenState extends ConsumerState<PhotoStepScreen> {
   }
 
   Future<void> _check() async {
+    // Android: the system picker, no permission screens (Google Play's
+    // photo policy). Backing out of it goes back.
+    if (_library.usesSystemPicker) {
+      await _pickWithSystem();
+      return;
+    }
     final access = await _library.access();
     final asked = await _db.readPreference(photosAskedPreference) == 'true';
     if (!mounted) return;
@@ -71,6 +77,21 @@ class _PhotoStepScreenState extends ConsumerState<PhotoStepScreen> {
         PhotoAccess.denied => asked ? _Stage.off : _Stage.explain,
       };
     });
+  }
+
+  Future<void> _pickWithSystem() async {
+    final router = GoRouter.of(context);
+    final photoId = await _library.pickWithSystemPicker();
+    if (!mounted) return;
+    if (photoId == null) {
+      router.pop();
+    } else {
+      unawaited(
+        router.pushReplacement(
+          AppRoutes.cropPicked(widget.activityId, photoId),
+        ),
+      );
+    }
   }
 
   Future<void> _ask() async {

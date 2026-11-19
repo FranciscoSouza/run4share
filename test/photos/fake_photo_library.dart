@@ -15,6 +15,21 @@ class FakePhotoLibrary implements PhotoLibrary {
     this.photoCount = 7,
   });
 
+  /// Android's system picker instead of the grid; off by default so the
+  /// grid flow (iOS) keeps its tests.
+  @override
+  bool usesSystemPicker = false;
+
+  /// What the system picker returns: a cache path, or null (backed out).
+  String? systemPick;
+  int systemPicks = 0;
+
+  @override
+  Future<String?> pickWithSystemPicker() async {
+    systemPicks++;
+    return systemPick;
+  }
+
   PhotoAccess current;
 
   /// What the system prompt answers.

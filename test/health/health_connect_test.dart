@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart' show TargetPlatform;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:health/health.dart' show HealthDataType;
 import 'package:run4share/app/clock.dart';
 import 'package:run4share/app/platform.dart';
 import 'package:run4share/data/activity_repository.dart';
@@ -229,5 +231,21 @@ void main() {
       expect(shown.map((a) => a.name), ['Strava run']);
       expect(await repo().count(ActivitySource.healthConnect), 1);
     });
+  });
+
+  // The health plugin reads steps with every workout and returns nothing
+  // when it may not: steps must be requested and checked (18 Nov 2026).
+  test('steps are requested and required, or no workouts come back', () {
+    expect(DeviceHealthHub.requested, contains(HealthDataType.STEPS));
+    expect(
+      DeviceHealthHub.needed,
+      containsAll([
+        HealthDataType.WORKOUT,
+        HealthDataType.STEPS,
+      ]),
+    );
+    final manifest =
+        File('android/app/src/main/AndroidManifest.xml').readAsStringSync();
+    expect(manifest, contains('android.permission.health.READ_STEPS'));
   });
 }

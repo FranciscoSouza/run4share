@@ -94,6 +94,11 @@ class DeviceHealthHub implements HealthHub {
   Future<void>? _configured;
 
   /// What run4share reads, all read-only.
+  ///
+  /// Steps: the health plugin reads the steps inside every workout it
+  /// returns, and without this permission that read fails and the plugin
+  /// returns no workouts at all (found 18 Nov 2026). run4share doesn't
+  /// use or keep the steps.
   static const List<HealthDataType> _types = [
     HealthDataType.WORKOUT,
     HealthDataType.WORKOUT_ROUTE,
@@ -101,7 +106,22 @@ class DeviceHealthHub implements HealthHub {
     HealthDataType.TOTAL_CALORIES_BURNED,
     HealthDataType.ACTIVE_ENERGY_BURNED,
     HealthDataType.HEART_RATE,
+    HealthDataType.STEPS,
   ];
+
+  /// Without these the workout list comes back empty, so a phone that
+  /// granted only some is treated as not connected and asked again.
+  static const List<HealthDataType> _needed = [
+    HealthDataType.WORKOUT,
+    HealthDataType.STEPS,
+  ];
+
+  /// For tests: what's requested, and what must be granted.
+  @visibleForTesting
+  static List<HealthDataType> get requested => _types;
+  @visibleForTesting
+  static List<HealthDataType> get needed => _needed;
+
   static final List<HealthDataAccess> _read = [
     for (final _ in _types) HealthDataAccess.READ,
   ];
@@ -152,8 +172,8 @@ class DeviceHealthHub implements HealthHub {
     if (_ios) return true;
     await _ready();
     return await _health.hasPermissions(
-          [HealthDataType.WORKOUT],
-          permissions: [HealthDataAccess.READ],
+          _needed,
+          permissions: [for (final _ in _needed) HealthDataAccess.READ],
         ) ??
         false;
   }
@@ -168,12 +188,15 @@ class DeviceHealthHub implements HealthHub {
   @override
   Future<List<HubWorkout>> workouts(DateTime from, DateTime to) async {
     await _ready();
+    // A day past "now": a workout logged with a later start today, or
+    // saved while the phone's time zone was different, is still read.
+    final until = to.add(const Duration(days: 1));
     Future<List<HealthDataPoint>> read(HealthDataType type) async {
       try {
         return await _health.getHealthDataFromTypes(
           types: [type],
           startTime: from,
-          endTime: to,
+          endTime: until,
         );
       } on Object catch (error) {
         debugPrint('Health Connect $type failed: $error');
@@ -182,6 +205,17 @@ class DeviceHealthHub implements HealthHub {
     }
 
     final sessions = await read(HealthDataType.WORKOUT);
+    // What Health Connect gave back, for "my workout doesn't show".
+    debugPrint(
+      'Health Connect workouts ${from.toUtc()}..${until.toUtc()}: '
+      '${sessions.length}',
+    );
+    for (final p in sessions) {
+      debugPrint(
+        '  ${p.sourceName} ${p.dateFrom.toUtc()}..${p.dateTo.toUtc()} '
+        '${(p.value as WorkoutHealthValue?)?.workoutActivityType.name}',
+      );
+    }
     if (sessions.isEmpty) return const [];
     final heart = await read(HealthDataType.HEART_RATE);
     final routes = await read(HealthDataType.WORKOUT_ROUTE);

@@ -14,7 +14,6 @@ import 'package:run4share/features/pro/pro.dart';
 import 'package:run4share/features/templates/template_canvas.dart';
 import 'package:run4share/features/templates/template_info.dart';
 import 'package:run4share/l10n/l10n.dart';
-import 'package:run4share/shared/widgets/buttons.dart';
 import 'package:run4share/shared/widgets/pro_badge.dart';
 
 /// Home's featured templates: one card centred, its neighbours peeking,
@@ -165,7 +164,9 @@ class _FeaturedTemplatesState extends ConsumerState<FeaturedTemplates>
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
-        final card = (width * 0.565).clamp(200.0, 280.0);
+        // Compact (Francisco, 18 Nov 2026): about a third of the width, so
+        // the activities show under it.
+        final card = (width * 0.34).clamp(120.0, 160.0);
         final pages = _controllerFor(math.min(1, (card + _gap) / width));
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,11 +222,17 @@ class _FeaturedTemplatesState extends ConsumerState<FeaturedTemplates>
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.sm),
+            Center(
+              child: _Dots(
+                count: _templates.length,
+                active: _index % _templates.length,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
@@ -233,20 +240,19 @@ class _FeaturedTemplatesState extends ConsumerState<FeaturedTemplates>
                       children: [
                         Text(
                           current.name,
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppText.section.copyWith(
                             fontWeight: FontWeight.w700,
-                            fontSize: 24,
+                            fontSize: 20,
                           ),
                         ),
-                        const SizedBox(height: 2),
                         Text(
                           templateWhat(l10n, current, isPro: isPro),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: AppText.body.copyWith(
-                            fontSize: 14,
+                            fontSize: 13,
                             color: AppColors.neutral40,
                           ),
                         ),
@@ -254,25 +260,18 @@ class _FeaturedTemplatesState extends ConsumerState<FeaturedTemplates>
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: _Dots(
-                      count: _templates.length,
-                      active: _index % _templates.length,
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 40),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.lg,
+                      ),
                     ),
+                    onPressed: () =>
+                        useTemplate(context, current, isPro: isPro),
+                    child: Text(l10n.templateUse),
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.page),
-              child: SizedBox(
-                width: double.infinity,
-                child: AppButton(
-                  label: l10n.templateUse,
-                  onPressed: () => useTemplate(context, current, isPro: isPro),
-                ),
               ),
             ),
           ],

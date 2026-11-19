@@ -19,6 +19,11 @@ class FakeSystemActions implements SystemActions {
   @override
   Future<void> openLink(Uri uri) async => links.add(uri);
 
+  final pages = <Uri>[];
+
+  @override
+  Future<void> openPage(Uri uri) async => pages.add(uri);
+
   @override
   Future<void> requestReview() async => reviews++;
 

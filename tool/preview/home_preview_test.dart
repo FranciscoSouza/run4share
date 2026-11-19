@@ -44,6 +44,16 @@ void main() {
       ..devicePixelRatio = 2;
     await tester.pumpAndSettle();
 
+    Future<void> images() async {
+      // Asset images decode outside fake time.
+      for (var i = 0; i < 4; i++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 150)),
+        );
+        await tester.pump();
+      }
+    }
+
     Future<void> shot(String name) => tester.runAsync(() async {
           final layer =
               tester.binding.renderViews.first.debugLayer! as OffsetLayer;
@@ -55,13 +65,14 @@ void main() {
               .writeAsBytesSync(png!.buffer.asUint8List());
         });
 
+    await images();
     await shot('home-1');
     await tester.timedDrag(
       find.descendant(
         of: find.byType(FeaturedTemplates),
         matching: find.byType(PageView),
       ),
-      const Offset(-240, 0),
+      const Offset(-145, 0),
       const Duration(milliseconds: 400),
     );
     await tester.pumpAndSettle();

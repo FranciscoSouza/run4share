@@ -38,11 +38,14 @@ run4share does not send any of this to its developers or anyone else.
 
 ## Photos
 
-run4share asks for access to your photo library only so you can pick a
-photo for an image. It reads the photos you choose on your phone and
-never uploads them. When you save an image, run4share adds it to your
-Photos, in a "run4share" album. You can change photo access at any time
-in your phone's settings, including sharing only selected photos.
+On Android, you choose a photo in the phone's own photo picker:
+run4share gets only the photo you pick, and needs no access to your
+library. On iPhone, run4share asks for access to your photo library so
+you can pick a photo; you can share only selected photos, and change
+this at any time in your phone's settings. Either way, the photo you
+pick is copied into run4share's own storage so you can edit the image
+again later, and is never uploaded. When you save an image, run4share
+adds it to your Photos, in a "run4share" album.
 
 ## Strava
 
@@ -73,8 +76,10 @@ https://www.strava.com/legal/privacy
 ## Health Connect (Android)
 
 Connecting Health Connect is optional. run4share asks to **read** your
-workouts and, for them, distance, calories, heart rate and route, and to
-read data older than 30 days. It never writes to Health Connect. The data
+workouts and, for them, distance, calories, heart rate, route and steps
+(the steps are read alongside each workout by the library run4share uses;
+run4share doesn't use or keep them), and to read data older than 30
+days. It never writes to Health Connect. The data
 is read on your phone and kept in run4share's own storage, like Strava
 activities; it is never sent anywhere. When you disconnect in Settings,
 run4share removes those workouts and gives the permissions back. You can

@@ -15,6 +15,10 @@ abstract interface class SystemActions {
   /// Opens [uri] in the browser or the app that handles it.
   Future<void> openLink(Uri uri);
 
+  /// Opens a web page in an in-app browser tab (Chrome Custom Tab, Safari
+  /// view), so it feels part of the app; e.g. the privacy policy.
+  Future<void> openPage(Uri uri);
+
   /// The store's in-app rating dialog, or the store page if unavailable.
   Future<void> requestReview();
 
@@ -42,6 +46,13 @@ class DeviceSystemActions implements SystemActions {
   @override
   Future<void> openLink(Uri uri) async {
     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  @override
+  Future<void> openPage(Uri uri) async {
+    if (!await launchUrl(uri, mode: LaunchMode.inAppBrowserView)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   @override

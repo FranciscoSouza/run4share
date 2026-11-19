@@ -89,7 +89,7 @@
   "stravaErrorNetwork": "Couldn’t reach Strava. Check your connection and try again.",
   "stravaErrorNotConfigured": "Strava isn’t set up in this build.",
   "homeYourActivities": "Your activities",
-  "homeNoActivities": "No activities on Strava yet.",
+  "homeNoActivities": "No activities yet. New workouts from your connected apps show up here.",
   "@stravaConnectedAs": {
     "placeholders": {
       "name": {
@@ -111,7 +111,7 @@
   "homeSyncedHours": "Synced {hours} h ago",
   "homeSyncedOn": "Synced {date}",
   "homeSyncFailed": "Couldn’t sync",
-  "homeNoActivitiesYet": "No activities yet. Add one by hand or connect Strava.",
+  "homeNoActivitiesYet": "No activities yet. Add one by hand or connect an app above.",
   "actionEdit": "Edit",
   "actionDelete": "Delete",
   "actionCancel": "Cancel",

@@ -29,7 +29,9 @@ void main() {
     // Named by the hour it started ("Morning Run", "Afternoon Run"...),
     // and it started this time yesterday.
     await tester.showOnHome(
-      find.textContaining(RegExp(r'^(Morning|Afternoon|Evening|Night) Run$')),
+      find.textContaining(
+        RegExp(r'^(Morning|Lunch|Afternoon|Evening|Night) Run$'),
+      ),
     );
     expect(find.textContaining('Health Connect · '), findsOneWidget);
     // Strava can still be connected.
@@ -93,5 +95,26 @@ void main() {
 
     expect(find.text('Connected to Apple Health'), findsOneWidget);
     expect(find.textContaining('Profile › Apps › run4share'), findsOneWidget);
+  });
+
+  testWidgets('only Health Connect, nothing in it: a message for any app', (
+    tester,
+  ) async {
+    final hub = FakeHealthHub();
+    await tester.pumpApp(overrides: baseOverrides(hub: hub));
+    await tester.showOnHome(find.text('Bring in your workouts'));
+    await tester.showOnHome(find.text('Add activity manually'));
+    await tester.tap(find.text('Connect').last);
+    await settle(tester, rounds: 20);
+    await tester.homeToTop();
+    await tester.showOnHome(find.textContaining('No activities yet.'));
+    expect(
+      find.text(
+        'No activities yet. New workouts from your connected apps show up '
+        'here.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('on Strava'), findsNothing);
   });
 }

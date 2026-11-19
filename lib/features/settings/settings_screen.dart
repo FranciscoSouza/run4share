@@ -146,12 +146,14 @@ class SettingsScreen extends ConsumerWidget {
                       : l10n.languageName,
                   onTap: () => _chooseLanguage(context, ref),
                 ),
-                GroupedListTile(
-                  icon: AppIcons.image,
-                  title: l10n.settingsPhotoAccess,
-                  subtitle: l10n.settingsPhotoAccessSubtitle,
-                  onTap: ref.read(photoLibraryProvider).openSettings,
-                ),
+                // Android uses the system picker: no photo access to manage.
+                if (!ref.read(photoLibraryProvider).usesSystemPicker)
+                  GroupedListTile(
+                    icon: AppIcons.image,
+                    title: l10n.settingsPhotoAccess,
+                    subtitle: l10n.settingsPhotoAccessSubtitle,
+                    onTap: () => ref.read(photoLibraryProvider).openSettings(),
+                  ),
               ],
             ),
             SectionLabel(l10n.settingsSectionAbout),
@@ -179,7 +181,7 @@ class SettingsScreen extends ConsumerWidget {
                   title: l10n.settingsPrivacy,
                   onTap: () => ref
                       .read(systemActionsProvider)
-                      .openLink(AppLinks.privacyPolicy),
+                      .openPage(AppLinks.privacyPolicy),
                 ),
               ],
             ),

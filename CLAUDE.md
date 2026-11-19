@@ -26,7 +26,8 @@ or share to Instagram.
 time, phrases, stamps) → 8b Pro data stickers (shoe, route, charts) →
 9 Health Connect source → 10 Apple Health + iOS → 11 real activity
 charts → 12 Pro themes → 13 Pro templates → 14 onboarding → 15 chart extremes → 16 Home templates → 17 photo effects + copy sticker → 18 release
-prep → 19 form pickers + Strava photos.
+prep → 19 form pickers + Strava photos → 20 Health Connect fix,
+compact Home, portrait, Play readiness.
 Each phase ends with an Android build that Francisco confirms on his phone.
 
 **Phase 0 status:** code done (router with two-tab shell + Settings, ARB
@@ -508,6 +509,62 @@ phone.
 - Gotchas: the store looks up the Strava API lazily (building it while
   Settings builds threw); folder deletion is synchronous (async file IO
   never finishes in widget tests).
+
+**Phase 20 status (Health Connect fix, compact Home, portrait):** on
+`phase-20-hc-home-portrait`, not committed yet (18 Nov 2026).
+- Health Connect never returned workouts on a real phone: the `health`
+  plugin reads StepsRecord inside every workout and, without the steps
+  read permission, catches the SecurityException and returns an empty
+  list for WORKOUT (no error reaches the app). Fixed by requesting
+  `HealthDataType.STEPS` (manifest `READ_STEPS`); `hasAccess` now needs
+  WORKOUT + STEPS, so a phone that granted the old set is shown as not
+  connected and connects again. Steps aren't used or stored; privacy
+  policy and the Play declaration note say so. Found by reading the
+  plugin's `HealthDataReader.handleWorkoutData`.
+- On Francisco's phone, Health Connect still returned no workouts after
+  the fix: `adb shell dumpsys healthconnect` showed Google Health
+  (`com.fitbit.FitbitMobile`) and Samsung Health with permissions only
+  DECLARED (never granted) and "Contributed Data: false": nothing had
+  written to Health Connect. Fix is on the phone (Health Connect › App
+  permissions › the source app › allow). `dumpsys healthconnect` is the
+  quick check for "workouts don't show".
+- Empty-list messages no longer name Strava (any source can be the one
+  connected).
+- Home (Francisco): header pinned above the scrolling list; carousel
+  compact (centre card clamp(width x 0.34, 120, 160), dots under it,
+  name + what line beside a 40 px "Use this template" button), about
+  40 % of the screen.
+- Play readiness (Francisco, 18 Nov 2026; personal Play account):
+  - **System photo picker on Android** (Google Play's Photo and Video
+    Permissions policy): `MainActivity` registers
+    `ActivityResultContracts.PickVisualMedia` (channel `pickImage`),
+    decodes upright at most 3072 px (ImageDecoder; Android 8 uses
+    BitmapFactory + EXIF via androidx.exifinterface) into the cache;
+    `PickedPhotoStore` keeps it in documents/picked_photos as
+    `picked:<file>`, served (scaled with `fitWithin`) by
+    `WithStravaPhotos`. The photo step opens the picker straight away
+    and replaces itself with `AppRoutes.cropPicked`; backing out pops.
+    READ_MEDIA_* / READ_EXTERNAL_STORAGE are removed from the merged
+    manifest (`tools:node="remove"`); only WRITE_EXTERNAL_STORAGE (max
+    SDK 28, saving on old phones) remains. Settings hides Photo access
+    on Android. iOS keeps photo_manager's grid.
+  - Privacy policy hosted on GitHub Pages (Francisco must turn Pages on:
+    main /docs): `docs/privacy/index.html` built from the Markdown by
+    `tool/policy/build_policy.py`, public at
+    https://franciscosouza.github.io/run4share/privacy/ (AppLinks,
+    MainActivity's Health Connect rationale). Settings opens it in an
+    in-app browser tab (`SystemActions.openPage`, url_launcher
+    inAppBrowserView). Contact and date still placeholders (Francisco to
+    supply).
+  - `docs/release-checklist.md` Play section rewritten for a personal
+    account (12 testers x 14 days closed test), App content answers,
+    Health Connect declaration incl. steps, no photo declaration.
+  - Laboratory already hidden in release (`labVisible`).
+  - Debug-only log lines in `DeviceHealthHub.workouts` print what Health
+    Connect returns; the query reaches one day past now.
+- Portrait only: `SystemChrome.setPreferredOrientations` in `main()`,
+  Android activity `screenOrientation="portrait"`, iOS Info.plist
+  portrait (iPad portrait + upside-down, `UIRequiresFullScreen`).
 
 ## Decisions already taken (do not reopen without asking)
 

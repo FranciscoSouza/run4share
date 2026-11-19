@@ -41,7 +41,7 @@ void main() {
   Future<void> swipe(WidgetTester tester) async {
     await tester.timedDrag(
       carousel(),
-      const Offset(-240, 0),
+      const Offset(-145, 0),
       const Duration(milliseconds: 400),
     );
     await tester.pumpAndSettle();

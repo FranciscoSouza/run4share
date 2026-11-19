@@ -76,7 +76,12 @@ void main() {
     await tapRow(tester, 'Rate run4share');
     expect(system.storeListings, 1);
     await tapRow(tester, 'Privacy policy');
-    expect(system.links, [AppLinks.privacyPolicy]);
+    // In an in-app browser tab, at the public GitHub Pages address.
+    expect(system.pages, [AppLinks.privacyPolicy]);
+    expect(
+      AppLinks.privacyPolicy.toString(),
+      'https://franciscosouza.github.io/run4share/privacy/',
+    );
   });
 
   testWidgets('Invite a friend: copy and share the link', (tester) async {

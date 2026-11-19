@@ -92,20 +92,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final hasActivities = activities?.isNotEmpty ?? false;
     void connect() => context.push(AppRoutes.connectStrava);
 
+    // Pinned: the header stays while the page scrolls under it
+    // (Francisco, 18 Nov 2026).
+    final header = AppHeader(
+      trailing: checking || stravaConnected
+          ? null
+          : AppPill(
+              label: l10n.homeConnectStrava,
+              icon: AppIcons.link,
+              variant: AppPillVariant.dark,
+              onPressed: connect,
+            ),
+    );
     final list = ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
       children: [
-        AppHeader(
-          trailing: checking || stravaConnected
-              ? null
-              : AppPill(
-                  label: l10n.homeConnectStrava,
-                  icon: AppIcons.link,
-                  variant: AppPillVariant.dark,
-                  onPressed: connect,
-                ),
-        ),
         if (sync.syncing) _PullingBanner(text: l10n.homePulling),
         Padding(
           padding: const EdgeInsets.only(right: AppSpacing.sm),
@@ -166,17 +168,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return SafeArea(
       bottom: false,
-      child: NotificationListener<ScrollNotification>(
-        onNotification: stravaConnected ? _onScroll : null,
-        child: connected
-            ? RefreshIndicator.noSpinner(
-                onRefresh: () => Future.wait([
-                  ref.read(stravaSyncProvider.notifier).sync(),
-                  ref.read(healthConnectProvider.notifier).sync(),
-                ]),
-                child: list,
-              )
-            : list,
+      child: Column(
+        children: [
+          header,
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: stravaConnected ? _onScroll : null,
+              child: connected
+                  ? RefreshIndicator.noSpinner(
+                      onRefresh: () => Future.wait([
+                        ref.read(stravaSyncProvider.notifier).sync(),
+                        ref.read(healthConnectProvider.notifier).sync(),
+                      ]),
+                      child: list,
+                    )
+                  : list,
+            ),
+          ),
+        ],
       ),
     );
   }

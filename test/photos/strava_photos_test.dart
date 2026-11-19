@@ -13,6 +13,7 @@ import 'package:run4share/features/activities/strava_sync.dart';
 import 'package:run4share/features/create/crop_screen.dart';
 import 'package:run4share/features/home/strava_photo_strip.dart';
 import 'package:run4share/features/photos/photo_library.dart';
+import 'package:run4share/features/photos/picked_photos.dart';
 import 'package:run4share/features/photos/strava_photos.dart';
 import 'package:run4share/features/strava/strava_api.dart';
 import 'package:run4share/features/strava/strava_config.dart';
@@ -141,7 +142,11 @@ void main() {
     await store.download(activity, 'p42-2');
     expect(adapter.requested, hasLength(1));
 
-    final library = WithStravaPhotos(FakePhotoLibrary(), store);
+    final library = WithStravaPhotos(
+      FakePhotoLibrary(),
+      store,
+      PickedPhotoStore(() async => dir),
+    );
     expect(await library.preview(id, maxSide: 2048), hasLength(64));
 
     await store.clear();

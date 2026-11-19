@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:run4share/features/photos/picked_photos.dart';
 import 'package:run4share/features/photos/strava_photos.dart';
 
 enum PhotoAccess {
@@ -59,9 +63,27 @@ abstract interface class PhotoLibrary {
 
   /// A JPEG no bigger than [maxSide] on its longest side, upright.
   Future<Uint8List?> preview(String photoId, {required int maxSide});
+
+  /// Android: photos are chosen in the system photo picker, which needs
+  /// no permission (Google Play's photo policy); iOS keeps the grid.
+  bool get usesSystemPicker;
+
+  /// Opens the system photo picker; the chosen photo's ID, or null if
+  /// the user backed out.
+  Future<String?> pickWithSystemPicker();
 }
 
 class DevicePhotoLibrary implements PhotoLibrary {
+  static const _system = MethodChannel('run4share/system');
+
+  @override
+  bool get usesSystemPicker => Platform.isAndroid;
+
+  /// The picker's file in the cache (MainActivity), or null.
+  @override
+  Future<String?> pickWithSystemPicker() =>
+      _system.invokeMethod<String>('pickImage');
+
   static const _option = PermissionRequestOption(
     androidPermission: AndroidPermission(
       type: RequestType.image,
@@ -169,5 +191,6 @@ final photoLibraryProvider = Provider<PhotoLibrary>(
   (ref) => WithStravaPhotos(
     DevicePhotoLibrary(),
     ref.watch(stravaPhotoStoreProvider),
+    ref.watch(pickedPhotoStoreProvider),
   ),
 );
